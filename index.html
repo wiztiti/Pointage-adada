@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pointage Adada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.0/lucide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root { --bg-pastel: #fdfcf0; --primary-pastel: #d1e9ff; --accent-red: #ffb3ba; --accent-green: #baffc9; }
+        .dark { --bg-pastel: #1a1a1a; --primary-pastel: #2d3748; }
+        body { background-color: var(--bg-pastel); transition: all 0.3s; }
+        .card { background: white; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1rem; }
+        .dark .card { background: #2d2d2d; color: white; }
+        .btn-big { height: 80px; font-size: 1.25rem; font-weight: bold; border-radius: 12px; transition: transform 0.1s; }
+        .btn-big:active { transform: scale(0.95); }
+    </style>
+</head>
+<body class="p-2 pb-20 select-none">
+
+    <header class="card p-4 sticky top-0 z-50 flex flex-col items-center border-b border-blue-100">
+        <div class="flex items-center justify-between w-full mb-2">
+            <button onclick="navDate(-1)" class="p-2 bg-blue-50 rounded-full"><i data-lucide="chevron-left"></i></button>
+            <h1 id="currentDateDisplay" class="font-bold text-lg text-blue-800 dark:text-blue-200 uppercase text-center"></h1>
+            <button onclick="navDate(1)" class="p-2 bg-blue-50 rounded-full"><i data-lucide="chevron-right"></i></button>
+        </div>
+        <div class="flex gap-4 text-sm font-semibold">
+            <button onclick="showRecap()" class="text-blue-600 underline">Voir récap du jour</button>
+            <button id="btnToday" onclick="goToToday()" class="hidden text-orange-500 italic">Retour à aujourd'hui</button>
+            <button onclick="toggleTheme()" class="p-1"><i data-lucide="sun-moon"></i></button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-2 gap-4 mb-4">
+        <button id="btnDepart" onclick="handleAction('DEPART')" class="btn-big bg-[#ffb3ba] text-red-800 shadow-sm disabled:opacity-30">DÉPART</button>
+        <button id="btnRetour" onclick="handleAction('RETOUR')" class="btn-big bg-[#baffc9] text-green-800 shadow-sm disabled:opacity-30">RETOUR</button>
+    </div>
+
+    <details id="detailsTranches" class="card overflow-hidden">
+        <summary class="p-4 font-bold cursor-pointer flex justify-between bg-blue-50 dark:bg-gray-700">
+            Tranches de travail <span id="countTranches" class="bg-blue-200 px-2 rounded-full text-xs">0</span>
+        </summary>
+        <div id="listTranches" class="p-4 space-y-3"></div>
+        <button onclick="addTrancheManuelle()" class="w-full p-2 text-xs text-blue-500">+ Ajouter manuellement</button>
+    </details>
+
+    <details class="card">
+        <summary class="p-4 font-bold cursor-pointer bg-purple-50 dark:bg-gray-700">Heures (Réelles vs Conv.)</summary>
+        <div class="p-4 space-y-4">
+            <div class="flex justify-between items-center bg-white dark:bg-gray-800 p-3 rounded-lg border">
+                <span>Appliquer la ½ heure (-30min)</span>
+                <input type="checkbox" id="checkDemiHeure" onchange="updateCalculs()" class="w-6 h-6">
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-center">
+                <div class="p-2 bg-gray-100 dark:bg-gray-600 rounded">
+                    <div class="text-xs uppercase">Réelles Jour</div>
+                    <div id="hReellesJour" class="text-xl font-bold">0h00</div>
+                </div>
+                <div class="p-2 bg-blue-100 dark:bg-blue-900 rounded">
+                    <div class="text-xs uppercase text-blue-800 dark:text-blue-100">Conv. Jour</div>
+                    <div id="hConvJour" class="text-xl font-bold text-blue-600">0h00</div>
+                </div>
+            </div>
+            <div class="text-xs grid grid-cols-2 gap-4 pt-2 border-t">
+                <div>Semaine: <b id="hSemaine">0h00</b></div>
+                <div>Mois: <b id="hMois">0h00</b></div>
+            </div>
+        </div>
+    </details>
+
+    <div class="card p-4 space-y-4">
+        <div>
+            <label class="block font-bold mb-1 text-sm">Kilométrage fin de journée</label>
+            <input type="number" id="inputKm" onchange="saveData()" placeholder="Ex: 124500" class="w-full p-2 border rounded dark:bg-gray-800">
+        </div>
+        <div>
+            <label class="block font-bold mb-1 text-sm">Commentaires de la journée</label>
+            <textarea id="inputCom" onchange="saveData()" rows="2" class="w-full p-2 border rounded dark:bg-gray-800"></textarea>
+        </div>
+    </div>
+
+    <details class="card">
+        <summary class="p-4 font-bold cursor-pointer bg-green-50 dark:bg-gray-700">Gestion des élèves</summary>
+        <div class="p-4 space-y-4">
+            <button onclick="openModal('modalListeEleves')" class="w-full p-2 border rounded bg-white dark:bg-gray-800">Modifier la liste des élèves</button>
+            <button onclick="openModal('modalPresence')" class="w-full p-3 bg-green-200 dark:bg-green-900 font-bold rounded">PRÉSENT ? (Pointer)</button>
+            <div id="recapElevesJour" class="text-sm border-t pt-2 space-y-1"></div>
+        </div>
+    </details>
+
+    <div id="modalRecap" class="fixed inset-0 bg-black/50 hidden z-[100] p-4 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-sm rounded-lg overflow-hidden flex flex-col max-h-[90vh]">
+            <div id="ticketRecap" class="p-6 overflow-y-auto bg-[#f9f9f9] text-black font-mono text-sm border-4 border-double border-gray-300">
+                <h2 class="text-center font-black text-lg border-b-2 border-dashed border-gray-400 pb-2 mb-4">ADADA - RECAP</h2>
+                <div id="recapContent"></div>
+            </div>
+            <div class="p-4 grid grid-cols-3 gap-2 bg-white">
+                <button onclick="share('sms')" class="p-2 bg-blue-100 rounded text-xs">SMS</button>
+                <button onclick="share('pdf')" class="p-2 bg-red-100 rounded text-xs">PDF</button>
+                <button onclick="closeModal('modalRecap')" class="p-2 bg-gray-200 rounded text-xs uppercase font-bold">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalListeEleves" class="fixed inset-0 bg-black/50 hidden z-[100] p-4 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-900 w-full p-6 rounded-lg">
+            <h2 class="font-bold mb-4">Ma liste d'élèves</h2>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="newEleveName" class="border p-2 flex-1 dark:bg-gray-800">
+                <button onclick="addEleveToList()" class="bg-blue-500 text-white px-4 rounded">Add</button>
+            </div>
+            <div id="fullListeEleves" class="space-y-2 max-h-60 overflow-y-auto"></div>
+            <button onclick="closeModal('modalListeEleves')" class="mt-4 w-full p-2 bg-gray-200 rounded">Fermer</button>
+        </div>
+    </div>
+
+    <div id="modalPresence" class="fixed inset-0 bg-black/50 hidden z-[100] p-4 flex items-center justify-center">
+        <div class="bg-white dark:bg-gray-900 w-full p-4 rounded-lg overflow-y-auto max-h-[95vh]">
+            <h2 class="font-bold mb-4 border-b pb-2">Présence des élèves</h2>
+            <div id="presenceChecklist" class="space-y-4"></div>
+            <button onclick="closeModal('modalPresence')" class="mt-6 w-full p-4 bg-green-500 text-white font-bold rounded uppercase">Valider</button>
+        </div>
+    </div>
+
+    <script>
+        // --- INITIALISATION & DONNÉES ---
+        let state = {
+            viewDate: new Date().toISOString().split('T')[0],
+            db: JSON.parse(localStorage.getItem('adada_db')) || {},
+            eleves: JSON.parse(localStorage.getItem('adada_eleves')) || []
+        };
+
+        const getDayData = (date) => state.db[date] || { tranches: [], km: "", com: "", presences: {}, applyDemi: false };
+
+        // --- NAVIGATION ---
+        function navDate(dir) {
+            let d = new Date(state.viewDate);
+            d.setDate(d.getDate() + dir);
+            state.viewDate = d.toISOString().split('T')[0];
+            initView();
+        }
+        function goToToday() { state.viewDate = new Date().toISOString().split('T')[0]; initView(); }
+
+        // --- ACTIONS LOGIQUE ---
+        function handleAction(type) {
+            let data = getDayData(state.viewDate);
+            let now = new Date();
+            let timeStr = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+            
+            if (type === 'DEPART') {
+                data.tranches.push({ start: timeStr, end: "", fuel: 0 });
+            } else {
+                let last = data.tranches[data.tranches.length - 1];
+                if (last && last.end === "") last.end = timeStr;
+            }
+            saveDay(data);
+        }
+
+        function saveDay(data) {
+            state.db[state.viewDate] = data;
+            localStorage.setItem('adada_db', JSON.stringify(state.db));
+            initView();
+        }
+
+        // --- CALCULS HEURES (LA REGLE ADADA) ---
+        function updateCalculs() {
+            let data = getDayData(state.viewDate);
+            data.applyDemi = document.getElementById('checkDemiHeure').checked;
+            
+            let totalMinutes = 0;
+            let validTranches = data.tranches.filter(t => t.start && t.end);
+            
+            validTranches.forEach(t => {
+                let [h1, m1] = t.start.split(':').map(Number);
+                let [h2, m2] = t.end.split(':').map(Number);
+                totalMinutes += (h2*60+m2) - (h1*60+m1);
+            });
+
+            // Minimums conventionnels
+            let convMin = 0;
+            if (validTranches.length === 1) convMin = 120; // 2h
+            else if (validTranches.length === 2) convMin = 180; // 3h
+            else if (validTranches.length >= 3) convMin = 270; // 4h30
+
+            let convMinutes = Math.max(totalMinutes, convMin);
+
+            // Règle de la demi-heure
+            if (data.applyDemi && convMinutes > 180) {
+                convMinutes = Math.max(convMinutes - 30, convMin);
+            }
+
+            document.getElementById('hReellesJour').innerText = formatMin(totalMinutes);
+            document.getElementById('hConvJour').innerText = formatMin(convMinutes);
+            
+            // Stats Semaine/Mois (Simplifié)
+            document.getElementById('hSemaine').innerText = "Calculé au récap"; 
+            document.getElementById('hMois').innerText = state.viewDate.split('-')[1];
+        }
+
+        function formatMin(m) {
+            let h = Math.floor(m/60);
+            let min = m % 60;
+            return `${h}h${min.toString().padStart(2,'0')}`;
+        }
+
+        // --- AFFICHAGE ---
+        function initView() {
+            lucide.createIcons();
+            const data = getDayData(state.viewDate);
+            const today = new Date().toISOString().split('T')[0];
+            
+            document.getElementById('currentDateDisplay').innerText = new Date(state.viewDate).toLocaleDateString('fr-FR', {weekday: 'long', day: 'numeric', month: 'long'});
+            document.getElementById('btnToday').style.display = (state.viewDate === today) ? 'none' : 'block';
+            
+            // Etat boutons
+            let lastTranche = data.tranches[data.tranches.length -1];
+            let isRunning = lastTranche && lastTranche.end === "";
+            document.getElementById('btnDepart').disabled = isRunning;
+            document.getElementById('btnRetour').disabled = !isRunning;
+            if(isRunning) document.getElementById('detailsTranches').open = true;
+
+            // Liste tranches
+            document.getElementById('countTranches').innerText = data.tranches.length;
+            document.getElementById('listTranches').innerHTML = data.tranches.map((t, i) => `
+                <div class="bg-white dark:bg-gray-800 p-2 rounded border shadow-inner text-sm space-y-2">
+                    <div class="flex items-center gap-2">
+                        <input type="time" value="${t.start}" onchange="editT(${i}, 'start', this.value)" class="border rounded p-1">
+                        à 
+                        <input type="time" value="${t.end}" onchange="editT(${i}, 'end', this.value)" class="border rounded p-1">
+                        <button onclick="delT(${i})" class="text-red-300 ml-auto">X</button>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span>Carburant (L): <input type="number" value="${t.fuel}" onchange="editT(${i}, 'fuel', this.value)" class="w-12 border rounded"></span>
+                        <span class="font-bold text-blue-500">${calcDur(t.start, t.end)}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // Inputs
+            document.getElementById('inputKm').value = data.km;
+            document.getElementById('inputCom').value = data.com;
+            document.getElementById('checkDemiHeure').checked = data.applyDemi;
+
+            updateCalculs();
+            renderPresenceList();
+            renderElevesRecap();
+        }
+
+        function editT(i, field, val) {
+            let data = getDayData(state.viewDate);
+            data.tranches[i][field] = val;
+            saveDay(data);
+        }
+        function delT(i) {
+            let data = getDayData(state.viewDate);
+            data.tranches.splice(i, 1);
+            saveDay(data);
+        }
+        function calcDur(s, e) {
+            if(!s || !e) return "En cours...";
+            let [h1, m1] = s.split(':').map(Number);
+            let [h2, m2] = e.split(':').map(Number);
+            return formatMin((h2*60+m2) - (h1*60+m1));
+        }
+
+        // --- GESTION ELEVES ---
+        function renderPresenceList() {
+            const data = getDayData(state.viewDate);
+            document.getElementById('presenceChecklist').innerHTML = state.eleves.map(e => `
+                <div class="p-3 border rounded bg-gray-50 dark:bg-gray-800">
+                    <div class="font-bold mb-2 text-blue-600">${e}</div>
+                    <div class="grid grid-cols-4 gap-1">
+                        ${['MA', 'MR', 'SA', 'SR'].map(type => `
+                            <label class="flex flex-col items-center text-[10px] bg-white dark:bg-gray-700 p-1 rounded border">
+                                ${type}
+                                <input type="checkbox" ${data.presences[e]?.includes(type) ? 'checked' : ''} onchange="togglePres('${e}', '${type}')">
+                            </label>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function togglePres(name, type) {
+            let data = getDayData(state.viewDate);
+            if(!data.presences[name]) data.presences[name] = [];
+            if(data.presences[name].includes(type)) data.presences[name] = data.presences[name].filter(t => t !== type);
+            else data.presences[name].push(type);
+            saveDay(data);
+        }
+
+        function renderElevesRecap() {
+            const data = getDayData(state.viewDate);
+            let html = "";
+            for(let name in data.presences) {
+                if(data.presences[name].length > 0) html += `<div>• ${name} : <span class="text-xs text-gray-500">${data.presences[name].join(', ')}</span></div>`;
+            }
+            document.getElementById('recapElevesJour').innerHTML = html || "Aucun élève pointé.";
+        }
+
+        // --- RECAP & PARTAGE ---
+        function showRecap() {
+            const data = getDayData(state.viewDate);
+            const conv = document.getElementById('hConvJour').innerText;
+            const reelles = document.getElementById('hReellesJour').innerText;
+            
+            let html = `
+                <p>DATE : ${state.viewDate}</p>
+                <p class="border-b border-dashed my-2"></p>
+                <p><b>TRANCHES :</b></p>
+                ${data.tranches.map(t => `<p>- ${t.start} > ${t.end} (${calcDur(t.start, t.end)})</p>`).join('')}
+                <p class="mt-2"><b>HEURES REELLES :</b> ${reelles}</p>
+                <p><b>HEURES CONV. :</b> ${conv}</p>
+                <p class="border-b border-dashed my-2"></p>
+                <p><b>KM FIN :</b> ${data.km || '---'}</p>
+                <p><b>ELEVES :</b></p>
+                ${Object.keys(data.presences).map(n => `<p>${n}: ${data.presences[n].join(' ')}</p>`).join('')}
+                <p class="border-b border-dashed my-2"></p>
+                <p class="text-[10px] text-center italic">Pointage Adada - Généré le ${new Date().toLocaleString()}</p>
+            `;
+            document.getElementById('recapContent').innerHTML = html;
+            openModal('modalRecap');
+        }
+
+        function share(type) {
+            const text = document.getElementById('recapContent').innerText;
+            if(type === 'sms') window.location.href = `sms:?body=${encodeURIComponent(text)}`;
+            if(type === 'pdf') html2pdf().from(document.getElementById('ticketRecap')).save(`recap-adada-${state.viewDate}.pdf`);
+        }
+
+        // --- UTILS ---
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function addEleveToList() {
+            let n = document.getElementById('newEleveName').value;
+            if(n) { state.eleves.push(n); localStorage.setItem('adada_eleves', JSON.stringify(state.eleves)); document.getElementById('newEleveName').value = ""; renderListeElevesConfig(); renderPresenceList(); }
+        }
+        function renderListeElevesConfig() {
+            document.getElementById('fullListeEleves').innerHTML = state.eleves.map((e, i) => `<div class="flex justify-between border-b p-1">${e} <button onclick="state.eleves.splice(${i},1); localStorage.setItem('adada_eleves', JSON.stringify(state.eleves)); renderListeElevesConfig();" class="text-red-500">X</button></div>`).join('');
+        }
+        function toggleTheme() { document.body.classList.toggle('dark'); }
+        function saveData() { 
+            let data = getDayData(state.viewDate);
+            data.km = document.getElementById('inputKm').value;
+            data.com = document.getElementById('inputCom').value;
+            saveDay(data);
+        }
+
+        // Lancement
+        initView();
+        renderListeElevesConfig();
+    </script>
+</body>
+</html>
