@@ -3,37 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ADADA FINAL PRO</title>
+    <title>ADADA POINTAGE</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f0fdf4; padding: 15px; margin: 0; color: #1e293b; }
-        .card { background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid #dcfce7; }
-        h3 { text-align: center; margin: 0 0 15px 0; color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        body { font-family: -apple-system, sans-serif; background-color: #f0fdf4; padding: 15px; margin: 0; color: #1e293b; }
+        .card { background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #dcfce7; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        h3 { text-align: center; margin: 0 0 10px 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
         
-        .flex-center { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
+        .flex-center { display: flex; justify-content: center; gap: 20px; margin: 15px 0; }
         .btn-action { width: 120px; padding: 15px; border: none; border-radius: 15px; font-weight: 800; font-size: 13px; cursor: pointer; }
         .btn-depart { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
         .btn-retour { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
         .btn-action:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        /* HEURES DU JOUR : Noir et pas de gras */
         .heure-val { font-weight: normal; font-size: 20px; display: block; margin-top: 5px; color: #000000 !important; }
 
-        /* Suppression des flèches menus */
         details summary { list-style: none; cursor: pointer; text-align: center; font-weight: bold; color: #64748b; font-size: 13px; outline: none; }
         details summary::-webkit-details-marker { display: none; }
         
-        .heure-box { background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 8px; display: flex; align-items: center; justify-content: space-between; }
-        .heure-box input { border: none; background: transparent; font-size: 15px; width: 70px; text-align: center; }
+        .heure-box { background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #e2e8f0; margin: 8px 0; display: flex; align-items: center; justify-content: space-around; }
+        .heure-box input { border: none; background: transparent; font-size: 16px; width: 70px; text-align: center; color: #000; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); padding: 20px; z-index: 1000; }
-        .modal-content { background: white; padding: 20px; border-radius: 25px; max-width: 450px; margin: 20px auto; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); padding: 20px; z-index: 999; }
+        .modal-content { background: white; padding: 20px; border-radius: 25px; max-width: 400px; margin: 20px auto; max-height: 85vh; overflow-y: auto; }
         
-        .check-grid { display: grid; grid-template-cols: repeat(4, 1fr); gap: 5px; margin-top: 5px; }
+        .check-grid { display: grid; grid-template-cols: repeat(4, 1fr); gap: 5px; }
         .check-btn { padding: 10px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: white; font-size: 11px; font-weight: bold; color: #64748b; }
         .check-btn.active { background: #16a34a; color: white; border-color: #16a34a; }
 
-        input[type="number"] { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; width: 100%; box-sizing: border-box; text-align: center; font-size: 16px; }
-        textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; box-sizing: border-box; font-size: 14px; margin-top: 10px; }
+        input[type="number"], textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; box-sizing: border-box; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -41,53 +38,153 @@
     <div class="card">
         <div style="display:flex; justify-content: space-between; align-items: center;">
             <button onclick="navDate(-1)" style="border:none; background:none; font-size:25px; color:#16a34a;">❮</button>
-            <b id="dateAffichage">...</b>
+            <b id="dateAffichage" style="font-size: 15px;">...</b>
             <button onclick="navDate(1)" style="border:none; background:none; font-size:25px; color:#16a34a;">❯</button>
         </div>
-        <div style="text-align:center; margin-top:10px;">
-            <button onclick="ouvrir('modRecap')" style="color:#16a34a; background:none; border:none; text-decoration:underline; font-size:12px; font-weight:bold;">VOIR RÉCAPITULATIF</button>
-        </div>
+        <center><button onclick="ouvrir('modRecap')" style="color:#16a34a; background:none; border:none; text-decoration:underline; font-size:11px; margin-top:10px; font-weight:bold;">VOIR RÉCAPITULATIF</button></center>
     </div>
 
     <div class="flex-center">
-        <button id="btnD" class="btn-action btn-depart" onclick="clicAction('D')">DÉPART</button>
-        <button id="btnR" class="btn-action btn-retour" onclick="clicAction('R')">RETOUR</button>
+        <button id="btnD" class="btn-action btn-depart" onclick="action('D')">DÉPART</button>
+        <button id="btnR" class="btn-action btn-retour" onclick="action('R')">RETOUR</button>
     </div>
 
     <div class="card">
         <h3>HEURES DU JOUR</h3>
-        <div style="display:flex; justify-content:space-around; align-items:center; text-align:center;">
-            <div>
-                <span style="font-size:10px; color:#94a3b8; font-weight:bold;">RÉELLES</span>
-                <span id="txtR" class="heure-val">0h00</span>
-            </div>
-            <div style="border-left: 1px solid #f1f5f9; height: 35px;"></div>
-            <div>
-                <span style="font-size:10px; color:#94a3b8; font-weight:bold;">CONVENTIONNELLES</span>
-                <span id="txtC" class="heure-val">0h00</span>
-            </div>
+        <div style="display:flex; justify-content:space-around; text-align:center;">
+            <div><small style="color:#94a3b8; font-weight:bold;">RÉELLES</small><span id="txtR" class="heure-val">0h00</span></div>
+            <div style="border-left:1px solid #f1f5f9; height:35px;"></div>
+            <div><small style="color:#94a3b8; font-weight:bold;">CONVENTIONNELLES</small><span id="txtC" class="heure-val">0h00</span></div>
         </div>
-        <div style="text-align:center; margin-top:15px; border-top:1px solid #f1f5f9; padding-top:10px;">
-            <label style="font-size:12px; font-weight:bold; color:#64748b; cursor:pointer;">
-                <input type="checkbox" id="halfH" onchange="maj()"> Appliquer la déduction - 1/2 heure
-            </label>
+        <div style="text-align:center; margin-top:12px; border-top:1px solid #f1f5f9; padding-top:10px;">
+            <label style="font-size:12px; color:#64748b; font-weight:bold;"><input type="checkbox" id="halfH" onchange="maj()"> Appliquer la déduction - 1/2 heure</label>
         </div>
     </div>
 
     <details class="card">
         <summary>TRANCHES DE TRAVAIL</summary>
         <div id="listeT" style="margin-top:10px;"></div>
-        <button onclick="ajouterM()" style="width:100%; margin-top:10px; font-size:11px; color:#94a3b8; background:none; border:1px dashed #cbd5e1; padding:8px; border-radius:10px;">+ AJOUTER MANUELLEMENT</button>
+        <button onclick="ajouterM()" style="width:100%; margin-top:5px; font-size:10px; color:#94a3b8; background:none; border:1px dashed #cbd5e1; padding:8px; border-radius:10px;">+ AJOUTER MANUELLEMENT</button>
     </details>
 
     <div class="card">
         <h3>VÉHICULE & NOTES</h3>
         <input type="number" id="inKm" oninput="saveInputs()" placeholder="KM FIN DE JOURNÉE">
-        <textarea id="inCom" oninput="saveInputs()" placeholder="Notes ou remarques..." rows="2"></textarea>
+        <textarea id="inCom" oninput="saveInputs()" placeholder="Notes du jour..." rows="2" style="margin-top:10px;"></textarea>
     </div>
 
     <details class="card">
         <summary>GESTION ÉLÈVES</summary>
-        <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
+        <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
             <button onclick="ouvrir('modPres')" style="padding:15px; background:#1e293b; color:white; font-weight:bold; border-radius:15px; border:none;">POINTAGE PRÉSENCES</button>
-            <button onclick="ouvrir('modList')" style="padding:10px; border-radius:12px; border:1px solid #e2e8f0; background:none; font-size:11px; font-weight:bold; color:#6
+            <button onclick="ouvrir('modList')" style="padding:8px; border:1px solid #e2e8f0; background:none; font-size:11px; color:#64748b; border-radius:10px;">MODIFIER LA LISTE DES ÉLÈVES</button>
+            <div id="resP" style="font-size:11px; color:#94a3b8; text-align:center; font-style:italic;"></div>
+        </div>
+    </details>
+
+    <div id="modRecap" class="modal" onclick="fermer('modRecap')"><div class="modal-content" onclick="event.stopPropagation()"><h3>RAPPORT</h3><pre id="resRecap" style="font-size:12px; background:#f8fafc; padding:10px; border-radius:10px; white-space:pre-wrap; border:1px solid #eee;"></pre><button onclick="fermer('modRecap')" style="width:100%; padding:15px; margin-top:10px; border-radius:15px; border:none; background:#f1f5f9; font-weight:bold;">FERMER</button></div></div>
+    
+    <div id="modList" class="modal"><div class="modal-content"><h3>ÉLÈVES</h3><div style="display:flex; gap:5px; margin-bottom:10px;"><input id="newE" placeholder="Nom..."><button onclick="addE()" style="background:#16a34a; color:white; border:none; padding:10px 15px; border-radius:10px;">+</button></div><div id="divL"></div><button onclick="fermer('modList')" style="width:100%; padding:15px; margin-top:15px; border-radius:15px; background:#1e293b; color:white; border:none;">OK</button></div></div>
+
+    <div id="modPres" class="modal"><div class="modal-content"><h3>PRÉSENCES</h3><div id="gridP"></div><button onclick="fermer('modPres')" style="width:100%; padding:15px; margin-top:15px; border-radius:15px; background:#16a34a; color:white; border:none; font-weight:bold;">VALIDER</button></div></div>
+
+    <script>
+        let dateJ = new Date().toISOString().split('T')[0];
+        let db = JSON.parse(localStorage.getItem('adada_final_db')) || {};
+        let eleves = JSON.parse(localStorage.getItem('adada_final_el')) || [];
+
+        function navDate(n) { let d = new Date(dateJ); d.setDate(d.getDate() + n); dateJ = d.toISOString().split('T')[0]; maj(); }
+        
+        function action(type) {
+            initDate();
+            let h = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+            if(type === 'D') db[dateJ].t.push({s: h, e: ""});
+            else if(db[dateJ].t.length > 0) db[dateJ].t[db[dateJ].t.length-1].e = h;
+            sauver();
+        }
+
+        function initDate() { if(!db[dateJ]) db[dateJ] = { t: [], km: "", com: "", p: {} }; }
+
+        function maj() {
+            initDate();
+            let data = db[dateJ];
+            document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'short'}).toUpperCase();
+            
+            let enCours = data.t.length > 0 && data.t[data.t.length-1].e === "";
+            document.getElementById('btnD').disabled = enCours;
+            document.getElementById('btnR').disabled = !enCours;
+
+            let htmlT = ""; let total = 0;
+            data.t.forEach((tr, i) => {
+                htmlT += `<div class="heure-box">
+                    <input type="time" value="${tr.s}" onchange="editT(${i},'s',this.value)"> ➔ 
+                    <input type="time" value="${tr.e}" onchange="editT(${i},'e',this.value)">
+                    <button onclick="delT(${i})" style="color:red; border:none; background:none; font-weight:bold;">×</button>
+                </div>`;
+                if(tr.s && tr.e) {
+                    let [h1,m1]=tr.s.split(':').map(Number); let [h2,m2]=tr.e.split(':').map(Number);
+                    total += (h2*60+m2)-(h1*60+m1);
+                }
+            });
+            document.getElementById('listeT').innerHTML = htmlT;
+
+            let minC = 0;
+            if(data.t.length === 1) minC = 120;
+            else if(data.t.length === 2) minC = 180;
+            else if(data.t.length >= 3) minC = 270;
+            let conv = Math.max(total, minC);
+            if(document.getElementById('halfH').checked && conv > 180) conv = Math.max(conv - 30, minC);
+
+            document.getElementById('txtR').innerText = Math.floor(total/60)+'h'+(total%60).toString().padStart(2,'0');
+            document.getElementById('txtC').innerText = Math.floor(conv/60)+'h'+(conv%60).toString().padStart(2,'0');
+            document.getElementById('inKm').value = data.km;
+            document.getElementById('inCom').value = data.com;
+            
+            majE(data);
+        }
+
+        function majE(data) {
+            document.getElementById('divL').innerHTML = eleves.map((e,i) => `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span>${e}</span><button onclick="eleves.splice(${i},1); sauver();" style="color:red; border:none; background:none;">X</button></div>`).join('');
+            let htmlP = "";
+            eleves.forEach(e => {
+                if(!data.p[e]) data.p[e] = [];
+                htmlP += `<div style="margin-bottom:15px; border:1px solid #f1f5f9; padding:10px; border-radius:15px;">
+                    <div style="font-weight:bold; font-size:12px; text-align:center; margin-bottom:8px;">${e}</div>
+                    <div class="check-grid">${['MA','MR','SA','SR'].map(t => `<button onclick="toggleP('${e.replace(/'/g, "\\'")}','${t}')" class="check-btn ${data.p[e].includes(t)?'active':''}">${t}</button>`).join('')}</div></div>`;
+            });
+            document.getElementById('gridP').innerHTML = htmlP || "Ajoutez des élèves.";
+            let pres = Object.keys(data.p).filter(k => data.p[k].length > 0);
+            document.getElementById('resP').innerText = pres.length ? "Pointés : " + pres.join(', ') : "";
+        }
+
+        function toggleP(n, t) {
+            let l = db[dateJ].p[n] || [];
+            db[dateJ].p[n] = l.includes(t) ? l.filter(x => x !== t) : [...l, t];
+            sauver();
+        }
+
+        function editT(i,f,v) { db[dateJ].t[i][f]=v; sauver(); }
+        function delT(i) { db[dateJ].t.splice(i,1); sauver(); }
+        function ajouterM() { initDate(); db[dateJ].t.push({s:"08:00",e:"17:00"}); sauver(); }
+        function addE() { let n = document.getElementById('newE').value; if(n){ eleves.push(n); document.getElementById('newE').value=""; sauver(); }}
+        function saveInputs() { initDate(); db[dateJ].km = document.getElementById('inKm').value; db[dateJ].com = document.getElementById('inCom').value; localStorage.setItem('adada_final_db', JSON.stringify(db)); }
+        function sauver() { localStorage.setItem('adada_final_db', JSON.stringify(db)); localStorage.setItem('adada_final_el', JSON.stringify(eleves)); maj(); }
+        
+        function ouvrir(id) { 
+            if(id === 'modRecap') {
+                let data = db[dateJ];
+                let txt = "--- RAPPORT ADADA ---\nDate : " + dateJ + "\n\n";
+                data.t.forEach(t => txt += "T : " + t.s + " - " + t.e + "\n");
+                txt += "\nREELLES : " + document.getElementById('txtR').innerText;
+                txt += "\nCONVENTIONNELLES : " + document.getElementById('txtC').innerText;
+                txt += "\nKM : " + (data.km || "0") + "\nNOTES : " + (data.com || "/");
+                document.getElementById('resRecap').innerText = txt;
+            }
+            document.getElementById(id).style.display = 'block'; 
+        }
+        function fermer(id) { document.getElementById(id).style.display = 'none'; }
+        
+        window.onload = maj;
+    </script>
+</body>
+</html>
