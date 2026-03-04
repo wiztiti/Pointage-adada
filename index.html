@@ -31,9 +31,19 @@
         .heure-val { font-weight: 800; font-size: 20px; display: block; margin-top: 5px; }
         .conv-color { color: #16a34a; }
 
-        /* Sections fermées */
-        details summary { list-style: none; cursor: pointer; text-align: center; font-weight: bold; color: #64748b; font-size: 13px; outline: none; }
-        details summary::-webkit-details-marker { display: none; }
+        /* Sections fermées - SUPPRESSION DES FLÈCHES NAVIGATEUR */
+        details summary { 
+            list-style: none; /* Cache la flèche sur Firefox/Standard */
+            cursor: pointer; 
+            text-align: center; 
+            font-weight: bold; 
+            color: #64748b; 
+            font-size: 13px; 
+            outline: none; 
+        }
+        details summary::-webkit-details-marker { 
+            display: none; /* Cache la flèche sur Chrome/Safari */
+        }
         
         .heure-box { 
             background: #f8fafc; padding: 10px; border-radius: 12px; 
@@ -71,8 +81,7 @@
     </div>
 
     <details class="card">
-        <summary>TRANCHES DE TRAVAIL ▼</summary>
-        <div id="listeT" style="margin-top:15px;"></div>
+        <summary>TRANCHES DE TRAVAIL</summary> <div id="listeT" style="margin-top:15px;"></div>
         <div style="text-align:center;">
             <button onclick="ajouterM()" style="font-size:10px; margin-top:15px; color:#94a3b8; background:none; border:1px solid #e2e8f0; padding:5px 10px; border-radius:20px;">+ AJOUTER MANUELLEMENT</button>
         </div>
@@ -107,8 +116,7 @@
     </div>
 
     <details class="card">
-        <summary>GESTION ÉLÈVES ▼</summary>
-        <div style="margin-top:15px;">
+        <summary>GESTION ÉLÈVES</summary> <div style="margin-top:15px;">
             <button onclick="ouvrir('modList')" style="width:100%; padding:10px; border-radius:12px; border:1px solid #e2e8f0; background:none; font-size:11px; font-weight:bold; color:#64748b;">MODIFIER LA LISTE</button>
             <button onclick="ouvrir('modPres')" style="width:100%; padding:14px; background:#1e293b; color:white; font-weight:bold; border-radius:15px; border:none; margin-top:10px;">POINTAGE PRÉSENCES</button>
             <div id="resPresLabel" style="font-size:10px; color:#94a3b8; text-align:center; margin-top:10px; font-style:italic;"></div>
@@ -242,7 +250,6 @@
         }
         function fermer(id) { document.getElementById(id).style.display = 'none'; }
         
-        // LANCEMENT
         maj();
     </script>
 </body>
