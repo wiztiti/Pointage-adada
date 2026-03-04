@@ -2,96 +2,161 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ADADA POINTAGE</title>
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 15px; margin: 0; color: #333; }
-        .card { background: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .flex { display: flex; gap: 10px; }
-        .btn { flex: 1; padding: 20px; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; }
-        .btn-depart { background: #fee2e2; color: #b91c1c; border: 2px solid #fecaca; }
-        .btn-retour { background: #dcfce7; color: #15803d; border: 2px solid #bbf7d0; }
-        .btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .heure-box { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 5px; font-size: 14px; }
-        .conv { color: #2563eb; font-weight: bold; font-size: 20px; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); padding: 20px; z-index: 100; overflow-y: auto; }
-        .modal-content { background: white; padding: 20px; border-radius: 15px; }
-        .check-btn { padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: white; font-size: 10px; flex: 1; }
-        .check-btn.active { background: #2563eb; color: white; border-color: #1e40af; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: #f0fdf4; /* VERT CLAIR PASTEL */
+            padding: 15px; 
+            margin: 0; 
+            color: #1e293b; 
+        }
+        .card { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 20px; 
+            margin-bottom: 15px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
+            border: 1px solid #dcfce7; 
+        }
+        .flex-center { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
+        
+        /* Boutons Départ/Retour plus fins et espacés */
+        .btn-action { 
+            width: 120px; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 15px; 
+            font-weight: 800; 
+            font-size: 14px; 
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-depart { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+        .btn-retour { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+        .btn-action:disabled { opacity: 0.3; filter: grayscale(1); }
+
+        h2, h3, h4 { text-align: center; margin-top: 0; margin-bottom: 15px; color: #64748b; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .heure-box { 
+            background: #f8fafc; 
+            padding: 10px; 
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0; 
+            margin-top: 8px; 
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .conv-val { color: #16a34a; font-weight: 900; font-size: 26px; text-align: center; display: block; }
+        
+        details summary { list-style: none; cursor: pointer; text-align: center; font-weight: bold; color: #64748b; outline: none; }
+        details summary::-webkit-details-marker { display: none; }
+
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); padding: 20px; z-index: 100; }
+        .modal-content { background: white; padding: 25px; border-radius: 25px; max-width: 400px; margin: 50px auto; position: relative; }
+        
+        .check-grid { display: grid; grid-template-cols: repeat(4, 1fr); gap: 5px; margin-top: 5px; }
+        .check-btn { padding: 8px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: white; font-size: 10px; font-weight: bold; }
+        .check-btn.active { background: #16a34a; color: white; }
+
+        input[type="time"], input[type="number"] { border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px; text-align: center; font-weight: bold; }
+        textarea { width: 100%; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
     <div class="card" style="text-align:center;">
         <div style="display:flex; justify-content: space-between; align-items: center;">
-            <button onclick="navDate(-1)" style="width:40px; height:40px;"> < </button>
-            <b id="dateAffichage" style="text-transform: uppercase;"></b>
-            <button onclick="navDate(1)" style="width:40px; height:40px;"> > </button>
+            <button onclick="navDate(-1)" style="border:none; background:none; font-size:20px; color:#16a34a;">❮</button>
+            <b id="dateAffichage" style="font-size: 16px;"></b>
+            <button onclick="navDate(1)" style="border:none; background:none; font-size:20px; color:#16a34a;">❯</button>
         </div>
-        <button onclick="ouvrir('modRecap')" style="margin-top:10px; color:blue; background:none; border:none; text-decoration:underline;">Voir récap du jour</button>
+        <button onclick="ouvrir('modRecap')" style="margin-top:10px; color:#16a34a; background:none; border:none; text-decoration:underline; font-size:12px; font-weight:bold;">VOIR RÉCAPITULATIF</button>
     </div>
 
-    <div class="flex">
-        <button id="btnD" class="btn btn-depart" onclick="clicAction('D')">DÉPART</button>
-        <button id="btnR" class="btn btn-retour" onclick="clicAction('R')">RETOUR</button>
+    <div class="flex-center">
+        <button id="btnD" class="btn-action btn-depart" onclick="clicAction('D')">DÉPART</button>
+        <button id="btnR" class="btn-action btn-retour" onclick="clicAction('R')">RETOUR</button>
     </div>
 
-    <div class="card">
-        <h4 style="margin:0 0 10px 0; color:#666;">TRANCHES</h4>
-        <div id="listeT"></div>
-        <button onclick="ajouterM()" style="font-size:10px; margin-top:10px; color:#999;">+ Ajouter manuel</button>
-    </div>
-
-    <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <b>HEURES</b>
-            <label style="font-size:11px;"><input type="checkbox" id="halfH" onchange="maj()"> Appliquer ½h</label>
+    <details class="card" id="detTranches">
+        <summary>TRANCHES DE TRAVAIL ▼</summary>
+        <div id="listeT" style="margin-top:15px;"></div>
+        <div style="text-align:center;">
+            <button onclick="ajouterM()" style="font-size:10px; margin-top:15px; color:#94a3b8; background:none; border:1px solid #e2e8f0; padding:5px 10px; border-radius:20px;">+ AJOUTER MANUELLEMENT</button>
         </div>
-        <div class="flex" style="margin-top:10px;">
-            <div style="flex:1;">Réelles: <br><span id="txtR">0h00</span></div>
-            <div style="flex:1; border-left:1px solid #eee; padding-left:10px;">Conv.: <br><span id="txtC" class="conv">0h00</span></div>
+    </details>
+
+    <div class="card">
+        <h3>HEURES DU JOUR</h3>
+        <div style="display:flex; justify-content:space-around; align-items:center;">
+            <div style="text-align:center;">
+                <span style="font-size:10px; color:#94a3b8;">RÉELLES</span><br>
+                <span id="txtR" style="font-weight:bold; font-size:18px;">0h00</span>
+            </div>
+            <div style="text-align:center;">
+                <span id="txtC" class="conv-val">0h00</span>
+                <span style="font-size:10px; color:#16a34a; font-weight:bold;">CONV. ADADA</span>
+            </div>
+        </div>
+        <div style="text-align:center; margin-top:15px; border-top:1px solid #f1f5f9; pt-10">
+            <label style="font-size:12px; font-weight:bold; color:#64748b;">
+                <input type="checkbox" id="halfH" onchange="maj()" style="margin-top:15px;"> Appliquer la déduction -30min
+            </label>
         </div>
     </div>
 
     <div class="card">
-        <input type="number" id="inKm" oninput="saveInputs()" placeholder="Kilométrage fin" style="width:90%; padding:10px; border:none; border-bottom:1px solid #ccc; font-weight:bold;">
-        <textarea id="inCom" oninput="saveInputs()" placeholder="Commentaires..." style="width:90%; margin-top:10px; border:1px solid #eee; padding:5px;"></textarea>
+        <h3>INFOS VÉHICULE</h3>
+        <div style="text-align:center; margin-bottom:15px;">
+            <input type="number" id="inKm" oninput="saveInputs()" placeholder="KM FIN DE JOURNÉE" style="width:80%;">
+        </div>
+        <textarea id="inCom" oninput="saveInputs()" placeholder="Notes ou incidents..." rows="2"></textarea>
     </div>
 
-    <div class="card">
-        <button onclick="ouvrir('modList')" style="width:100%; padding:10px; margin-bottom:5px;">GÉRER ÉLÈVES</button>
-        <button onclick="ouvrir('modPres')" style="width:100%; padding:15px; background:black; color:white; font-weight:bold; border-radius:10px;">PRÉSENCES ?</button>
-    </div>
+    <details class="card">
+        <summary>GESTION ÉLÈVES ▼</summary>
+        <div style="margin-top:15px;">
+            <button onclick="ouvrir('modList')" style="width:100%; padding:10px; border-radius:12px; border:1px solid #e2e8f0; background:none; font-size:11px; font-weight:bold; color:#64748b;">MODIFIER LA LISTE DES ÉLÈVES</button>
+            <button onclick="ouvrir('modPres')" style="width:100%; padding:15px; background:#1e293b; color:white; font-weight:bold; border-radius:15px; border:none; margin-top:10px; letter-spacing:1px;">POINTAGE PRÉSENCES</button>
+            <div id="resPresLabel" style="font-size:11px; color:#94a3b8; text-align:center; margin-top:10px; italic"></div>
+        </div>
+    </details>
 
-    <div id="modRecap" class="modal">
-        <div class="modal-content">
-            <h3 style="text-align:center; border-bottom:1px dashed #ccc; padding-bottom:10px;">RÉCAPITULATIF</h3>
-            <div id="resRecap" style="font-family:monospace; font-size:12px; white-space:pre-wrap;"></div>
-            <button onclick="fermer('modRecap')" style="width:100%; padding:15px; margin-top:20px;">FERMER</button>
+    <div id="modRecap" class="modal" onclick="fermer('modRecap')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3>RÉCAPITULATIF</h3>
+            <div id="resRecap" style="font-family:monospace; font-size:13px; line-height:1.6; color:#334155;"></div>
+            <button onclick="fermer('modRecap')" style="width:100%; padding:15px; margin-top:20px; border-radius:15px; border:none; background:#f1f5f9; font-weight:bold;">FERMER</button>
         </div>
     </div>
 
     <div id="modList" class="modal">
         <div class="modal-content">
-            <h3>Élèves</h3>
-            <div class="flex"><input id="newE" style="flex:2; padding:10px;"><button onclick="addE()" style="flex:1;">+</button></div>
-            <div id="divList" style="margin-top:15px;"></div>
-            <button onclick="fermer('modList')" style="width:100%; padding:15px; margin-top:20px; background:#eee;">OK</button>
+            <h3>MES ÉLÈVES</h3>
+            <div style="display:flex; gap:5px;">
+                <input id="newE" placeholder="Nom..." style="flex:2; border-radius:10px; border:1px solid #ddd; padding:10px;">
+                <button onclick="addE()" style="flex:1; background:#16a34a; color:white; border:none; border-radius:10px; font-weight:bold;">+</button>
+            </div>
+            <div id="divList" style="margin-top:20px; max-height:200px; overflow-y:auto;"></div>
+            <button onclick="fermer('modList')" style="width:100%; padding:15px; margin-top:20px; border-radius:15px; border:none; background:#1e293b; color:white; font-weight:bold;">TERMINÉ</button>
         </div>
     </div>
 
     <div id="modPres" class="modal">
         <div class="modal-content">
-            <h3>Pointage Présences</h3>
-            <div id="gridP"></div>
-            <button onclick="fermer('modPres')" style="width:100%; padding:15px; margin-top:20px; background:green; color:white; font-weight:bold;">VALIDER</button>
+            <h3>PRÉSENCES</h3>
+            <div id="gridP" style="max-height:350px; overflow-y:auto;"></div>
+            <button onclick="fermer('modPres')" style="width:100%; padding:15px; margin-top:20px; border-radius:15px; border:none; background:#16a34a; color:white; font-weight:bold;">VALIDER</button>
         </div>
     </div>
 
     <script>
         let dateJ = new Date().toISOString().split('T')[0];
-        let db = JSON.parse(localStorage.getItem('adada_final_db')) || {};
-        let eleves = JSON.parse(localStorage.getItem('adada_final_eleves')) || [];
+        let db = JSON.parse(localStorage.getItem('adada_db_v3')) || {};
+        let eleves = JSON.parse(localStorage.getItem('adada_eleves_v3')) || [];
 
         function navDate(n) { 
             let d = new Date(dateJ); d.setDate(d.getDate() + n); 
@@ -110,25 +175,23 @@
 
         function maj() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {} };
-            document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'short'});
+            document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'short'}).toUpperCase();
             
-            // Boutons
             let running = data.t.length > 0 && data.t[data.t.length-1].e === "";
             document.getElementById('btnD').disabled = running;
             document.getElementById('btnR').disabled = !running;
 
-            // Tranches
             let hT = "";
             data.t.forEach((tr, i) => {
                 hT += `<div class="heure-box">
-                    <input type="time" value="${tr.s}" onchange="editT(${i},'s',this.value)"> - 
+                    <input type="time" value="${tr.s}" onchange="editT(${i},'s',this.value)">
+                    <span style="color:#cbd5e1">➔</span>
                     <input type="time" value="${tr.e}" onchange="editT(${i},'e',this.value)">
-                    <button onclick="delT(${i})" style="color:red; float:right;">X</button>
+                    <button onclick="delT(${i})" style="color:#f87171; border:none; background:none; font-weight:bold; font-size:18px; margin-left:10px;">×</button>
                 </div>`;
             });
-            document.getElementById('listeT').innerHTML = hT || "Aucune tranche";
+            document.getElementById('listeT').innerHTML = hT;
 
-            // Calculs
             let total = 0;
             data.t.forEach(tr => { if(tr.s && tr.e) {
                 let [h1,m1]=tr.s.split(':').map(Number); let [h2,m2]=tr.e.split(':').map(Number);
@@ -151,47 +214,4 @@
 
         function majEleves() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {} };
-            document.getElementById('divList').innerHTML = eleves.map((e,i) => `<div>${e} <button onclick="eleves.splice(${i},1); sauver();">X</button></div>`).join('');
-            
-            let hP = "";
-            eleves.forEach(e => {
-                hP += `<div style="margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;">
-                    <b>${e}</b><div class="flex" style="margin-top:5px;">
-                    ${['MA','MR','SA','SR'].map(type => `
-                        <button onclick="toggleP('${e}','${type}')" class="check-btn ${(data.p[e]||[]).includes(type)?'active':''}">${type}</button>
-                    `).join('')}</div></div>`;
-            });
-            document.getElementById('gridP').innerHTML = hP || "Ajoutez des élèves d'abord.";
-        }
-
-        function toggleP(nom, type) {
-            let data = db[dateJ] || { t: [], km: "", com: "", p: {} };
-            if(!data.p[nom]) data.p[nom] = [];
-            if(data.p[nom].includes(type)) data.p[nom] = data.p[nom].filter(x => x !== type);
-            else data.p[nom].push(type);
-            db[dateJ] = data; sauver();
-        }
-
-        function editT(i,f,v) { let data = db[dateJ]; data.t[i][f]=v; db[dateJ]=data; sauver(); }
-        function delT(i) { let data = db[dateJ]; data.t.splice(i,1); db[dateJ]=data; sauver(); }
-        function ajouterM() { let data = db[dateJ] || { t: [], km: "", com: "", p: {} }; data.t.push({s:"08:00",e:"09:00",f:0}); db[dateJ]=data; sauver(); }
-        function addE() { let n = document.getElementById('newE').value; if(n){ eleves.push(n); document.getElementById('newE').value=""; sauver(); }}
-        function saveInputs() { let data = db[dateJ] || { t: [], km: "", com: "", p: {} }; data.km = document.getElementById('inKm').value; data.com = document.getElementById('inCom').value; db[dateJ]=data; localStorage.setItem('adada_final_db', JSON.stringify(db)); }
-        function sauver() { localStorage.setItem('adada_final_db', JSON.stringify(db)); localStorage.setItem('adada_final_eleves', JSON.stringify(eleves)); maj(); }
-        function ouvrir(id) { 
-            if(id === 'modRecap') {
-                let data = db[dateJ] || { t: [] };
-                let txt = "Rapport du " + dateJ + "\n\n";
-                data.t.forEach(t => txt += t.s + " - " + t.e + "\n");
-                txt += "\nHEURES: " + document.getElementById('txtC').innerText;
-                txt += "\nKM: " + (data.km || "---");
-                document.getElementById('resRecap').innerText = txt;
-            }
-            document.getElementById(id).style.display = 'block'; 
-        }
-        function fermer(id) { document.getElementById(id).style.display = 'none'; }
-
-        maj();
-    </script>
-</body>
-</html>
+            document.getElementById('divList').innerHTML =
