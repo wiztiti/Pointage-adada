@@ -7,29 +7,28 @@
     <style>
         body { 
             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background-color: #f0fdf4; /* Vert pastel très clair */
+            background-color: #e0f2fe; 
             padding: 10px; margin: 0; color: #1e293b; 
         }
         
-        /* Bandeau supérieur en bleu pastel très clair */
         .top-card {
-            background: #e0f2fe; /* Bleu pastel clair */
+            background: #f0f9ff; 
             padding: 12px; border-radius: 16px; 
-            margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+            margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); 
             border: 1px solid #bae6fd;
         }
 
         .card { 
             background: white; padding: 12px; border-radius: 16px; 
-            margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); 
-            border: 1px solid #e2e8f0; 
+            margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
+            border: 1px solid #cbd5e1; 
         }
 
         h3, summary, details summary { 
             text-align: center !important; 
             margin: 0 !important; 
-            color: #64748b !important; 
-            font-size: 12px !important; 
+            color: #475569 !important; 
+            font-size: 18px !important; 
             text-transform: uppercase !important; 
             letter-spacing: 0.5px !important; 
             font-weight: 700 !important;
@@ -37,22 +36,73 @@
             outline: none; 
             list-style: none;
             display: block;
+            padding: 12px 0 !important;
         }
         
-        details[open] summary, summary:hover, summary:active, h3:hover { color: #64748b !important; }
+        details[open] summary, summary:hover, summary:active, h3:hover { color: #0284c7 !important; }
         summary::-webkit-details-marker { display: none; }
 
-        .flex-center { display: flex; justify-content: center; gap: 20px; margin: 15px 0; }
+        .flex-center { display: flex; justify-content: center; gap: 20px; margin: 15px 0; flex-wrap: wrap; }
+        
         .btn-action { 
-            flex: 1; max-width: 140px; padding: 14px; border: none; border-radius: 12px; 
-            font-weight: 800; font-size: 14px; cursor: pointer; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex: 1; max-width: 140px; padding: 21px; border: none; border-radius: 12px; 
+            font-weight: 800; font-size: 16px; cursor: pointer; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
-        .btn-depart { background: #fee2e2; color: #b91c1c; }
-        .btn-retour { background: #dcfce7; color: #15803d; }
-        .btn-action:disabled { opacity: 0.3; filter: grayscale(1); cursor: not-allowed; }
+        
+        /* Bouton Départ */
+        .btn-depart { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+        
+        /* Bouton Retour (plus vif quand actif) */
+        .btn-retour { background: #bbf7d0; color: #166534; border-color: #86efac; }
+        
+        /* Animation pour le bouton Retour en attente */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); transform: scale(1); border-color: #22c55e; }
+            50% { box-shadow: 0 0 20px 8px rgba(34, 197, 94, 0.3); transform: scale(1.04); border-color: #15803d; }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: scale(1); border-color: #22c55e; }
+        }
+        
+        .btn-waiting {
+            animation: pulse-glow 1.5s infinite;
+            background: #22c55e !important;
+            color: white !important;
+            z-index: 10;
+        }
 
-        /* Style des Heures */
+        /* Amélioration du bouton inactif */
+        .btn-action:disabled { 
+            opacity: 0.6; 
+            background: #f1f5f9; 
+            color: #94a3b8; 
+            border-color: #e2e8f0; 
+            cursor: not-allowed; 
+            box-shadow: none; 
+            animation: none; 
+            transform: scale(0.98);
+        }
+
+        .status-badge {
+            width: 100%;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 900;
+            color: #166534;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #dcfce7;
+            padding: 8px;
+            border-radius: 20px;
+            border: 1px solid #bbf7d0;
+        }
+        .dot { height: 10px; width: 10px; background-color: #22c55e; border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
+
         .heure-col {
             flex: 1;
             display: flex;
@@ -62,29 +112,29 @@
         }
         .heure-label-top {
             font-size: 9px;
-            color: #94a3b8;
+            color: #64748b;
             font-weight: 800;
             margin-bottom: 4px;
         }
         .heure-val-reel {
             font-weight: 700;
             font-size: 14px;
-            color: #64748b;
+            color: #475569;
         }
         .heure-val-conv {
             font-weight: 800;
             font-size: 16px;
-            color: #0284c7; /* Bleu pour les heures */
-            background: #f0f9ff;
+            color: #0369a1; 
+            background: #e0f2fe;
             padding: 2px 8px;
             border-radius: 6px;
             margin-top: 2px;
-            border: 1px solid #e0f2fe;
+            border: 1px solid #bae6fd;
         }
         .heure-sub {
             font-size: 8px;
             font-weight: 600;
-            color: #0369a1;
+            color: #0c4a6e;
             text-transform: uppercase;
             margin-top: 1px;
         }
@@ -96,15 +146,49 @@
 
         .heure-display {
             background: white; padding: 6px 12px; border-radius: 8px;
-            font-weight: 700; border: 1px solid #e2e8f0;
+            font-weight: 700; border: 1px solid #cbd5e1;
             min-width: 60px; text-align: center; cursor: pointer;
         }
         .heure-display.disabled { cursor: default; background: #f8fafc; color: #94a3b8; }
 
-        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); padding: 10px; z-index: 100; }
-        .modal-content { background: white; padding: 16px; border-radius: 20px; max-width: 400px; margin: 10px auto; max-height: 95vh; overflow-y: auto; }
+        .modal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(15, 23, 42, 0.85); 
+            padding: 10px; 
+            z-index: 100; 
+            align-items: center; 
+            justify-content: center;
+        }
         
-        /* Styles Horloge */
+        .modal-content { 
+            background: white; 
+            border-radius: 20px; 
+            max-width: 400px; 
+            width: 100%;
+            margin: 0 auto; 
+            max-height: 90vh; 
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header { padding: 16px 16px 8px; border-bottom: 1px solid #f1f5f9; }
+        .modal-body { 
+            padding: 10px 16px; 
+            overflow-y: auto; 
+            flex-grow: 1; 
+            -webkit-overflow-scrolling: touch;
+        }
+        .modal-footer { 
+            padding: 12px 16px 16px; 
+            background: white; 
+            border-top: 1px solid #f1f5f9;
+        }
+        
         .clock-container {
             width: 260px; height: 260px; border-radius: 50%;
             background: #f8fafc; margin: 20px auto;
@@ -130,7 +214,7 @@
         .clock-number {
             position: absolute; font-weight: 600; color: #64748b;
             transform: translate(-50%, -50%); font-size: 13px;
-            pointer-events: none; transition: color 0.2s;
+            pointer-events: none;
         }
         .clock-number.active { color: #0284c7; font-weight: 900; font-size: 15px; }
 
@@ -141,50 +225,56 @@
         }
         .mode-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
 
-        .eleve-row { padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        .eleve-row { padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
         .pres-container { display: flex; gap: 8px; margin-top: 8px; }
         .pres-col { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 6px; border-radius: 8px; background: #f8fafc; }
         .col-m { border-left: 3px solid #3b82f6; } 
         .col-a { border-left: 3px solid #f59e0b; } 
 
-        .check-btn { padding: 8px 0; border: 1px solid #e2e8f0; border-radius: 6px; background: white; font-size: 10px; font-weight: 700; color: #64748b; cursor: pointer; transition: all 0.2s; }
-        .check-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
+        .check-btn { 
+            padding: 12px 0; border: 1px solid #e2e8f0; border-radius: 8px; 
+            background: white; font-size: 11px; font-weight: 700; color: #64748b; 
+            cursor: pointer; transition: all 0.2s; 
+        }
+        .check-btn.active { background: #0284c7; color: white; border-color: #0284c7; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
         .check-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .input-harmonized { 
             border: 1px solid #cbd5e1; 
-            border-radius: 8px; 
-            padding: 8px; 
+            border-radius: 10px; 
+            padding: 10px; 
             font-weight: bold; 
-            width: 80%; 
+            width: 85%; 
             text-align: center; 
             display: block;
             margin: 0 auto;
             font-family: inherit;
+            background: #fff;
         }
         textarea.input-harmonized { 
             resize: none; 
-            min-height: 40px; 
+            min-height: 50px; 
             font-weight: 500;
         }
 
         input:disabled, textarea:disabled { background-color: #f8fafc; color: #94a3b8; border-color: #f1f5f9; }
         
-        .btn-valider { width:100%; padding:14px; background:#0284c7; color:white; font-weight:bold; border-radius:12px; border:none; margin-top:10px; cursor:pointer; }
+        .btn-valider { width:100%; padding:14px; background:#0284c7; color:white; font-weight:bold; border-radius:12px; border:none; cursor:pointer; box-shadow: 0 4px 6px rgba(2, 132, 199, 0.3); }
         
         .btn-gestion-vert { 
             width:100%; 
-            padding:12px; 
+            padding:14px; 
             border-radius:12px; 
-            border:1px solid #e0f2fe; 
+            border:1px solid #bae6fd; 
             background: #f0f9ff; 
-            font-size:12px; 
+            font-size:13px; 
             font-weight:800; 
             color:#0369a1; 
             cursor:pointer; 
-            transition: background 0.2s;
+            transition: all 0.2s;
+            margin-bottom: 10px;
         }
-        .btn-gestion-vert:active:not(:disabled) { background: #e0f2fe; }
+        .btn-gestion-vert:active:not(:disabled) { background: #e0f2fe; transform: scale(0.98); }
         .btn-gestion-vert:disabled { opacity: 0.5; cursor: not-allowed; color: #94a3b8; border-color: #f1f5f9; }
 
         .btn-secondaire { width:100%; padding:10px; border-radius:10px; border:1px solid #e2e8f0; background:white; font-size:12px; font-weight:bold; color:#64748b; cursor:pointer; }
@@ -192,26 +282,36 @@
         #errorClock { color: #ef4444; font-size: 11px; font-weight: bold; margin-top: 5px; min-height: 16px; }
         
         .order-btn { border: none; background: #f1f5f9; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer; }
-        .order-btn:disabled { opacity: 0.2; cursor: not-allowed; }
         
-        .nav-btn:disabled { opacity: 0.2; cursor: default; }
-
+        /* Nouveau style pour les boutons de navigation haut */
         .top-nav-links {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 8px;
+            gap: 10px;
+            margin-top: 12px;
             border-top: 1px solid #bae6fd;
-            padding-top: 8px;
+            padding-top: 12px;
         }
-        .top-link {
-            color: #0369a1; /* Bleu plus foncé pour le contraste */
-            background: none;
-            border: none;
-            text-decoration: underline;
-            font-size: 11px;
-            font-weight: bold;
+        .nav-link-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
             cursor: pointer;
+            border: 1px solid #bae6fd;
+            background: white;
+            color: #0369a1;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .nav-link-btn:active { transform: scale(0.95); background: #f0f9ff; }
+        
+        /* Style spécial quand le mode ÉDITER est enclenché */
+        #btnEdit.active {
+            background: #fdf2f2; /* Rose pastel */
+            color: #b91c1c;    /* Texte rouge foncé pour contraste */
+            border-color: #fecaca;
         }
     </style>
 </head>
@@ -224,15 +324,16 @@
             <button id="btnNext" class="nav-btn" onclick="navDate(1)" style="border:none; background:none; font-size:22px; color:#0369a1; cursor:pointer;">❯</button>
         </div>
         <div class="top-nav-links">
-            <button onclick="ouvrir('modRecap')" class="top-link">RAPPORT</button>
-            <button id="btnEdit" onclick="toggleEditMode()" class="top-link" style="display:none; color:#f59e0b;">ÉDITER</button>
-            <button id="btnToday" onclick="goToToday()" class="top-link" style="display:none; color:#64748b;">AUJOURD'HUI</button>
+            <button onclick="ouvrir('modRecap')" class="nav-link-btn">RAPPORT</button>
+            <button id="btnEdit" onclick="toggleEditMode()" class="nav-link-btn" style="display:none;">ÉDITER</button>
+            <button id="btnToday" onclick="goToToday()" class="nav-link-btn" style="display:none;">CE JOUR</button>
         </div>
     </div>
 
     <div id="actionRow" class="flex-center">
         <button id="btnD" class="btn-action btn-depart" onclick="clicAction('D')">DÉPART</button>
         <button id="btnR" class="btn-action btn-retour" onclick="clicAction('R')">RETOUR</button>
+        <div id="statusWaiting" class="status-badge"><span class="dot"></span> RETOUR EN ATTENTE...</div>
     </div>
 
     <details class="card section-toggle">
@@ -268,7 +369,7 @@
             </div>
         </div>
         <div style="text-align:center; margin-top:12px; border-top:1px solid #f1f5f9; padding-top:10px;">
-            <label style="font-size:11px; font-weight:bold; color:#64748b;"><input type="checkbox" id="halfH" onchange="maj()"> Déduction -30min</label>
+            <label style="font-size:11px; font-weight:bold; color:#64748b;"><input type="checkbox" id="halfH" onchange="toggleHalf()"> Déduction -30min</label>
         </div>
     </details>
 
@@ -287,7 +388,7 @@
     <details class="card section-toggle">
         <summary>GESTION DES ÉLÈVES</summary>
         <div style="margin-top:12px;">
-            <button id="btnModPres" onclick="ouvrir('modPres')" class="btn-gestion-vert" style="margin-bottom:8px;">POINTAGE PRÉSENCES</button>
+            <button id="btnModPres" onclick="ouvrir('modPres')" class="btn-gestion-vert">POINTAGE PRÉSENCES</button>
             <button id="btnModList" onclick="ouvrir('modList')" class="btn-gestion-vert">MODIFIER LA LISTE</button>
         </div>
     </details>
@@ -295,52 +396,74 @@
     <!-- MODAL HORLOGE -->
     <div id="modClock" class="modal">
         <div class="modal-content" style="text-align:center;">
-            <h3 id="clockTitle">RÉGLER L'HEURE</h3>
-            <div style="font-size: 42px; font-weight: 900; color: #0284c7; margin: 10px 0;">
-                <span id="clockValH">08</span>:<span id="clockValM">00</span>
+            <div class="modal-body">
+                <h3 id="clockTitle" style="margin-top: 15px !important;">RÉGLER L'HEURE</h3>
+                <div style="font-size: 42px; font-weight: 900; color: #0284c7; margin: 10px 0;">
+                    <span id="clockValH">08</span>:<span id="clockValM">00</span>
+                </div>
+                <div id="errorClock"></div>
+                <div class="clock-mode-toggle">
+                    <button id="btnModeH" class="mode-btn active" onclick="setClockMode('H')">HEURES</button>
+                    <button id="btnModeM" class="mode-btn" onclick="setClockMode('M')">MINUTES</button>
+                </div>
+                <div class="clock-container" id="clockUI">
+                    <div class="clock-center"></div>
+                    <div id="hand" class="clock-hand"></div>
+                </div>
             </div>
-            <div id="errorClock"></div>
-            <div class="clock-mode-toggle">
-                <button id="btnModeH" class="mode-btn active" onclick="setClockMode('H')">HEURES</button>
-                <button id="btnModeM" class="mode-btn" onclick="setClockMode('M')">MINUTES</button>
+            <div class="modal-footer">
+                <button onclick="validerHeure()" class="btn-valider">VALIDER</button>
+                <button onclick="fermer('modClock')" class="btn-secondaire" style="border:none; margin-top:5px; width:auto; color:#94a3b8;">ANNULER</button>
             </div>
-            <div class="clock-container" id="clockUI">
-                <div class="clock-center"></div>
-                <div id="hand" class="clock-hand"></div>
-            </div>
-            <button onclick="validerHeure()" class="btn-valider">VALIDER</button>
-            <button onclick="fermer('modClock')" class="btn-secondaire" style="border:none; margin-top:5px; width:auto; color:#94a3b8;">ANNULER</button>
         </div>
     </div>
 
     <!-- MODAL RECAP -->
     <div id="modRecap" class="modal" onclick="fermer('modRecap')">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 id="recapTitle">RAPPORT</h3>
-            <div id="resRecap" style="font-family:monospace; font-size:12px; color:#334155; background:#f8fafc; padding:10px; border-radius:10px; white-space: pre-wrap; margin-top:10px;"></div>
-            <button onclick="fermer('modRecap')" class="btn-valider" style="background:#64748b;">FERMER</button>
+            <div class="modal-header">
+                <h3>RAPPORT</h3>
+            </div>
+            <div class="modal-body">
+                <div id="resRecap" style="font-family:monospace; font-size:12px; color:#334155; background:#f8fafc; padding:10px; border-radius:10px; white-space: pre-wrap;"></div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="fermer('modRecap')" class="btn-valider" style="background:#64748b;">FERMER</button>
+            </div>
         </div>
     </div>
 
     <!-- MODAL LISTE -->
     <div id="modList" class="modal">
         <div class="modal-content">
-            <h3>MES ÉLÈVES</h3>
-            <div id="formAddE" style="display:flex; gap:5px; margin-top:10px;">
-                <input id="newE" placeholder="Nom..." style="flex:1; border:1px solid #cbd5e1; border-radius:8px; padding:8px;">
-                <button onclick="addE()" style="padding:0 15px; background:#0284c7; color:white; border:none; border-radius:10px; font-weight:bold;">+</button>
+            <div class="modal-header">
+                <h3>MES ÉLÈVES</h3>
+                <div id="formAddE" style="display:flex; gap:5px; margin-top:10px;">
+                    <input id="newE" placeholder="Nom..." style="flex:1; border:1px solid #cbd5e1; border-radius:8px; padding:8px;">
+                    <button onclick="addE()" style="padding:0 15px; background:#0284c7; color:white; border:none; border-radius:10px; font-weight:bold;">+</button>
+                </div>
             </div>
-            <div id="divList" style="margin-top:15px; max-height:300px; overflow-y:auto;"></div>
-            <button onclick="fermer('modList')" class="btn-valider">TERMINÉ</button>
+            <div class="modal-body">
+                <div id="divList"></div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="fermer('modList')" class="btn-valider">TERMINÉ</button>
+            </div>
         </div>
     </div>
 
     <!-- MODAL POINTAGE -->
     <div id="modPres" class="modal">
         <div class="modal-content">
-            <h3>POINTAGE PRÉSENCES</h3>
-            <div id="gridP" style="margin-top:10px;"></div>
-            <button onclick="fermer('modPres')" class="btn-valider">VALIDER ET FERMER</button>
+            <div class="modal-header">
+                <h3>POINTAGE PRÉSENCES</h3>
+            </div>
+            <div class="modal-body" id="bodyPres">
+                <div id="gridP"></div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="fermer('modPres')" class="btn-valider">VALIDER ET FERMER</button>
+            </div>
         </div>
     </div>
 
@@ -353,10 +476,10 @@
         let editMode = false;
         let activeTrancheIdx = -1, activeField = '', clockH = 0, clockM = 0, clockMode = 'H';
 
+        function canEdit() { return (dateJ === today) || editMode; }
+
         function resetDetails() {
-            document.querySelectorAll('.section-toggle').forEach(det => {
-                det.removeAttribute('open');
-            });
+            document.querySelectorAll('.section-toggle').forEach(det => det.removeAttribute('open'));
         }
 
         function navDate(n) { 
@@ -370,26 +493,12 @@
         }
 
         function goToToday() {
-            dateJ = today;
-            editMode = false;
-            let btnEdit = document.getElementById('btnEdit');
-            if(btnEdit) {
-                btnEdit.innerText = "ÉDITER";
-                btnEdit.style.color = "#f59e0b";
-            }
-            resetDetails(); 
-            maj();
+            dateJ = today; editMode = false;
+            resetDetails(); maj();
         }
 
         function toggleEditMode() {
             editMode = !editMode;
-            if (editMode) {
-                document.getElementById('btnEdit').innerText = "VERROUILLER";
-                document.getElementById('btnEdit').style.color = "#0284c7";
-            } else {
-                document.getElementById('btnEdit').innerText = "ÉDITER";
-                document.getElementById('btnEdit').style.color = "#f59e0b";
-            }
             maj();
         }
 
@@ -400,27 +509,13 @@
             if(type === 'D') data.t.push({s: h, e: ""});
             else if(data.t.length > 0 && data.t[data.t.length-1].e === "") {
                 data.t[data.t.length-1].e = h;
-                if(data.t[data.t.length-1].s && data.t[data.t.length-1].s > data.t[data.t.length-1].e) {
-                    data.t[data.t.length-1].e = data.t[data.t.length-1].s;
-                }
             }
-            db[dateJ] = data;
-            sauver();
-        }
-
-        function trierTranches(data) {
-            if(!data.t) return;
-            data.t.sort((a, b) => (a.s || "99:99").localeCompare(b.s || "99:99"));
-        }
-
-        function canEdit() {
-            return (dateJ === today) || editMode;
+            db[dateJ] = data; sauver();
         }
 
         function getMinutesForDate(dStr) {
             let data = db[dStr];
             if (!data || !data.t || data.t.length === 0) return { r: 0, c: 0 };
-            
             let totalM = 0;
             data.t.forEach(tr => {
                 if (tr.s && tr.e) {
@@ -429,33 +524,37 @@
                     totalM += (h2 * 60 + m2) - (h1 * 60 + m1);
                 }
             });
-
             let nbTranches = data.t.filter(tr => tr.s && tr.e).length;
             let minC = nbTranches === 1 ? 120 : nbTranches === 2 ? 180 : nbTranches >= 3 ? 270 : 0;
             let convM = Math.max(totalM, minC);
-            
             if (data.half && convM > 180) convM = Math.max(convM - 30, minC);
-            
             return { r: totalM, c: convM };
         }
 
         function maj() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
             if(!data.p) data.p = {};
-            trierTranches(data);
             
-            data.half = document.getElementById('halfH').checked;
-            db[dateJ] = data;
-
             let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            let dateStr = new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase();
-            document.getElementById('dateAffichage').innerText = dateStr;
+            document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase();
             
+            // État des boutons de navigation haut
             document.getElementById('btnNext').disabled = (dateJ >= today);
-            document.getElementById('btnEdit').style.display = (dateJ === today) ? 'none' : 'block';
             document.getElementById('btnToday').style.display = (dateJ === today) ? 'none' : 'block';
             
+            let btnEdit = document.getElementById('btnEdit');
+            btnEdit.style.display = (dateJ === today) ? 'none' : 'block';
+            
+            // On garde le texte "ÉDITER" mais on change la classe CSS pour le style rose
+            if (editMode) {
+                btnEdit.classList.add('active');
+            } else {
+                btnEdit.classList.remove('active');
+            }
+            
             let editing = canEdit();
+            
+            // Désactivation des champs si non-editable
             document.getElementById('inKm').disabled = !editing;
             document.getElementById('inCom').disabled = !editing;
             document.getElementById('halfH').disabled = !editing;
@@ -464,87 +563,74 @@
             document.getElementById('btnModList').disabled = !editing;
             document.getElementById('btnModPres').disabled = !editing;
             
+            // Visibilité des boutons Départ/Retour (uniquement aujourd'hui)
             document.getElementById('actionRow').style.display = (dateJ === today) ? 'flex' : 'none';
             
             let running = data.t.length > 0 && data.t[data.t.length-1].e === "";
             document.getElementById('btnD').disabled = running;
             document.getElementById('btnR').disabled = !running;
+            
+            // Animation et texte si en attente
+            const btnR = document.getElementById('btnR');
+            const statusBadge = document.getElementById('statusWaiting');
+            if (running && dateJ === today) {
+                btnR.classList.add('btn-waiting');
+                statusBadge.style.display = 'flex';
+            } else {
+                btnR.classList.remove('btn-waiting');
+                statusBadge.style.display = 'none';
+            }
 
+            // Liste des tranches
             document.getElementById('listeT').innerHTML = data.t.map((tr, i) => `
                 <div class="heure-box">
                     <div class="heure-display ${!editing ? 'disabled' : ''}" onclick="ouvrirHorloge(${i}, 's', '${tr.s || ''}')">${tr.s || '--:--'}</div>
-                    <span style="color:#cbd5e1">➔</span>
+                    <span style="color:#cbd5e1">➔ ${ (i === data.t.length-1 && running) ? '<small style="color:#ef4444; font-size:8px; font-weight:bold; vertical-align:middle; margin-left:5px;">EN COURS...</small>' : '' }</span>
                     <div class="heure-display ${!editing ? 'disabled' : ''}" onclick="ouvrirHorloge(${i}, 'e', '${tr.e || ''}')">${tr.e || '--:--'}</div>
-                    ${editing ? `<button onclick="delT(${i})" style="color:#f87171; border:none; background:none; font-size:22px; font-weight:bold; cursor:pointer; padding:0 5px;">×</button>` : ''}
-                </div>`).join('');
+                    ${editing ? `<button onclick="delT(${i})" style="color:#f87171; border:none; background:none; font-size:22px; font-weight:bold; cursor:pointer;">×</button>` : ''}
+                </div>`).join('') || '<p style="text-align:center; color:#94a3b8; font-size:11px;">Aucune tranche enregistrée.</p>';
 
+            // Calculs Heures
             let jour = getMinutesForDate(dateJ);
             document.getElementById('txtR').innerText = formatH(jour.r);
             document.getElementById('txtC').innerText = formatH(jour.c);
 
+            // Semaine
             let d = new Date(dateJ);
             let day = d.getDay();
-            let diff = d.getDate() - day + (day === 0 ? -6 : 1);
-            let monday = new Date(d.setDate(diff));
-            
+            let monday = new Date(d.setDate(d.getDate() - (day === 0 ? 6 : day - 1)));
             let weekR = 0, weekC = 0;
             for(let i=0; i<7; i++) {
-                let tempD = new Date(monday);
-                tempD.setDate(monday.getDate() + i);
+                let tempD = new Date(monday); tempD.setDate(monday.getDate() + i);
                 let res = getMinutesForDate(tempD.toISOString().split('T')[0]);
                 weekR += res.r; weekC += res.c;
             }
             document.getElementById('semR').innerText = formatH(weekR);
             document.getElementById('semC').innerText = formatH(weekC);
 
-            let firstDay = new Date(dateJ);
-            firstDay.setDate(1);
-            let month = firstDay.getMonth();
-            let monthR = 0, monthC = 0;
-            while(firstDay.getMonth() === month) {
+            // Mois
+            let firstDay = new Date(dateJ); firstDay.setDate(1);
+            let mR = 0, mC = 0, currentM = firstDay.getMonth();
+            while(firstDay.getMonth() === currentM) {
                 let res = getMinutesForDate(firstDay.toISOString().split('T')[0]);
-                monthR += res.r; monthC += res.c;
-                firstDay.setDate(firstDay.getDate() + 1);
+                mR += res.r; mC += res.c; firstDay.setDate(firstDay.getDate() + 1);
             }
-            document.getElementById('moiR').innerText = formatH(monthR);
-            document.getElementById('moiC').innerText = formatH(monthC);
+            document.getElementById('moiR').innerText = formatH(mR);
+            document.getElementById('moiC').innerText = formatH(mC);
 
             document.getElementById('inKm').value = data.km || "";
             document.getElementById('inCom').value = data.com || "";
             majEleves();
         }
 
-        function formatH(m) {
-            return Math.floor(m/60)+'h'+(m%60).toString().padStart(2,'0');
-        }
-
-        function getDernierKmAvant(currentDate) {
-            let dates = Object.keys(db).sort();
-            let lastKm = null;
-            for (let d of dates) {
-                if (d < currentDate) {
-                    if (db[d].km && !isNaN(parseFloat(db[d].km))) lastKm = parseFloat(db[d].km);
-                } else break;
-            }
-            return lastKm;
-        }
+        function formatH(m) { return Math.floor(m/60)+'h'+(m%60).toString().padStart(2,'0'); }
 
         function ouvrirHorloge(idx, field, val) {
             if (!canEdit()) return;
             activeTrancheIdx = idx; activeField = field;
-            document.getElementById('errorClock').innerText = "";
-            if(val) { 
-                let [h, m] = val.split(':').map(Number); 
-                clockH = h; clockM = m; 
-            } else { 
-                if(field === 'e' && db[dateJ].t[idx].s) {
-                    let [h, m] = db[dateJ].t[idx].s.split(':').map(Number);
-                    clockH = h; clockM = m;
-                } else {
-                    clockH = 8; clockM = 0; 
-                }
-            }
-            setClockMode('H'); document.getElementById('modClock').style.display = 'block';
+            if(val) { let [h, m] = val.split(':').map(Number); clockH = h; clockM = m; }
+            else { clockH = 8; clockM = 0; }
+            setClockMode('H'); document.getElementById('modClock').style.display = 'flex';
         }
 
         function setClockMode(m) {
@@ -555,8 +641,7 @@
             document.querySelectorAll('.clock-number').forEach(n => n.remove());
             if(m === 'H') {
                 for(let i=1; i<=12; i++) {
-                    createNum(i, i, 40, container);
-                    createNum(i === 12 ? 0 : i + 12, i, 28, container);
+                    createNum(i, i, 40, container); createNum(i === 12 ? 0 : i + 12, i, 28, container);
                 }
             } else {
                 for(let i=0; i<12; i++) createNum(i*5, i || 12, 40, container);
@@ -581,22 +666,10 @@
             document.querySelectorAll('.clock-number').forEach(n => n.classList.remove('active'));
             let activeNum = document.getElementById(`num-${clockMode}-${clockMode==='H'?clockH:clockM}`);
             if(activeNum) activeNum.classList.add('active');
-            let angle = 0, dist = 50;
-            if(clockMode === 'H') {
-                angle = (clockH % 12) * 30;
-                dist = clockH >= 12 && clockH !== 0 ? 30 : 42;
-            } else {
-                angle = clockM * 6; dist = 42;
-            }
-            document.getElementById('hand').style.height = (dist) + "%";
+            let angle = (clockMode === 'H') ? (clockH % 12 * 30) : (clockM * 6);
+            let dist = (clockMode === 'H' && clockH >= 12 && clockH !== 0) ? 30 : 42;
+            document.getElementById('hand').style.height = dist + "%";
             document.getElementById('hand').style.transform = `rotate(${angle}deg)`;
-            
-            if(activeField === 'e' && db[dateJ].t[activeTrancheIdx].s) {
-                let hStr = clockH.toString().padStart(2, '0') + ":" + clockM.toString().padStart(2, '0');
-                let hDep = db[dateJ].t[activeTrancheIdx].s;
-                if(hStr < hDep) document.getElementById('errorClock').innerText = "Le retour doit être après le départ";
-                else document.getElementById('errorClock').innerText = "";
-            }
         }
 
         function handleClockTouch(e) {
@@ -615,47 +688,35 @@
             updateClockUI();
         }
 
-        document.getElementById('clockUI').addEventListener('touchend', () => { if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200); });
-        document.getElementById('clockUI').addEventListener('mouseup', () => { if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200); });
         document.getElementById('clockUI').addEventListener('touchstart', (e) => { e.preventDefault(); handleClockTouch(e); });
         document.getElementById('clockUI').addEventListener('touchmove', (e) => { e.preventDefault(); handleClockTouch(e); });
         document.getElementById('clockUI').addEventListener('mousedown', (e) => { 
-            const move = (ev) => handleClockTouch(ev);
-            const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); };
-            window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
             handleClockTouch(e);
+            const move = (ev) => handleClockTouch(ev);
+            const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); if(clockMode==='H') setTimeout(()=>setClockMode('M'),200); };
+            window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
         });
 
         function validerHeure() {
             let hStr = clockH.toString().padStart(2, '0') + ":" + clockM.toString().padStart(2, '0');
-            if(activeField === 'e' && db[dateJ].t[activeTrancheIdx].s) {
-                let hDep = db[dateJ].t[activeTrancheIdx].s;
-                if(hStr < hDep) { document.getElementById('errorClock').innerText = "Incohérent : retour avant départ !"; return; }
-            } else if (activeField === 's') {
-                let hRet = db[dateJ].t[activeTrancheIdx].e;
-                if(hRet && hStr > hRet) db[dateJ].t[activeTrancheIdx].e = hStr; 
-            }
             db[dateJ].t[activeTrancheIdx][activeField] = hStr;
             fermer('modClock'); sauver();
         }
 
         function majEleves() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
-            if(!data.p) data.p = {};
             let editing = canEdit();
-            document.getElementById('formAddE').style.display = editing ? 'flex' : 'none';
             document.getElementById('divList').innerHTML = eleves.map((e,i) => `
-                <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #f1f5f9; align-items:center; font-size:13px;">
+                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #f1f5f9; align-items:center;">
                     <span><button onclick="mooveE(${i},-1)" class="order-btn" ${!editing?'disabled':''}>↑</button> <button onclick="mooveE(${i},1)" class="order-btn" ${!editing?'disabled':''}>↓</button> <b>${e}</b></span>
-                    ${editing ? `<button onclick="eleves.splice(${i},1); sauver();" style="color:#f87171; border:none; background:none; font-size:11px;">X</button>` : ''}
+                    ${editing ? `<button onclick="deleteE(${i})" style="color:#f87171; border:none; background:none; cursor:pointer;">×</button>` : ''}
                 </div>`).join('');
             
-            // Correction des identifiants (MA, MR, SA, SR) et étiquettes
             document.getElementById('gridP').innerHTML = eleves.map(e => {
                 let ep = data.p[e] || [];
                 return `
                 <div class="eleve-row">
-                    <div style="font-weight:800; font-size:14px; color:#1e293b; margin-left:5px;">${e}</div>
+                    <div style="font-weight:800; font-size:14px; color:#334155; padding-left:5px;">${e}</div>
                     <div class="pres-container">
                         <div class="pres-col col-m">
                             <button onclick="toggleP('${e}','MA')" class="check-btn ${ep.includes('MA')?'active':''}" ${!editing?'disabled':''}>ALLER MATIN</button>
@@ -667,11 +728,11 @@
                         </div>
                     </div>
                 </div>`;
-            }).join('') || "<p style='text-align:center; color:#94a3b8; font-size:12px;'>Aucun élève.</p>";
+            }).join('') || "<p style='text-align:center; color:#94a3b8; font-size:11px; padding:20px;'>Aucun élève dans la liste.</p>";
         }
 
         function toggleP(nom, type) {
-            if (!canEdit()) return;
+            if(!canEdit()) return;
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
             if(!data.p) data.p = {};
             if(!data.p[nom]) data.p[nom] = [];
@@ -680,50 +741,74 @@
             db[dateJ] = data; sauver();
         }
 
-        function delT(i) { if (!canEdit()) return; db[dateJ].t.splice(i, 1); sauver(); }
-        function ajouterM() { if (!canEdit()) return; let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; data.t.push({s:"", e:""}); db[dateJ]=data; sauver(); }
-        function addE() { if (!canEdit()) return; let n = document.getElementById('newE').value.trim(); if(n){ eleves.push(n); document.getElementById('newE').value=""; sauver(); }}
-        function mooveE(i, d) { if (!canEdit()) return; if(i+d >= 0 && i+d < eleves.length) { [eleves[i], eleves[i+d]] = [eleves[i+d], eleves[i]]; sauver(); }}
-        function saveInputs() { if (!canEdit()) return; let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; data.km = document.getElementById('inKm').value; data.com = document.getElementById('inCom').value; db[dateJ]=data; localStorage.setItem('adada_db_v5', JSON.stringify(db)); }
-        function sauver() { if(db[dateJ]) trierTranches(db[dateJ]); localStorage.setItem('adada_db_v5', JSON.stringify(db)); localStorage.setItem('adada_eleves_v5', JSON.stringify(eleves)); maj(); }
+        function delT(i) { 
+            if(!canEdit()) return;
+            db[dateJ].t.splice(i, 1); sauver(); 
+        }
+
+        function ajouterM() { 
+            if(!canEdit()) return;
+            let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; 
+            data.t.push({s:"", e:""}); 
+            db[dateJ]=data; 
+            sauver(); 
+        }
+
+        function deleteE(i) {
+            if(!canEdit()) return;
+            eleves.splice(i, 1); sauver();
+        }
+
+        function addE() { 
+            if(!canEdit()) return;
+            let n = document.getElementById('newE').value.trim(); 
+            if(n){ eleves.push(n); document.getElementById('newE').value=""; sauver(); }
+        }
+
+        function mooveE(i, d) { 
+            if(!canEdit()) return;
+            if(i+d >= 0 && i+d < eleves.length) { [eleves[i], eleves[i+d]] = [eleves[i+d], eleves[i]]; sauver(); }
+        }
+
+        function saveInputs() { 
+            if(!canEdit()) return; 
+            let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; 
+            data.km = document.getElementById('inKm').value; 
+            data.com = document.getElementById('inCom').value; 
+            db[dateJ] = data; 
+            localStorage.setItem('adada_db_v5', JSON.stringify(db)); 
+        }
+        
+        function toggleHalf() {
+            if(!canEdit()) return;
+            let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; 
+            data.half = document.getElementById('halfH').checked;
+            db[dateJ] = data; 
+            sauver();
+        }
+
+        function sauver() { 
+            localStorage.setItem('adada_db_v5', JSON.stringify(db)); 
+            localStorage.setItem('adada_eleves_v5', JSON.stringify(eleves)); 
+            maj(); 
+        }
         
         function ouvrir(id) { 
             if(id === 'modRecap') {
                 let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
-                trierTranches(data);
-                let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-                document.getElementById('recapTitle').innerText = "RAPPORT DU " + new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase();
-                let sections = [];
-                let validTranches = data.t.filter(t => t.s && t.e);
-                if (validTranches.length > 0) {
-                    let totalM = 0; let hTxt = "";
-                    validTranches.forEach((t, i) => {
-                        let [h1,m1]=t.s.split(':').map(Number); let [h2,m2]=t.e.split(':').map(Number);
-                        let mTotal = (h2*60+m2)-(h1*60+m1); totalM += mTotal;
-                        hTxt += (i+1) + ". " + t.s + " - " + t.e + " (" + formatH(mTotal) + ")\n";
-                    });
-                    let jour = getMinutesForDate(dateJ);
-                    hTxt += "Total : " + formatH(jour.r) + " (" + formatH(jour.c) + ") conv.";
-                    sections.push(hTxt);
-                }
-                let kmCurrent = parseFloat(data.km);
-                if (!isNaN(kmCurrent)) {
-                    let lastKm = getDernierKmAvant(dateJ);
-                    sections.push(((lastKm !== null) ? (kmCurrent - lastKm) : "---") + " Kms aujourd'hui (" + kmCurrent + " au compteur)");
-                }
-                if (data.com && data.com.trim() !== "") sections.push(data.com.trim());
-                let labelMap = { "MA": "Aller Matin", "MR": "Retour Matin", "SA": "Aller Soir", "SR": "Retour Soir" };
-                let eleveLines = [];
-                eleves.forEach(e => {
-                    let ep = data.p?.[e] || [];
-                    if(ep.length > 0) eleveLines.push("• " + e + " : " + ["MA", "MR", "SA", "SR"].filter(k => ep.includes(k)).map(k => labelMap[k]).join(", "));
-                });
-                if(eleveLines.length > 0) sections.push("Élèves du jour\n\n" + eleveLines.join("\n"));
-                document.getElementById('resRecap').innerText = sections.join("\n\n");
+                let txt = "RAPPORT DU " + dateJ + "\n\n";
+                let jour = getMinutesForDate(dateJ);
+                txt += "TEMPS : " + formatH(jour.r) + " (" + formatH(jour.c) + " conv.)\n";
+                if(data.km) txt += "KM : " + data.km + "\n";
+                if(data.com) txt += "NOTES : " + data.com + "\n";
+                txt += "\nÉLÈVES :\n";
+                eleves.forEach(e => { if(data.p[e]?.length) txt += "- " + e + " (" + data.p[e].join(',') + ")\n"; });
+                document.getElementById('resRecap').innerText = txt;
             }
-            document.getElementById(id).style.display = 'block'; 
+            document.getElementById(id).style.display = 'flex'; 
         }
         function fermer(id) { document.getElementById(id).style.display = 'none'; }
+        
         window.onload = maj;
     </script>
 </body>
