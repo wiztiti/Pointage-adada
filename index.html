@@ -168,6 +168,7 @@
         
         .rapport-total-red { color: #f87171; font-weight: bold; }
         .rapport-total-green { color: #10b981; font-weight: bold; }
+        .rapport-km-blue-pastel { color: #60a5fa; font-weight: bold; }
         
         .modal-body { padding: 10px 16px; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
         .modal-footer { padding: 12px 16px 16px; background: white; border-top: 1px solid #f1f5f9; }
@@ -565,11 +566,14 @@
                         }
                     });
                     if (jour.r > 0) htmlCont += "<span class='rapport-total-red'>Total : " + formatH(jour.r) + "</span> <span class='rapport-total-green'>(" + formatH(jour.c) + ") conv</span><br><br>";
+                    
                     if(data.km) {
                         let prevKm = findLastKm(dateJ);
                         let diffKm = prevKm > 0 ? Math.round(data.km - prevKm) : 0;
-                        htmlCont += diffKm + " kms effectués ce jour (" + Math.round(data.km) + " au compteur)<br><br>";
+                        htmlCont += "<span class='rapport-km-blue-pastel'>" + diffKm + " kms effectués ce jour</span><br>";
+                        htmlCont += "<span class='rapport-km-blue-pastel'>(" + Math.round(data.km) + " au compteur)</span><br><br>";
                     }
+                    
                     if(data.com) htmlCont += data.com.replace(/\n/g, '<br>') + "<br><br>";
                     if(presents.length > 0) {
                         presents.forEach(e => {
