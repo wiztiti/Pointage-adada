@@ -11,6 +11,7 @@
             background-attachment: fixed;
             padding: 10px; margin: 0; color: #1e293b; 
             min-height: 100vh;
+            padding-bottom: 40px; 
         }
         
         .top-card {
@@ -127,29 +128,23 @@
         .dot { height: 10px; width: 10px; background-color: #22c55e; border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
         @keyframes blink { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } 100% { opacity: 1; transform: scale(1); } }
 
-        .heure-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .heure-label-top { font-size: 9px; color: #64748b; font-weight: 800; margin-bottom: 4px; }
-        .heure-val-reel { font-weight: 700; font-size: 14px; color: #475569; }
-        .heure-val-conv { font-weight: 800; font-size: 16px; color: #0369a1; background: #f0f9ff; padding: 2px 8px; border-radius: 6px; margin-top: 2px; border: 1px solid #bae6fd; }
-        .heure-sub { font-size: 8px; font-weight: 600; color: #0c4a6e; text-transform: uppercase; margin-top: 1px; }
         .heure-box { background: #f8fafc; padding: 10px; border-radius: 12px; margin-top: 6px; display: flex; align-items: center; justify-content: space-around; border: 1px solid #f1f5f9; }
         .heure-display { background: white; padding: 6px 12px; border-radius: 8px; font-weight: 700; border: 1px solid #cbd5e1; min-width: 60px; text-align: center; cursor: pointer; }
         .heure-display.disabled { cursor: default; background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); padding: 10px; z-index: 100; align-items: center; justify-content: center; }
         .modal-content { background: white; border-radius: 20px; max-width: 400px; width: 100%; margin: 0 auto; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
-        .modal-header { padding: 16px 16px 8px; border-bottom: 1px solid #f1f5f9; }
-        .modal-body { padding: 10px 16px; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
-        .modal-footer { padding: 12px 16px 16px; background: white; border-top: 1px solid #f1f5f9; }
         
         .input-harmonized { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-weight: bold; width: 85%; text-align: center; display: block; margin: 0 auto; font-family: inherit; background: #fff; }
-        textarea.input-harmonized { resize: none; min-height: 50px; font-weight: 500; }
         
         .btn-valider { width:100%; padding:14px; background:#10b981; color:white; font-weight:bold; border-radius:12px; border:none; cursor:pointer; }
         .btn-gestion-vert { width:100%; padding:14px; border-radius:12px; border:1px solid #bae6fd; background: #f0f9ff; font-size:13px; font-weight:800; color:#0369a1; cursor:pointer; margin-bottom: 10px; }
-        .btn-secondaire { width:100%; padding:10px; border-radius:10px; border:1px solid #e2e8f0; background:white; font-size:12px; font-weight:bold; color:#64748b; cursor:pointer; }
 
-        .illustration-container { display: none; justify-content: center; margin: 20px 0 30px 0; opacity: 0.8; filter: grayscale(0.2); }
+        .heure-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .heure-label-top { font-size: 9px; color: #64748b; font-weight: 800; margin-bottom: 4px; }
+        .heure-val-reel { font-weight: 700; font-size: 14px; color: #475569; }
+        .heure-val-conv { font-weight: 800; font-size: 16px; color: #0369a1; background: #f0f9ff; padding: 2px 8px; border-radius: 6px; margin-top: 2px; border: 1px solid #bae6fd; }
+        .heure-sub { font-size: 8px; font-weight: 600; color: #0c4a6e; text-transform: uppercase; margin-top: 1px; }
 
         .clock-container { width: 260px; height: 260px; border-radius: 50%; background: #f8fafc; margin: 20px auto; position: relative; touch-action: none; border: 4px solid #f1f5f9; }
         .clock-center { position: absolute; width: 8px; height: 8px; background: #10b981; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
@@ -165,6 +160,18 @@
         .pres-col { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 6px; border-radius: 8px; background: #f8fafc; }
         .check-btn { padding: 12px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: white; font-size: 11px; font-weight: 700; color: #64748b; cursor: pointer; }
         .check-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
+
+        .eleve-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f5f9; align-items: center; }
+        .eleve-controls { display: flex; gap: 10px; align-items: center; }
+        .btn-move { border: none; background: #f1f5f9; color: #64748b; width: 32px; height: 32px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-del-eleve { color: #f87171; border: none; background: none; cursor: pointer; font-size: 20px; font-weight: bold; margin-left: 5px; }
+        
+        .rapport-total-red { color: #f87171; font-weight: bold; }
+        .rapport-total-green { color: #10b981; font-weight: bold; }
+        
+        .modal-body { padding: 10px 16px; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
+        .modal-footer { padding: 12px 16px 16px; background: white; border-top: 1px solid #f1f5f9; }
+        .modal-header { padding: 16px 16px 8px; border-bottom: 1px solid #f1f5f9; }
     </style>
 </head>
 <body>
@@ -197,8 +204,9 @@
     </details>
 
     <details class="card section-toggle" id="detailsHeures">
-        <summary>RÉCAPITULATIF HEURES</summary>
-        <div style="padding-top:15px; display:flex; justify-content:space-between; align-items:flex-start;">
+        <summary>RÉCAPITULATIF DES HEURES</summary>
+        <div style="font-size: 12px; color: #16a34a; text-align: center; margin-bottom: 8px; font-style: italic; font-weight: 600;">A titre indicatif</div>
+        <div style="padding-top:5px; display:flex; justify-content:space-between; align-items:flex-start;">
             <div class="heure-col">
                 <span class="heure-label-top">JOUR</span>
                 <span id="txtR" class="heure-val-reel">0h00</span>
@@ -232,7 +240,7 @@
                 <input type="number" id="inKm" class="input-harmonized" oninput="saveInputs()" placeholder="Kilométrage fin">
             </div>
             <div>
-                <textarea id="inCom" class="input-harmonized" oninput="saveInputs()" placeholder="Notes..." rows="2"></textarea>
+                <textarea id="inCom" class="input-harmonized" oninput="saveInputs()" placeholder="Notes..." rows="2" style="font-weight: 500;"></textarea>
             </div>
         </div>
     </details>
@@ -245,23 +253,7 @@
         </div>
     </details>
 
-    <div id="illusHistorique" class="illustration-container">
-        <svg width="120" height="80" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
-            <rect x="10" y="20" width="100" height="40" rx="8" fill="#facc15" stroke="#854d0e" stroke-width="2"/>
-            <rect x="10" y="45" width="100" height="15" rx="2" fill="#eab308"/>
-            <rect x="18" y="28" width="15" height="12" rx="2" fill="#bae6fd"/>
-            <rect x="38" y="28" width="15" height="12" rx="2" fill="#bae6fd"/>
-            <rect x="58" y="28" width="15" height="12" rx="2" fill="#bae6fd"/>
-            <rect x="78" y="28" width="22" height="12" rx="2" fill="#bae6fd"/>
-            <circle cx="30" cy="62" r="8" fill="#1e293b"/>
-            <circle cx="30" cy="62" r="4" fill="#94a3b8"/>
-            <circle cx="90" cy="62" r="8" fill="#1e293b"/>
-            <circle cx="90" cy="62" r="4" fill="#94a3b8"/>
-            <circle cx="106" cy="50" r="3" fill="#fef08a"/>
-        </svg>
-    </div>
-
-    <!-- MODALES -->
+    <!-- Modals -->
     <div id="modClock" class="modal">
         <div class="modal-content" style="text-align:center;">
             <div class="modal-body">
@@ -280,16 +272,16 @@
             </div>
             <div class="modal-footer">
                 <button onclick="validerHeure()" class="btn-valider">VALIDER</button>
-                <button onclick="fermer('modClock')" class="btn-secondaire" style="border:none; margin-top:5px; width:auto; color:#94a3b8;">ANNULER</button>
+                <button onclick="fermer('modClock')" style="border:none; margin-top:5px; width:auto; color:#94a3b8; font-weight: bold; background: transparent; cursor: pointer;">ANNULER</button>
             </div>
         </div>
     </div>
 
     <div id="modRecap" class="modal" onclick="fermer('modRecap')">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-header"><h3>RAPPORT</h3></div>
+            <div class="modal-header"><h3>RAPPORT QUOTIDIEN</h3></div>
             <div class="modal-body">
-                <div id="resRecap" style="font-family:monospace; font-size:12px; color:#334155; background:#f8fafc; padding:10px; border-radius:10px; white-space: pre-wrap; border:1px solid #e2e8f0;"></div>
+                <div id="resRecap" style="font-family:monospace; font-size:12px; color:#334155; background:#f8fafc; padding:15px; border-radius:10px; white-space: pre-wrap; border:1px solid #e2e8f0; line-height: 1.5; min-height: 20px;"></div>
             </div>
             <div class="modal-footer"><button onclick="fermer('modRecap')" class="btn-valider" style="background:#64748b;">FERMER</button></div>
         </div>
@@ -299,7 +291,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>MES ÉLÈVES</h3>
-                <div style="display:flex; gap:5px; margin-top:10px;">
+                <div id="addEleveRow" style="display:flex; gap:5px; margin-top:10px;">
                     <input id="newE" placeholder="Nom..." style="flex:1; border:1px solid #cbd5e1; border-radius:8px; padding:8px;">
                     <button onclick="addE()" style="padding:0 15px; background:#10b981; color:white; border:none; border-radius:10px; font-weight:bold;">+</button>
                 </div>
@@ -329,9 +321,7 @@
         function canEdit() { return (dateJ === today) || editMode; }
         
         function resetDetails() { 
-            document.querySelectorAll('.section-toggle').forEach(det => {
-                det.removeAttribute('open');
-            }); 
+            document.querySelectorAll('.section-toggle').forEach(det => det.removeAttribute('open')); 
         }
 
         function navDate(n) { 
@@ -344,16 +334,8 @@
             maj(); 
         }
 
-        function goToToday() {
-            dateJ = today; editMode = false;
-            resetDetails(); maj();
-        }
-
-        function toggleEditMode() {
-            editMode = !editMode;
-            resetDetails();
-            maj();
-        }
+        function goToToday() { dateJ = today; editMode = false; resetDetails(); maj(); }
+        function toggleEditMode() { editMode = !editMode; resetDetails(); maj(); }
 
         function clicAction(type) {
             if (!canEdit() || dateJ !== today) return;
@@ -382,27 +364,26 @@
             return { r: totalM, c: convM };
         }
 
+        function findLastKm(currentDate) {
+            let dates = Object.keys(db).sort();
+            let lastKm = 0;
+            for (let d of dates) if (d < currentDate && db[d].km) lastKm = parseFloat(db[d].km);
+            return lastKm;
+        }
+
         function maj() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
             let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase();
-            
             document.getElementById('btnNext').disabled = (dateJ >= today);
             document.getElementById('btnToday').style.display = (dateJ === today) ? 'none' : 'flex';
-            document.getElementById('illusHistorique').style.display = (dateJ === today) ? 'none' : 'flex';
 
             let btnEdit = document.getElementById('btnEdit');
             btnEdit.style.display = (dateJ === today) ? 'none' : 'flex';
             
             const sectionHeures = document.getElementById('detailsHeures');
-            if (editMode) {
-                btnEdit.classList.add('active');
-                sectionHeures.classList.add('no-click');
-                sectionHeures.removeAttribute('open');
-            } else {
-                btnEdit.classList.remove('active');
-                sectionHeures.classList.remove('no-click');
-            }
+            if (editMode) { btnEdit.classList.add('active'); sectionHeures.classList.add('no-click'); sectionHeures.removeAttribute('open'); }
+            else { btnEdit.classList.remove('active'); sectionHeures.classList.remove('no-click'); }
             
             let editing = canEdit();
             document.getElementById('inKm').disabled = !editing;
@@ -410,25 +391,16 @@
             document.getElementById('halfH').disabled = !editing;
             document.getElementById('halfH').checked = !!data.half;
             document.getElementById('btnAddManual').style.display = editing ? 'inline-block' : 'none';
-            document.getElementById('btnModList').disabled = !editing;
+            document.getElementById('btnModList').style.display = (dateJ === today) ? 'block' : 'none';
             document.getElementById('btnModPres').disabled = !editing;
-            
             document.getElementById('actionRow').style.display = (dateJ === today) ? 'flex' : 'none';
             
             let running = data.t.length > 0 && data.t[data.t.length-1].s !== "" && data.t[data.t.length-1].e === "";
-            
             document.getElementById('btnD').disabled = running;
-            const btnR = document.getElementById('btnR');
-            const statusBadge = document.getElementById('statusWaiting');
-            btnR.disabled = !running;
-
-            if (running && dateJ === today) {
-                btnR.classList.add('btn-waiting');
-                statusBadge.style.display = 'flex';
-            } else {
-                btnR.classList.remove('btn-waiting');
-                statusBadge.style.display = 'none';
-            }
+            document.getElementById('btnR').disabled = !running;
+            document.getElementById('statusWaiting').style.display = (running && dateJ === today) ? 'flex' : 'none';
+            if (running && dateJ === today) document.getElementById('btnR').classList.add('btn-waiting');
+            else document.getElementById('btnR').classList.remove('btn-waiting');
 
             document.getElementById('listeT').innerHTML = data.t.map((tr, i) => `
                 <div class="heure-box">
@@ -436,7 +408,7 @@
                     <span style="color:#cbd5e1">➔</span>
                     <div class="heure-display ${!editing ? 'disabled' : ''}" onclick="ouvrirHorloge(${i}, 'e', '${tr.e || ''}')">${tr.e || '--:--'}</div>
                     ${editing ? `<button onclick="delT(${i})" style="color:#f87171; border:none; background:none; font-size:22px; font-weight:bold; cursor:pointer;">×</button>` : ''}
-                </div>`).join('') || '<p style="text-align:center; color:#94a3b8; font-size:11px;">Aucune tranche.</p>';
+                </div>`).join('') || '<p style="text-align:center; color:#94a3b8; font-size:11px;">Aucune tranche enregistrée.</p>';
 
             let jour = getMinutesForDate(dateJ);
             document.getElementById('txtR').innerText = formatH(jour.r);
@@ -461,7 +433,6 @@
             }
             document.getElementById('moiR').innerText = formatH(mR);
             document.getElementById('moiC').innerText = formatH(mC);
-
             document.getElementById('inKm').value = data.km || "";
             document.getElementById('inCom').value = data.com || "";
             majEleves();
@@ -483,13 +454,8 @@
             document.getElementById('btnModeM').className = m === 'M' ? 'mode-btn active' : 'mode-btn';
             const container = document.getElementById('clockUI');
             document.querySelectorAll('.clock-number').forEach(n => n.remove());
-            if(m === 'H') {
-                for(let i=1; i<=12; i++) {
-                    createNum(i, i, 40, container); createNum(i === 12 ? 0 : i + 12, i, 28, container);
-                }
-            } else {
-                for(let i=0; i<12; i++) createNum(i*5, i || 12, 40, container);
-            }
+            if(m === 'H') for(let i=1; i<=12; i++) { createNum(i, i, 40, container); createNum(i === 12 ? 0 : i + 12, i, 28, container); }
+            else for(let i=0; i<12; i++) createNum(i*5, i || 12, 40, container);
             updateClockUI();
         }
 
@@ -532,25 +498,13 @@
 
         document.getElementById('clockUI').addEventListener('touchstart', (e) => { e.preventDefault(); handleClockTouch(e); });
         document.getElementById('clockUI').addEventListener('touchmove', (e) => { e.preventDefault(); handleClockTouch(e); });
-        
-        // CORRECTION : Événements Mouse + Relâchement pour transition
         document.getElementById('clockUI').addEventListener('mousedown', (e) => { 
             handleClockTouch(e);
             const move = (ev) => handleClockTouch(ev);
-            const up = () => { 
-                window.removeEventListener('mousemove', move); 
-                window.removeEventListener('mouseup', up); 
-                // Passage automatique aux minutes si on était sur les heures
-                if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200); 
-            };
-            window.addEventListener('mousemove', move); 
-            window.addEventListener('mouseup', up);
+            const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200); };
+            window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
         });
-
-        // CORRECTION : Événement Touchend pour mobile
-        document.getElementById('clockUI').addEventListener('touchend', () => {
-            if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200);
-        });
+        document.getElementById('clockUI').addEventListener('touchend', () => { if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200); });
 
         function validerHeure() {
             let hStr = clockH.toString().padStart(2, '0') + ":" + clockM.toString().padStart(2, '0');
@@ -560,45 +514,27 @@
 
         function majEleves() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
-            let editing = canEdit();
+            let listEditing = (dateJ === today);
+            document.getElementById('addEleveRow').style.display = listEditing ? 'flex' : 'none';
             document.getElementById('divList').innerHTML = eleves.map((e,i) => `
-                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #f1f5f9; align-items:center;">
+                <div class="eleve-item">
                     <span><b>${e}</b></span>
-                    ${editing ? `<button onclick="deleteE(${i})" style="color:#f87171; border:none; background:none; cursor:pointer;">×</button>` : ''}
+                    <div class="eleve-controls">
+                        ${listEditing ? `<button onclick="moveE(${i}, -1)" class="btn-move">▲</button><button onclick="moveE(${i}, 1)" class="btn-move">▼</button><button onclick="deleteE(${i})" class="btn-del-eleve">×</button>` : ''}
+                    </div>
                 </div>`).join('');
-            
             document.getElementById('gridP').innerHTML = eleves.map(e => {
                 let ep = data.p[e] || [];
-                return `
-                <div style="padding: 12px 0; border-bottom: 1px solid #f1f5f9;">
-                    <div style="font-weight:800; font-size:14px; color:#334155; padding-left:5px;">${e}</div>
-                    <div class="pres-container">
-                        <div class="pres-col" style="border-left: 3px solid #3b82f6;">
-                            <button onclick="toggleP('${e}','MA')" class="check-btn ${ep.includes('MA')?'active':''}" ${!editing?'disabled':''}>ALLER MATIN</button>
-                            <button onclick="toggleP('${e}','MR')" class="check-btn ${ep.includes('MR')?'active':''}" ${!editing?'disabled':''}>RETOUR MATIN</button>
-                        </div>
-                        <div class="pres-col" style="border-left: 3px solid #f59e0b;">
-                            <button onclick="toggleP('${e}','SA')" class="check-btn ${ep.includes('SA')?'active':''}" ${!editing?'disabled':''}>ALLER SOIR</button>
-                            <button onclick="toggleP('${e}','SR')" class="check-btn ${ep.includes('SR')?'active':''}" ${!editing?'disabled':''}>RETOUR SOIR</button>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('') || "<p style='text-align:center; color:#94a3b8; font-size:11px; padding:20px;'>Aucun élève.</p>";
+                return `<div style="padding: 12px 0; border-bottom: 1px solid #f1f5f9;"><div style="font-weight:800; font-size:14px; color:#334155; padding-left:5px;">${e}</div><div class="pres-container"><div class="pres-col" style="border-left: 3px solid #3b82f6;"><button onclick="toggleP('${e}','MA')" class="check-btn ${ep.includes('MA')?'active':''}" ${!canEdit()?'disabled':''}>ALLER MATIN</button><button onclick="toggleP('${e}','MR')" class="check-btn ${ep.includes('MR')?'active':''}" ${!canEdit()?'disabled':''}>RETOUR MATIN</button></div><div class="pres-col" style="border-left: 3px solid #f59e0b;"><button onclick="toggleP('${e}','SA')" class="check-btn ${ep.includes('SA')?'active':''}" ${!canEdit()?'disabled':''}>ALLER SOIR</button><button onclick="toggleP('${e}','SR')" class="check-btn ${ep.includes('SR')?'active':''}" ${!canEdit()?'disabled':''}>RETOUR SOIR</button></div></div></div>`;
+            }).join('') || "<p style='text-align:center; color:#94a3b8; font-size:11px; padding:20px;'>Aucun élève dans la liste.</p>";
         }
 
-        function toggleP(nom, type) {
-            if(!canEdit()) return;
-            let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
-            if(!data.p) data.p = {}; if(!data.p[nom]) data.p[nom] = [];
-            if(data.p[nom].includes(type)) data.p[nom] = data.p[nom].filter(x => x !== type);
-            else data.p[nom].push(type);
-            db[dateJ] = data; sauver();
-        }
-
+        function moveE(idx, dir) { if(dateJ !== today) return; let target = idx + dir; if (target < 0 || target >= eleves.length) return; let temp = eleves[idx]; eleves[idx] = eleves[target]; eleves[target] = temp; sauver(); }
+        function toggleP(nom, type) { if(!canEdit()) return; let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; if(!data.p) data.p = {}; if(!data.p[nom]) data.p[nom] = []; if(data.p[nom].includes(type)) data.p[nom] = data.p[nom].filter(x => x !== type); else data.p[nom].push(type); db[dateJ] = data; sauver(); }
         function delT(i) { if(!canEdit()) return; db[dateJ].t.splice(i, 1); sauver(); }
         function ajouterM() { if(!canEdit()) return; let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; data.t.push({s:"", e:""}); db[dateJ]=data; sauver(); }
-        function deleteE(i) { if(!canEdit()) return; eleves.splice(i, 1); sauver(); }
-        function addE() { if(!canEdit()) return; let n = document.getElementById('newE').value.trim(); if(n){ eleves.push(n); document.getElementById('newE').value=""; sauver(); } }
+        function deleteE(i) { if(dateJ !== today) return; eleves.splice(i, 1); sauver(); }
+        function addE() { if(dateJ !== today) return; let n = document.getElementById('newE').value.trim(); if(n){ eleves.push(n); document.getElementById('newE').value=""; sauver(); } }
         function saveInputs() { if(!canEdit()) return; let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; data.km = document.getElementById('inKm').value; data.com = document.getElementById('inCom').value; db[dateJ] = data; localStorage.setItem('adada_db_v5', JSON.stringify(db)); }
         function toggleHalf() { if(!canEdit()) return; let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; data.half = document.getElementById('halfH').checked; db[dateJ] = data; sauver(); }
         function sauver() { localStorage.setItem('adada_db_v5', JSON.stringify(db)); localStorage.setItem('adada_eleves_v5', JSON.stringify(eleves)); maj(); }
@@ -607,22 +543,48 @@
             if(id === 'modRecap') {
                 let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
                 let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-                let txt = "RAPPORT DU " + new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase() + "\n\n";
+                let dateFormatee = new Date(dateJ).toLocaleDateString('fr-FR', options);
                 let jour = getMinutesForDate(dateJ);
-                if(jour.r > 0) txt += "TEMPS : " + formatH(jour.r) + " (" + formatH(jour.c) + " conv.)\n";
-                if(data.km) txt += "KM : " + data.km + "\n";
-                if(data.com) txt += "NOTES : " + data.com + "\n";
                 let presents = eleves.filter(e => data.p[e] && data.p[e].length > 0);
-                if(presents.length > 0) {
-                    txt += "\nÉLÈVES :\n";
-                    presents.forEach(e => txt += "- " + e + " (" + data.p[e].join(', ') + ")\n");
+                let resDiv = document.getElementById('resRecap');
+
+                // Filtre strict : aucune donnée = aucun texte
+                if (jour.r === 0 && !data.km && !data.com && presents.length === 0) {
+                    resDiv.innerHTML = "";
+                    resDiv.style.background = "transparent";
+                    resDiv.style.border = "none";
+                } else {
+                    resDiv.style.background = "#f8fafc";
+                    resDiv.style.border = "1px solid #e2e8f0";
+                    let htmlCont = "<div style='text-align:center; font-weight:bold; margin-bottom:15px;'>" + dateFormatee + "</div>";
+                    data.t.forEach((tr, i) => {
+                        if(tr.s && tr.e) {
+                            let [h1, m1] = tr.s.split(':').map(Number);
+                            let [h2, m2] = tr.e.split(':').map(Number);
+                            htmlCont += "Vacation " + (i+1) + " : " + tr.s + " - " + tr.e + " (" + formatH((h2*60+m2)-(h1*60+m1)) + ")<br>";
+                        }
+                    });
+                    if (jour.r > 0) htmlCont += "<span class='rapport-total-red'>Total : " + formatH(jour.r) + "</span> <span class='rapport-total-green'>(" + formatH(jour.c) + ") conv</span><br><br>";
+                    if(data.km) {
+                        let prevKm = findLastKm(dateJ);
+                        let diffKm = prevKm > 0 ? Math.round(data.km - prevKm) : 0;
+                        htmlCont += diffKm + " kms effectués ce jour (" + Math.round(data.km) + " au compteur)<br><br>";
+                    }
+                    if(data.com) htmlCont += data.com.replace(/\n/g, '<br>') + "<br><br>";
+                    if(presents.length > 0) {
+                        presents.forEach(e => {
+                            let pData = data.p[e], desc = "";
+                            if(pData.includes('MA')) desc += " Aller MATIN"; if(pData.includes('MR')) desc += " Retour MATIN";
+                            if(pData.includes('SA')) desc += " Aller SOIR"; if(pData.includes('SR')) desc += " Retour SOIR";
+                            htmlCont += "<b>" + e + "</b> :" + desc + "<br>";
+                        });
+                    }
+                    resDiv.innerHTML = htmlCont;
                 }
-                document.getElementById('resRecap').innerText = txt || "Aucune donnée.";
             }
             document.getElementById(id).style.display = 'flex'; 
         }
         function fermer(id) { document.getElementById(id).style.display = 'none'; }
-        
         window.onload = maj;
     </script>
 </body>
