@@ -44,7 +44,6 @@
         details[open] summary, summary:hover, summary:active, h3:hover { color: #0284c7 !important; }
         summary::-webkit-details-marker { display: none; }
 
-        /* Style spécifique pour le récapitulatif verrouillé en mode édition */
         .no-click summary {
             cursor: default !important;
             pointer-events: none !important;
@@ -150,6 +149,15 @@
         .btn-gestion-vert { width:100%; padding:14px; border-radius:12px; border:1px solid #bae6fd; background: #f0f9ff; font-size:13px; font-weight:800; color:#0369a1; cursor:pointer; margin-bottom: 10px; }
         .btn-secondaire { width:100%; padding:10px; border-radius:10px; border:1px solid #e2e8f0; background:white; font-size:12px; font-weight:bold; color:#64748b; cursor:pointer; }
 
+        /* Illustration Car Scolaire */
+        .illustration-container {
+            display: none;
+            justify-content: center;
+            margin: 20px 0 30px 0;
+            opacity: 0.8;
+            filter: grayscale(0.2);
+        }
+
         .clock-container { width: 260px; height: 260px; border-radius: 50%; background: #f8fafc; margin: 20px auto; position: relative; touch-action: none; border: 4px solid #f1f5f9; }
         .clock-center { position: absolute; width: 8px; height: 8px; background: #10b981; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
         .clock-hand { position: absolute; width: 2px; background: #10b981; bottom: 50%; left: calc(50% - 1px); transform-origin: bottom center; z-index: 5; transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -244,6 +252,29 @@
         </div>
     </details>
 
+    <!-- Illustration Car Scolaire (Uniquement Historique) -->
+    <div id="illusHistorique" class="illustration-container">
+        <svg width="120" height="80" viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+            <!-- Corps du bus -->
+            <rect x="10" y="20" width="100" height="40" rx="8" fill="#facc15" stroke="#854d0e" stroke-width="2"/>
+            <rect x="10" y="45" width="100" height="15" rx="2" fill="#eab308"/>
+            <!-- Fenêtres -->
+            <rect x="18" y="28" width="15" height="12" rx="2" fill="#bae6fd"/>
+            <rect x="38" y="28" width="15" height="12" rx="2" fill="#bae6fd"/>
+            <rect x="58" y="28" width="15" height="12" rx="2" fill="#bae6fd"/>
+            <rect x="78" y="28" width="22" height="12" rx="2" fill="#bae6fd"/>
+            <!-- Roues -->
+            <circle cx="30" cy="62" r="8" fill="#1e293b"/>
+            <circle cx="30" cy="62" r="4" fill="#94a3b8"/>
+            <circle cx="90" cy="62" r="8" fill="#1e293b"/>
+            <circle cx="90" cy="62" r="4" fill="#94a3b8"/>
+            <!-- Phares -->
+            <circle cx="106" cy="50" r="3" fill="#fef08a"/>
+            <!-- Texte scolaire (stylisé) -->
+            <rect x="35" y="48" width="50" height="4" rx="1" fill="#1e293b" opacity="0.1"/>
+        </svg>
+    </div>
+
     <!-- MODALES -->
     <div id="modClock" class="modal">
         <div class="modal-content" style="text-align:center;">
@@ -334,7 +365,6 @@
 
         function toggleEditMode() {
             editMode = !editMode;
-            // On ferme toutes les sections lors du basculement (conformément à la demande)
             resetDetails();
             maj();
         }
@@ -374,15 +404,16 @@
             document.getElementById('btnNext').disabled = (dateJ >= today);
             document.getElementById('btnToday').style.display = (dateJ === today) ? 'none' : 'flex';
             
+            // Affichage de l'illustration seulement dans l'historique
+            document.getElementById('illusHistorique').style.display = (dateJ === today) ? 'none' : 'flex';
+
             let btnEdit = document.getElementById('btnEdit');
             btnEdit.style.display = (dateJ === today) ? 'none' : 'flex';
             
-            // Gestion de l'interactivité de la section Récapitulatif
             const sectionHeures = document.getElementById('detailsHeures');
             if (editMode) {
                 btnEdit.classList.add('active');
                 sectionHeures.classList.add('no-click');
-                // On s'assure qu'elle est fermée en mode édition si elle ne l'est pas déjà
                 sectionHeures.removeAttribute('open');
             } else {
                 btnEdit.classList.remove('active');
