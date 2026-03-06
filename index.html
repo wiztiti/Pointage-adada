@@ -415,8 +415,6 @@
             
             document.getElementById('actionRow').style.display = (dateJ === today) ? 'flex' : 'none';
             
-            // CORRECTION LOGIQUE : Une tranche est considérée comme "en cours" seulement si "s" existe et "e" est vide.
-            // Une tranche créée par "Ajout Manuel" a s="" et e="", donc elle ne déclenche pas le mode attente.
             let running = data.t.length > 0 && data.t[data.t.length-1].s !== "" && data.t[data.t.length-1].e === "";
             
             document.getElementById('btnD').disabled = running;
@@ -534,11 +532,24 @@
 
         document.getElementById('clockUI').addEventListener('touchstart', (e) => { e.preventDefault(); handleClockTouch(e); });
         document.getElementById('clockUI').addEventListener('touchmove', (e) => { e.preventDefault(); handleClockTouch(e); });
+        
+        // CORRECTION : Événements Mouse + Relâchement pour transition
         document.getElementById('clockUI').addEventListener('mousedown', (e) => { 
             handleClockTouch(e);
             const move = (ev) => handleClockTouch(ev);
-            const up = () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); if(clockMode==='H') setTimeout(()=>setClockMode('M'),200); };
-            window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+            const up = () => { 
+                window.removeEventListener('mousemove', move); 
+                window.removeEventListener('mouseup', up); 
+                // Passage automatique aux minutes si on était sur les heures
+                if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200); 
+            };
+            window.addEventListener('mousemove', move); 
+            window.addEventListener('mouseup', up);
+        });
+
+        // CORRECTION : Événement Touchend pour mobile
+        document.getElementById('clockUI').addEventListener('touchend', () => {
+            if(clockMode === 'H') setTimeout(() => setClockMode('M'), 200);
         });
 
         function validerHeure() {
