@@ -55,10 +55,14 @@
         /* Bouton Départ */
         .btn-depart { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
         
-        /* Bouton Retour (plus vif quand actif) */
-        .btn-retour { background: #bbf7d0; color: #166534; border-color: #86efac; }
+        /* Bouton Retour (États) */
+        .btn-retour { 
+            background: #f0fdf4; /* Vert très clair/pastel par défaut (inactif) */
+            color: #86efac;      /* Texte vert délavé par défaut */
+            border-color: #dcfce7;
+        }
         
-        /* Animation pour le bouton Retour en attente */
+        /* Animation pour le bouton Retour quand il devient cliquable (EN ATTENTE) */
         @keyframes pulse-glow {
             0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); transform: scale(1); border-color: #22c55e; }
             50% { box-shadow: 0 0 20px 8px rgba(34, 197, 94, 0.3); transform: scale(1.04); border-color: #15803d; }
@@ -72,8 +76,8 @@
             z-index: 10;
         }
 
-        /* Amélioration du bouton inactif */
-        .btn-action:disabled { 
+        /* Amélioration du bouton inactif général (Départ) */
+        .btn-action:disabled:not(.btn-retour) { 
             opacity: 0.6; 
             background: #f1f5f9; 
             color: #94a3b8; 
@@ -81,6 +85,13 @@
             cursor: not-allowed; 
             box-shadow: none; 
             animation: none; 
+            transform: scale(0.98);
+        }
+
+        /* Cas spécifique pour le bouton retour désactivé */
+        .btn-retour:disabled:not(.btn-waiting) {
+            cursor: not-allowed;
+            box-shadow: none;
             transform: scale(0.98);
         }
 
@@ -189,41 +200,42 @@
             border-top: 1px solid #f1f5f9;
         }
         
+        /* Styles Horloge mis à jour en Vert Pastel */
         .clock-container {
             width: 260px; height: 260px; border-radius: 50%;
-            background: #f8fafc; margin: 20px auto;
+            background: #f0fdf4; margin: 20px auto;
             position: relative; touch-action: none;
-            border: 4px solid #e2e8f0;
+            border: 4px solid #dcfce7;
         }
         .clock-center {
-            position: absolute; width: 8px; height: 8px; background: #0284c7;
+            position: absolute; width: 8px; height: 8px; background: #10b981;
             border-radius: 50%; top: 50%; left: 50%;
             transform: translate(-50%, -50%); z-index: 10;
         }
         .clock-hand {
-            position: absolute; width: 2px; background: #0284c7;
+            position: absolute; width: 2px; background: #10b981;
             bottom: 50%; left: calc(50% - 1px);
             transform-origin: bottom center; z-index: 5;
             transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .clock-hand::after {
             content: ''; position: absolute; top: -14px; left: -14px;
-            width: 28px; height: 28px; background: rgba(2, 132, 199, 0.2);
-            border: 2px solid #0284c7; border-radius: 50%;
+            width: 28px; height: 28px; background: rgba(16, 185, 129, 0.15);
+            border: 2px solid #10b981; border-radius: 50%;
         }
         .clock-number {
-            position: absolute; font-weight: 600; color: #64748b;
+            position: absolute; font-weight: 600; color: #94a3b8;
             transform: translate(-50%, -50%); font-size: 13px;
             pointer-events: none;
         }
-        .clock-number.active { color: #0284c7; font-weight: 900; font-size: 15px; }
+        .clock-number.active { color: #059669; font-weight: 900; font-size: 15px; }
 
         .clock-mode-toggle { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
         .mode-btn {
             padding: 6px 12px; border-radius: 12px; border: 1px solid #e2e8f0;
             background: white; font-weight: bold; color: #94a3b8; cursor: pointer; font-size: 11px;
         }
-        .mode-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
+        .mode-btn.active { background: #10b981; color: white; border-color: #10b981; }
 
         .eleve-row { padding: 12px 0; border-bottom: 1px solid #f1f5f9; }
         .pres-container { display: flex; gap: 8px; margin-top: 8px; }
@@ -259,7 +271,7 @@
 
         input:disabled, textarea:disabled { background-color: #f8fafc; color: #94a3b8; border-color: #f1f5f9; }
         
-        .btn-valider { width:100%; padding:14px; background:#0284c7; color:white; font-weight:bold; border-radius:12px; border:none; cursor:pointer; box-shadow: 0 4px 6px rgba(2, 132, 199, 0.3); }
+        .btn-valider { width:100%; padding:14px; background:#10b981; color:white; font-weight:bold; border-radius:12px; border:none; cursor:pointer; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2); }
         
         .btn-gestion-vert { 
             width:100%; 
@@ -283,7 +295,6 @@
         
         .order-btn { border: none; background: #f1f5f9; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer; }
         
-        /* Nouveau style pour les boutons de navigation haut */
         .top-nav-links {
             display: flex;
             justify-content: center;
@@ -307,10 +318,9 @@
         }
         .nav-link-btn:active { transform: scale(0.95); background: #f0f9ff; }
         
-        /* Style spécial quand le mode ÉDITER est enclenché */
         #btnEdit.active {
-            background: #fdf2f2; /* Rose pastel */
-            color: #b91c1c;    /* Texte rouge foncé pour contraste */
+            background: #fdf2f2; 
+            color: #b91c1c;    
             border-color: #fecaca;
         }
     </style>
@@ -398,7 +408,7 @@
         <div class="modal-content" style="text-align:center;">
             <div class="modal-body">
                 <h3 id="clockTitle" style="margin-top: 15px !important;">RÉGLER L'HEURE</h3>
-                <div style="font-size: 42px; font-weight: 900; color: #0284c7; margin: 10px 0;">
+                <div style="font-size: 42px; font-weight: 900; color: #059669; margin: 10px 0;">
                     <span id="clockValH">08</span>:<span id="clockValM">00</span>
                 </div>
                 <div id="errorClock"></div>
@@ -440,7 +450,7 @@
                 <h3>MES ÉLÈVES</h3>
                 <div id="formAddE" style="display:flex; gap:5px; margin-top:10px;">
                     <input id="newE" placeholder="Nom..." style="flex:1; border:1px solid #cbd5e1; border-radius:8px; padding:8px;">
-                    <button onclick="addE()" style="padding:0 15px; background:#0284c7; color:white; border:none; border-radius:10px; font-weight:bold;">+</button>
+                    <button onclick="addE()" style="padding:0 15px; background:#10b981; color:white; border:none; border-radius:10px; font-weight:bold;">+</button>
                 </div>
             </div>
             <div class="modal-body">
@@ -538,14 +548,12 @@
             let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase();
             
-            // État des boutons de navigation haut
             document.getElementById('btnNext').disabled = (dateJ >= today);
             document.getElementById('btnToday').style.display = (dateJ === today) ? 'none' : 'block';
             
             let btnEdit = document.getElementById('btnEdit');
             btnEdit.style.display = (dateJ === today) ? 'none' : 'block';
             
-            // On garde le texte "ÉDITER" mais on change la classe CSS pour le style rose
             if (editMode) {
                 btnEdit.classList.add('active');
             } else {
@@ -554,7 +562,6 @@
             
             let editing = canEdit();
             
-            // Désactivation des champs si non-editable
             document.getElementById('inKm').disabled = !editing;
             document.getElementById('inCom').disabled = !editing;
             document.getElementById('halfH').disabled = !editing;
@@ -563,16 +570,15 @@
             document.getElementById('btnModList').disabled = !editing;
             document.getElementById('btnModPres').disabled = !editing;
             
-            // Visibilité des boutons Départ/Retour (uniquement aujourd'hui)
             document.getElementById('actionRow').style.display = (dateJ === today) ? 'flex' : 'none';
             
             let running = data.t.length > 0 && data.t[data.t.length-1].e === "";
             document.getElementById('btnD').disabled = running;
-            document.getElementById('btnR').disabled = !running;
             
-            // Animation et texte si en attente
             const btnR = document.getElementById('btnR');
             const statusBadge = document.getElementById('statusWaiting');
+            btnR.disabled = !running;
+
             if (running && dateJ === today) {
                 btnR.classList.add('btn-waiting');
                 statusBadge.style.display = 'flex';
@@ -581,7 +587,6 @@
                 statusBadge.style.display = 'none';
             }
 
-            // Liste des tranches
             document.getElementById('listeT').innerHTML = data.t.map((tr, i) => `
                 <div class="heure-box">
                     <div class="heure-display ${!editing ? 'disabled' : ''}" onclick="ouvrirHorloge(${i}, 's', '${tr.s || ''}')">${tr.s || '--:--'}</div>
@@ -590,12 +595,10 @@
                     ${editing ? `<button onclick="delT(${i})" style="color:#f87171; border:none; background:none; font-size:22px; font-weight:bold; cursor:pointer;">×</button>` : ''}
                 </div>`).join('') || '<p style="text-align:center; color:#94a3b8; font-size:11px;">Aucune tranche enregistrée.</p>';
 
-            // Calculs Heures
             let jour = getMinutesForDate(dateJ);
             document.getElementById('txtR').innerText = formatH(jour.r);
             document.getElementById('txtC').innerText = formatH(jour.c);
 
-            // Semaine
             let d = new Date(dateJ);
             let day = d.getDay();
             let monday = new Date(d.setDate(d.getDate() - (day === 0 ? 6 : day - 1)));
@@ -608,7 +611,6 @@
             document.getElementById('semR').innerText = formatH(weekR);
             document.getElementById('semC').innerText = formatH(weekC);
 
-            // Mois
             let firstDay = new Date(dateJ); firstDay.setDate(1);
             let mR = 0, mC = 0, currentM = firstDay.getMonth();
             while(firstDay.getMonth() === currentM) {
@@ -796,13 +798,40 @@
         function ouvrir(id) { 
             if(id === 'modRecap') {
                 let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
-                let txt = "RAPPORT DU " + dateJ + "\n\n";
+                let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+                let txt = "RAPPORT DU " + new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase() + "\n\n";
+                
                 let jour = getMinutesForDate(dateJ);
-                txt += "TEMPS : " + formatH(jour.r) + " (" + formatH(jour.c) + " conv.)\n";
-                if(data.km) txt += "KM : " + data.km + "\n";
-                if(data.com) txt += "NOTES : " + data.com + "\n";
-                txt += "\nÉLÈVES :\n";
-                eleves.forEach(e => { if(data.p[e]?.length) txt += "- " + e + " (" + data.p[e].join(',') + ")\n"; });
+                
+                // On affiche le temps seulement s'il y en a un
+                if(jour.r > 0) {
+                    txt += "TEMPS : " + formatH(jour.r) + " (" + formatH(jour.c) + " conv.)\n";
+                }
+                
+                // Kilométrage seulement si rempli
+                if(data.km && data.km.trim() !== "") {
+                    txt += "KM : " + data.km + "\n";
+                }
+                
+                // Notes seulement si rempli
+                if(data.com && data.com.trim() !== "") {
+                    txt += "NOTES : " + data.com + "\n";
+                }
+                
+                // Élèves seulement s'il y a des présences
+                let elevesPresents = eleves.filter(e => data.p[e] && data.p[e].length > 0);
+                if(elevesPresents.length > 0) {
+                    txt += "\nÉLÈVES :\n";
+                    elevesPresents.forEach(e => {
+                        txt += "- " + e + " (" + data.p[e].join(', ') + ")\n";
+                    });
+                }
+                
+                // Si tout est vide
+                if(jour.r === 0 && (!data.km || data.km.trim() === "") && (!data.com || data.com.trim() === "") && elevesPresents.length === 0) {
+                    txt += "Aucune donnée enregistrée pour ce jour.";
+                }
+
                 document.getElementById('resRecap').innerText = txt;
             }
             document.getElementById(id).style.display = 'flex'; 
