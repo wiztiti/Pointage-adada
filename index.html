@@ -86,6 +86,18 @@
             text-transform: uppercase; cursor: pointer; background: #f0f9ff; color: #0369a1;    
             border: 1px solid #bae6fd; display: flex; align-items: center; justify-content: center;
         }
+
+        .nav-link-btn.active {
+            background: #0369a1;
+            color: white;
+        }
+
+        .btn-menu {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #bae6fd; 
+            background: #f0f9ff; color: #0369a1; font-weight: 800; text-transform: uppercase;
+            cursor: pointer; transition: background 0.2s;
+        }
+        .btn-menu:active { background: #e0f2fe; }
         
         #btnEdit.active {
             animation: pulse-active 1.4s infinite ease-in-out;
@@ -105,7 +117,7 @@
         .btn-delete:active { transform: scale(0.9); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); padding: 10px; z-index: 100; align-items: center; justify-content: center; }
-        .modal-content { background: white; border-radius: 24px; max-width: 360px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .modal-content { background: white; border-radius: 24px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         
         .clock-container { 
             width: 280px; height: 280px; border-radius: 50%; background: #f8fafc; 
@@ -138,7 +150,6 @@
 
         .input-harmonized { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-weight: bold; width: 85%; text-align: center; display: block; margin: 0 auto; font-family: inherit; background: #fff; }
         
-        /* Suppression des flèches pour le kilométrage */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
@@ -179,7 +190,69 @@
         }
         
         .stat-val-r { font-weight: 700; font-size: 15px; color: #3b82f6; } 
-        .stat-val-c { font-weight: 800; font-size: 16px; color: #059669; } 
+        .stat-val-c { font-weight: 800; font-size: 16px; color: #059669; }
+
+        /* Styles for Student List Management */
+        .student-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .student-name { flex-grow: 1; font-weight: 800; font-size: 13px; color: #334155; text-transform: uppercase; }
+        .student-controls { display: flex; gap: 8px; }
+        .btn-ctrl { 
+            background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; 
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #0369a1; transition: all 0.2s;
+        }
+        .btn-ctrl:active { background: #e0f2fe; transform: scale(0.95); }
+        .btn-ctrl svg { width: 18px; height: 18px; }
+
+        /* Pointage specific layout */
+        .pres-row {
+            margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;
+        }
+        .pres-name {
+            font-weight:bold; color:#334155; margin-bottom: 10px; text-transform: uppercase; font-size: 13px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;
+        }
+        .pres-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        }
+        .btn-pres {
+            font-size: 10px !important; height: auto !important; padding: 10px 4px !important;
+        }
+        .period-label {
+            font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; grid-column: span 2; margin-top: 4px;
+        }
+
+        /* Fixed Modal Footer Layout */
+        .modal-content.fixed-footer {
+            display: flex;
+            flex-direction: column;
+            max-height: 90vh;
+        }
+        .modal-header {
+            padding: 20px 20px 10px 20px;
+            background: white;
+            border-bottom: 1px solid #f1f5f9;
+            flex-shrink: 0;
+        }
+        .modal-body-scroll {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            -webkit-overflow-scrolling: touch;
+        }
+        .modal-footer {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #f1f5f9;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -247,7 +320,8 @@
     <details class="card editable-section">
         <summary>GESTION DES ÉLÈVES</summary>
         <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
-            <button onclick="ouvrir('modPres')" style="width:100%; padding:14px; border-radius:12px; border:1px solid #bae6fd; background:#f0f9ff; color:#0369a1; font-weight:800;">POINTAGE PRÉSENCES</button>
+            <button onclick="ouvrir('modPres')" class="btn-menu">POINTAGE PRÉSENCES</button>
+            <button onclick="ouvrir('modList')" class="btn-menu">LISTE DES ÉLÈVES</button>
         </div>
     </details>
 
@@ -256,6 +330,7 @@
         <div id="weather-temps" class="weather-temp"></div>
     </div>
 
+    <!-- Modal Horloge -->
     <div id="modClock" class="modal">
         <div class="modal-content">
             <div style="padding:24px; text-align:center;">
@@ -278,6 +353,7 @@
         </div>
     </div>
 
+    <!-- Modal Rapport -->
     <div id="modRecap" class="modal" onclick="fermer('modRecap')">
         <div class="modal-content" style="padding:20px;" onclick="event.stopPropagation()">
             <h3>RAPPORT QUOTIDIEN</h3>
@@ -286,12 +362,40 @@
         </div>
     </div>
 
-    <div id="modPres" class="modal"><div class="modal-content" style="padding:20px;"><h3>POINTAGE</h3><div id="gridP"></div><button onclick="fermer('modPres')" style="width:100%; padding:12px; background:#10b981; color:white; border:none; border-radius:10px; margin-top:10px;">OK</button></div></div>
+    <!-- Modal Pointage Présences -->
+    <div id="modPres" class="modal">
+        <div class="modal-content fixed-footer">
+            <div class="modal-header">
+                <h3>POINTAGE PRÉSENCES</h3>
+            </div>
+            <div id="gridP" class="modal-body-scroll"></div>
+            <div class="modal-footer">
+                <button onclick="fermer('modPres')" style="width:100%; padding:14px; background:#10b981; color:white; border:none; border-radius:12px; font-weight: 800; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">VALIDER LE POINTAGE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Liste des Élèves -->
+    <div id="modList" class="modal">
+        <div class="modal-content fixed-footer">
+            <div class="modal-header">
+                <h3>LISTE DES ÉLÈVES</h3>
+                <div style="display:flex; gap:8px; margin-top: 15px;">
+                    <input type="text" id="newStudent" placeholder="Prénom de l'élève" class="input-harmonized" style="flex:1; margin:0; text-align:left; padding-left:15px;">
+                    <button onclick="addStudent()" style="background:#10b981; color:white; border:none; padding:0 20px; border-radius:12px; font-weight:bold; font-size: 24px;">+</button>
+                </div>
+            </div>
+            <div id="studentListContainer" class="modal-body-scroll"></div>
+            <div class="modal-footer">
+                <button onclick="fermer('modList')" style="width:100%; padding:14px; background:#10b981; color:white; border:none; border-radius:12px; font-weight: 800; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">VALIDER LA LISTE</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         let dateJ = new Date().toISOString().split('T')[0], today = dateJ;
         let db = JSON.parse(localStorage.getItem('adada_db_v7')) || {};
-        let eleves = JSON.parse(localStorage.getItem('adada_eleves_v7')) || ["Élève 1", "Élève 2"];
+        let eleves = JSON.parse(localStorage.getItem('adada_eleves_v7')) || [];
         let editMode = false, activeTrancheIdx = -1, activeField = '', clockH = 8, clockM = 0;
         let clockMode = 'H';
 
@@ -404,6 +508,7 @@
             document.getElementById('inKm').value = data.km || "";
             document.getElementById('inCom').value = data.com || "";
             majEleves();
+            renderStudentList();
         }
 
         function getMinutesForDate(dStr) {
@@ -530,6 +635,7 @@
         }
 
         function validerHeure() {
+            if(!db[dateJ]) db[dateJ]={t:[], km:"", com:"", p:{}, half:false};
             db[dateJ].t[activeTrancheIdx][activeField] = clockH.toString().padStart(2,'0') + ":" + clockM.toString().padStart(2,'0');
             fermer('modClock'); sauver();
         }
@@ -540,28 +646,132 @@
         function toggleHalf() { db[dateJ].half = document.getElementById('halfH').checked; sauver(); }
         function sauver() { localStorage.setItem('adada_db_v7', JSON.stringify(db)); maj(); }
 
+        // --- Student Management Functions ---
+
+        function addStudent() {
+            const input = document.getElementById('newStudent');
+            const name = input.value.trim();
+            if (name) {
+                eleves.push(name);
+                saveStudents();
+                input.value = '';
+                renderStudentList();
+                majEleves();
+            }
+        }
+
+        function removeStudent(index) {
+            eleves.splice(index, 1);
+            saveStudents();
+            renderStudentList();
+            majEleves();
+        }
+
+        function moveStudent(index, dir) {
+            const newIndex = index + dir;
+            if (newIndex >= 0 && newIndex < eleves.length) {
+                const temp = eleves[index];
+                eleves[index] = eleves[newIndex];
+                eleves[newIndex] = temp;
+                saveStudents();
+                renderStudentList();
+                majEleves();
+            }
+        }
+
+        function saveStudents() {
+            localStorage.setItem('adada_eleves_v7', JSON.stringify(eleves));
+        }
+
+        function renderStudentList() {
+            const container = document.getElementById('studentListContainer');
+            if (!eleves.length) {
+                container.innerHTML = '<p style="text-align:center; color:#94a3b8; font-size:12px; padding: 20px;">Aucun élève dans la liste.</p>';
+                return;
+            }
+            container.innerHTML = eleves.map((name, i) => `
+                <div class="student-item">
+                    <span class="student-name">${name}</span>
+                    <div class="student-controls">
+                        <button onclick="moveStudent(${i}, -1)" class="btn-ctrl" ${i === 0 ? 'disabled style="opacity:0.3; cursor:default"' : ''}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                        </button>
+                        <button onclick="moveStudent(${i}, 1)" class="btn-ctrl" ${i === eleves.length - 1 ? 'disabled style="opacity:0.3; cursor:default"' : ''}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        </button>
+                        <button onclick="removeStudent(${i})" class="btn-ctrl" style="color:#f87171; border-color:#fca5a5; background:#fff1f1">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         function majEleves() {
             let data = db[dateJ] || {p:{}};
-            document.getElementById('gridP').innerHTML = eleves.map(e => `
-                <div style="margin-bottom:15px;">
-                    <div style="font-weight:bold; color:#334155;">${e}</div>
-                    <div style="display:flex; gap:8px; margin-top:5px;">
-                        <button onclick="toggleP('${e}','MA')" class="nav-link-btn ${(data.p[e]||[]).includes('MA')?'active':''}" style="flex:1">MATIN</button>
-                        <button onclick="toggleP('${e}','SA')" class="nav-link-btn ${(data.p[e]||[]).includes('SA')?'active':''}" style="flex:1">SOIR</button>
+            if (!data.p) data.p = {};
+            const grid = document.getElementById('gridP');
+            if (eleves.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px;">Veuillez d\'abord ajouter des élèves dans l\'onglet "LISTE DES ÉLÈVES".</p>';
+                return;
+            }
+            grid.innerHTML = eleves.map(e => {
+                const checked = data.p[e] || [];
+                return `
+                <div class="pres-row">
+                    <div class="pres-name">${e}</div>
+                    <div class="pres-grid">
+                        <div class="period-label">MATIN</div>
+                        <button onclick="toggleP('${e}','M_A')" class="nav-link-btn btn-pres ${checked.includes('M_A')?'active':''}">ALLER</button>
+                        <button onclick="toggleP('${e}','M_R')" class="nav-link-btn btn-pres ${checked.includes('M_R')?'active':''}">RETOUR</button>
+                        
+                        <div class="period-label">SOIR</div>
+                        <button onclick="toggleP('${e}','S_A')" class="nav-link-btn btn-pres ${checked.includes('S_A')?'active':''}">ALLER</button>
+                        <button onclick="toggleP('${e}','S_R')" class="nav-link-btn btn-pres ${checked.includes('S_R')?'active':''}">RETOUR</button>
                     </div>
-                </div>`).join('');
+                </div>`;
+            }).join('');
         }
+
         function toggleP(n,t) { 
-            if(!db[dateJ].p) db[dateJ].p={}; if(!db[dateJ].p[n]) db[dateJ].p[n]=[];
+            if(!db[dateJ]) db[dateJ]={t:[], km:"", com:"", p:{}, half:false};
+            if(!db[dateJ].p) db[dateJ].p={}; 
+            if(!db[dateJ].p[n]) db[dateJ].p[n]=[];
             if(db[dateJ].p[n].includes(t)) db[dateJ].p[n] = db[dateJ].p[n].filter(x=>x!==t);
             else db[dateJ].p[n].push(t); sauver();
         }
 
         function majRecap() {
-            let data = db[dateJ] || {t:[]}, jour = getMinutesForDate(dateJ);
-            let txt = "RAPPORT DU " + dateJ + "\n\n";
-            data.t.forEach((tr,i) => txt += `Vacation ${i+1}: ${tr.s} - ${tr.e}\n`);
-            txt += `\nTOTAL REEL: ${formatH(jour.r)}\nCONV: ${formatH(jour.c)}`;
+            let data = db[dateJ] || {t:[], p:{}}, jour = getMinutesForDate(dateJ);
+            let txt = "RAPPORT DU " + new Date(dateJ).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}).toUpperCase() + "\n\n";
+            if (data.t.length > 0) {
+                data.t.forEach((tr,i) => txt += `Vacation ${i+1}: ${tr.s || '??'} - ${tr.e || '??'}\n`);
+            } else {
+                txt += "Aucune vacation enregistrée.\n";
+            }
+            txt += `\nTOTAL RÉEL: ${formatH(jour.r)}\nTOTAL CONV: ${formatH(jour.c)}`;
+            
+            let presences = [];
+            eleves.forEach(e => {
+                let p = (data.p && data.p[e]) ? data.p[e] : [];
+                if (p.length > 0) {
+                    const labels = p.map(code => {
+                        if(code === 'M_A') return 'Matin Aller';
+                        if(code === 'M_R') return 'Matin Retour';
+                        if(code === 'S_A') return 'Soir Aller';
+                        if(code === 'S_R') return 'Soir Retour';
+                        return code;
+                    });
+                    presences.push(`${e}: ${labels.join(', ')}`);
+                }
+            });
+            if (presences.length > 0) {
+                txt += "\n\nPRÉSENCES ÉLÈVES :\n" + presences.join('\n');
+            }
+            
             document.getElementById('resRecap').innerText = txt;
         }
 
@@ -578,7 +788,6 @@
         }
 
         window.onload = () => { 
-            if(!db[today]) db[today]={t:[], km:"", com:"", p:{}, half:false}; 
             initClock();
             maj(); 
             getWeather(dateJ); 
