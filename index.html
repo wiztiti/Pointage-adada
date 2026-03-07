@@ -59,27 +59,33 @@
             100% { transform: scale(1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         }
 
-        .is-waiting {
+        /* --- STYLES DES BOUTONS D'ACTION (MODIFIÉS) --- */
+        .btn-action { 
+            flex: 1; max-width: 140px; padding: 28px 10px; border: none; 
+            border-radius: 14px; font-weight: 800; font-size: 13px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04); transition: all 0.3s ease;
+            text-transform: uppercase; display: flex; align-items: center; justify-content: center;
+            background: #f8fafc; color: #94a3b8; border: 2px solid #f1f5f9;
+            opacity: 0.6;
+        }
+
+        .btn-depart.is-waiting { 
+            background: #fee2e2; color: #b91c1c; border: 2px solid #fecaca; 
+            opacity: 1;
             animation: pulse-active 1.4s infinite ease-in-out;
             z-index: 10;
         }
 
-        body.is-editing .editable-section[open] {
-            animation: pulse-edit-bg 2s infinite ease-in-out;
-            box-shadow: 0 4px 12px rgba(248, 113, 113, 0.15);
+        .btn-retour.is-waiting { 
+            background: #dcfce7; color: #15803d; border: 2px solid #86efac; 
+            opacity: 1;
+            animation: pulse-active 1.4s infinite ease-in-out;
+            z-index: 10;
         }
 
+        .btn-action:active { transform: scale(0.95); }
+
         .flex-center { display: flex; justify-content: center; gap: 20px; margin: 15px 0; flex-wrap: wrap; }
-        
-        .btn-action { 
-            flex: 1; max-width: 140px; padding: 28px 10px; border: none; 
-            border-radius: 14px; font-weight: 800; font-size: 13px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: all 0.3s ease;
-            text-transform: uppercase; display: flex; align-items: center; justify-content: center;
-        }
-        
-        .btn-depart { background: #fee2e2; color: #b91c1c; border: 2px solid #fecaca; }
-        .btn-retour { background: #dcfce7; color: #15803d; border: 2px solid #86efac; }
         
         .nav-link-btn {
             width: 80px; padding: 8px 0; border-radius: 10px; font-size: 11px; font-weight: 800;
