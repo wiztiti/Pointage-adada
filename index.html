@@ -117,12 +117,14 @@
         .btn-ctrl:active { background: #e0f2fe; transform: scale(0.95); }
         .btn-ctrl svg { width: 18px; height: 18px; }
 
+        /* Modification demandée : Corbeille plus petite */
         .btn-delete-red { 
             color: #f87171; border: 1px solid #fca5a5; background: #fff1f1;
-            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border-radius: 10px; transition: transform 0.1s ease;
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 8px; transition: transform 0.1s ease;
         }
         .btn-delete-red:active { transform: scale(0.9); }
+        .btn-delete-red svg { width: 14px; height: 14px; }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); padding: 10px; z-index: 100; align-items: center; justify-content: center; }
         .modal-content { background: white; border-radius: 24px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
@@ -221,7 +223,7 @@
             border: 1px solid #e2e8f0;
         }
         .student-name { flex-grow: 1; font-weight: 800; font-size: 13px; color: #334155; text-transform: uppercase; }
-        .student-controls { display: flex; gap: 8px; }
+        .student-controls { display: flex; gap: 8px; align-items: center; }
 
         .pres-row {
             margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;
@@ -264,7 +266,6 @@
             flex-shrink: 0;
         }
 
-        /* Modification demandée : Couleur violet pastel et majuscule uniquement sur l'initiale */
         #saintAffichage {
             color: #a78bfa;
             font-weight: 700;
@@ -435,7 +436,6 @@
         function getSaint(dateStr) {
             const parts = dateStr.split('-');
             const key = parts[1] + '-' + parts[2];
-            // On s'assure que le texte est en minuscules ici, le CSS se charge de la capitale sur l'initiale
             return saints[key] ? "Saint " + saints[key].toLowerCase() : "";
         }
 
@@ -472,10 +472,7 @@
         function maj() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
             document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'}).toUpperCase();
-            
-            // Mise à jour du Saint
             document.getElementById('saintAffichage').innerText = getSaint(dateJ);
-
             document.getElementById('btnNext').style.visibility = (dateJ >= today) ? 'hidden' : 'visible';
             document.getElementById('btnToday').style.display = (dateJ === today) ? 'none' : 'flex';
             
@@ -513,7 +510,7 @@
                     <div class="heure-display ${!editing?'disabled':''}" onclick="ouvrirHorloge(${i},'e','${tr.e}')">${tr.e || '--:--'}</div>
                     ${editing ? `
                         <button class="btn-delete-red" onclick="delT(${i})">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
@@ -759,7 +756,7 @@
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
                         <button onclick="removeStudent(${i})" class="btn-delete-red">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
