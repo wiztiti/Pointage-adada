@@ -47,14 +47,23 @@
         details[open] summary, summary:hover { color: #0284c7 !important; }
         summary::-webkit-details-marker { display: none; }
 
-        /* Animation de pulsation rouge pastel pour le fond uniquement */
         @keyframes pulse-edit-bg {
             0% { background-color: #ffffff; border-color: #cbd5e1; }
             50% { background-color: #fff1f1; border-color: #fca5a5; }
             100% { background-color: #ffffff; border-color: #cbd5e1; }
         }
 
-        /* Appliqué uniquement à la section OUVERTE quand le mode édition est actif */
+        @keyframes pulse-active {
+            0% { transform: scale(1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+            50% { transform: scale(1.05); box-shadow: 0 10px 15px rgba(0,0,0,0.15); }
+            100% { transform: scale(1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        }
+
+        .is-waiting {
+            animation: pulse-active 1.4s infinite ease-in-out;
+            z-index: 10;
+        }
+
         body.is-editing .editable-section[open] {
             animation: pulse-edit-bg 2s infinite ease-in-out;
             box-shadow: 0 4px 12px rgba(248, 113, 113, 0.15);
@@ -70,29 +79,8 @@
         }
         
         .btn-depart { background: #fee2e2; color: #b91c1c; border: 2px solid #fecaca; }
-        .btn-retour { background: #f0fdf4; color: #16a34a; border: 2px solid #dcfce7; }
+        .btn-retour { background: #dcfce7; color: #15803d; border: 2px solid #86efac; }
         
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); transform: scale(1); }
-            50% { box-shadow: 0 0 20px 8px rgba(34, 197, 94, 0.3); transform: scale(1.04); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); transform: scale(1); }
-        }
-
-        @keyframes pulse-red-soft {
-            0% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.5); transform: scale(1); }
-            50% { box-shadow: 0 0 20px 8px rgba(248, 113, 113, 0.25); transform: scale(1.04); }
-            100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); transform: scale(1); }
-        }
-
-        @keyframes pulse-btn-edit {
-            0% { background: #fecaca; transform: scale(1); }
-            50% { background: #fca5a5; transform: scale(1.05); }
-            100% { background: #fecaca; transform: scale(1); }
-        }
-
-        .btn-waiting-retour { animation: pulse-green 1.5s infinite; background: #22c55e !important; color: white !important; }
-        .btn-waiting-depart { animation: pulse-red-soft 1.5s infinite; background: #f87171 !important; color: white !important; }
-
         .nav-link-btn {
             width: 80px; padding: 8px 0; border-radius: 10px; font-size: 11px; font-weight: 800;
             text-transform: uppercase; cursor: pointer; background: #f0f9ff; color: #0369a1;    
@@ -100,30 +88,98 @@
         }
         
         #btnEdit.active {
-            animation: pulse-btn-edit 2s infinite ease-in-out;
+            animation: pulse-active 1.4s infinite ease-in-out;
             color: #991b1b; border-color: #f87171;
         }
 
         .heure-box { background: rgba(248, 250, 252, 0.8); padding: 10px; border-radius: 12px; margin-top: 6px; display: flex; align-items: center; justify-content: space-around; border: 1px solid #f1f5f9; }
+        .vacation-label { font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; width: 60px; }
         .heure-display { background: white; padding: 6px 12px; border-radius: 8px; font-weight: 700; border: 1px solid #cbd5e1; min-width: 60px; text-align: center; }
         .heure-display.disabled { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; cursor: default; }
 
+        .btn-delete { 
+            color: #f87171; border: none; background: none; 
+            padding: 8px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.1s ease;
+        }
+        .btn-delete:active { transform: scale(0.9); }
+
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); padding: 10px; z-index: 100; align-items: center; justify-content: center; }
-        .modal-content { background: white; border-radius: 20px; max-width: 400px; width: 100%; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); }
+        .modal-content { background: white; border-radius: 24px; max-width: 360px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         
+        .clock-container { 
+            width: 280px; height: 280px; border-radius: 50%; background: #f8fafc; 
+            margin: 20px auto; position: relative; touch-action: none; 
+            border: 4px solid #f1f5f9; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .clock-center { 
+            position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; 
+            background: #10b981; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; 
+        }
+        .clock-hand { 
+            position: absolute; width: 2px; background: #10b981; 
+            bottom: 50%; left: calc(50% - 1px); transform-origin: bottom center; z-index: 5; 
+            transition: all 0.1s ease;
+        }
+        .clock-hand::after { 
+            content: ''; position: absolute; top: -16px; left: -16px; 
+            width: 32px; height: 32px; background: rgba(16, 185, 129, 0.1); 
+            border: 2px solid #10b981; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .clock-number {
+            position: absolute; width: 30px; height: 30px; text-align: center;
+            line-height: 30px; font-weight: 700; font-size: 14px; color: #64748b;
+            transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .clock-number.outer { color: #94a3b8; font-size: 11px; }
+
+        .active-unit { color: #10b981 !important; border-bottom: 3px solid #10b981; padding-bottom: 2px; }
+        .inactive-unit { color: #cbd5e1 !important; cursor: pointer; }
+
         .input-harmonized { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-weight: bold; width: 85%; text-align: center; display: block; margin: 0 auto; font-family: inherit; background: #fff; }
         
-        .clock-container { width: 260px; height: 260px; border-radius: 50%; background: #f8fafc; margin: 20px auto; position: relative; touch-action: none; border: 4px solid #f1f5f9; }
-        .clock-hand { position: absolute; width: 2px; background: #10b981; bottom: 50%; left: calc(50% - 1px); transform-origin: bottom center; z-index: 5; }
-        .clock-hand::after { content: ''; position: absolute; top: -14px; left: -14px; width: 28px; height: 28px; background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; border-radius: 50%; }
-        
-        .pres-container { display: flex; gap: 8px; margin-top: 8px; }
-        .pres-col { flex: 1; display: flex; flex-direction: column; gap: 4px; padding: 6px; border-radius: 8px; background: rgba(248, 250, 252, 0.7); }
-        .check-btn { padding: 12px 0; border: 1px solid #e2e8f0; border-radius: 8px; background: white; font-size: 11px; font-weight: 700; color: #64748b; }
-        .check-btn.active { background: #0284c7; color: white; border-color: #0284c7; }
+        /* Suppression des flèches pour le kilométrage */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
 
         .weather-temp { font-weight: 800; font-size: 20px; color: #334155; display: flex; align-items: baseline; gap: 8px; }
         .weather-temp span { color: #94a3b8; font-weight: 500; font-size: 13px; text-transform: uppercase; }
+        
+        .stat-grid { 
+            display: grid; 
+            grid-template-columns: 100px 1fr 1fr 1fr; 
+            gap: 2px; 
+            margin-top: 10px;
+            align-items: center;
+        }
+        .stat-label-row { 
+            font-size: 10px; 
+            color: #64748b; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            display: flex; 
+            align-items: center; 
+            justify-content: flex-start;
+            padding-left: 5px;
+        }
+        .stat-box { text-align: center; padding: 8px 0; }
+        .stat-header { 
+            font-size: 10px; 
+            color: #94a3b8; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            text-align: center;
+            padding-bottom: 8px;
+        }
+        
+        .stat-val-r { font-weight: 700; font-size: 15px; color: #3b82f6; } 
+        .stat-val-c { font-weight: 800; font-size: 16px; color: #059669; } 
     </style>
 </head>
 <body>
@@ -149,27 +205,31 @@
         <button id="btnR" class="btn-action btn-retour" onclick="clicAction('R')">RETOUR</button>
     </div>
 
-    <details class="card editable-section">
+    <details class="card editable-section" id="detailsTranches">
         <summary>TRANCHES DE TRAVAIL</summary>
         <div id="listeT" style="margin-top:10px;"></div>
         <div style="text-align:center;">
-            <button id="btnAddManual" onclick="ajouterM()" style="font-size:11px; margin-top:10px; color:#0284c7; background:none; border:1px solid #bae6fd; padding:6px 16px; border-radius:20px; font-weight:bold;">Ajout manuel</button>
+            <button id="btnAddManual" onclick="ajouterM()" style="font-size:11px; margin-top:10px; color:#0284c7; background:none; border:1px solid #bae6fd; padding:6px 16px; border-radius:20px; font-weight:bold;">+ AJOUT MANUEL</button>
         </div>
     </details>
 
     <details class="card" id="detailsHeures">
         <summary>RÉCAPITULATIF DES HEURES</summary>
-        <div style="padding-top:5px; display:flex; justify-content:space-around;">
-            <div style="text-align:center;">
-                <div style="font-size:9px; color:#64748b; font-weight:800;">JOUR</div>
-                <div id="txtR" style="font-weight:700; font-size:14px;">0h00</div>
-                <div id="txtC" style="font-weight:800; font-size:16px; color:#0369a1; background:#f0f9ff; padding:2px 8px; border-radius:6px; border:1px solid #bae6fd;">0h00</div>
-            </div>
-            <div style="text-align:center;">
-                <div style="font-size:9px; color:#64748b; font-weight:800;">SEMAINE</div>
-                <div id="semR" style="font-weight:700; font-size:14px;">0h00</div>
-                <div id="semC" style="font-weight:800; font-size:16px; color:#0369a1; background:#f0f9ff; padding:2px 8px; border-radius:6px; border:1px solid #bae6fd;">0h00</div>
-            </div>
+        <div class="stat-grid">
+            <div></div>
+            <div class="stat-header">JOUR</div>
+            <div class="stat-header">SEMAINE</div>
+            <div class="stat-header">MOIS</div>
+
+            <div class="stat-label-row">Réelles</div>
+            <div class="stat-box"><div id="txtR" class="stat-val-r">0h00</div></div>
+            <div class="stat-box"><div id="semR" class="stat-val-r">0h00</div></div>
+            <div class="stat-box"><div id="moisR" class="stat-val-r">0h00</div></div>
+
+            <div class="stat-label-row">Conventionnelles</div>
+            <div class="stat-box"><div id="txtC" class="stat-val-c">0h00</div></div>
+            <div class="stat-box"><div id="semC" class="stat-val-c">0h00</div></div>
+            <div class="stat-box"><div id="moisC" class="stat-val-c">0h00</div></div>
         </div>
         <div style="text-align:center; margin-top:12px; border-top:1px solid #f1f5f9; padding-top:10px;">
             <label style="font-size:11px; font-weight:bold; color:#64748b;"><input type="checkbox" id="halfH" onchange="toggleHalf()"> Déduction -30min</label>
@@ -179,8 +239,8 @@
     <details class="card editable-section">
         <summary>KILOMÉTRAGE / NOTES</summary>
         <div style="padding-top:10px;">
-            <input type="number" id="inKm" class="input-harmonized" oninput="saveInputs()" placeholder="Kilométrage fin" style="margin-bottom:10px;">
-            <textarea id="inCom" class="input-harmonized" oninput="saveInputs()" placeholder="Notes..." rows="2"></textarea>
+            <input type="number" id="inKm" class="input-harmonized" oninput="saveInputs()" placeholder="Kilométrage de fin de journée" style="margin-bottom:10px;">
+            <textarea id="inCom" class="input-harmonized" oninput="saveInputs()" placeholder="Notes..." rows="2" style="font-weight: normal;"></textarea>
         </div>
     </details>
 
@@ -188,7 +248,6 @@
         <summary>GESTION DES ÉLÈVES</summary>
         <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
             <button onclick="ouvrir('modPres')" style="width:100%; padding:14px; border-radius:12px; border:1px solid #bae6fd; background:#f0f9ff; color:#0369a1; font-weight:800;">POINTAGE PRÉSENCES</button>
-            <button id="btnModList" onclick="ouvrir('modList')" style="width:100%; padding:14px; border-radius:12px; border:1px solid #bae6fd; background:#f0f9ff; color:#0369a1; font-weight:800;">MODIFIER LA LISTE</button>
         </div>
     </details>
 
@@ -197,14 +256,24 @@
         <div id="weather-temps" class="weather-temp"></div>
     </div>
 
-    <!-- Modals (Simplified for context) -->
     <div id="modClock" class="modal">
         <div class="modal-content">
-            <div style="padding:20px; text-align:center;">
-                <h3 id="clockValH" style="font-size:42px; color:#059669; display:inline;">08</h3>:<h3 id="clockValM" style="font-size:42px; color:#059669; display:inline;">00</h3>
-                <div class="clock-container" id="clockUI"><div class="clock-hand" id="hand"></div></div>
-                <button onclick="validerHeure()" style="width:100%; padding:15px; background:#10b981; color:white; border:none; border-radius:12px; font-weight:bold;">VALIDER</button>
-                <button onclick="fermer('modClock')" style="margin-top:10px; background:none; border:none; color:#94a3b8; font-weight:bold;">ANNULER</button>
+            <div style="padding:24px; text-align:center;">
+                <div style="margin-bottom:15px; display: flex; justify-content: center; align-items: baseline; gap: 5px;">
+                    <span id="clockValH" onclick="setClockMode('H')" class="active-unit" style="font-size:48px; font-weight:800;">08</span>
+                    <span style="font-size:48px; font-weight:800; color:#cbd5e1;">:</span>
+                    <span id="clockValM" onclick="setClockMode('M')" class="inactive-unit" style="font-size:48px; font-weight:800;">00</span>
+                </div>
+                
+                <div class="clock-container" id="clockUI">
+                    <div class="clock-center"></div>
+                    <div class="clock-hand" id="hand"></div>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:20px;">
+                    <button onclick="fermer('modClock')" style="flex:1; padding:15px; background:#f1f5f9; color:#64748b; border:none; border-radius:14px; font-weight:bold;">ANNULER</button>
+                    <button onclick="validerHeure()" style="flex:2; padding:15px; background:#10b981; color:white; border:none; border-radius:14px; font-weight:bold;">OK</button>
+                </div>
             </div>
         </div>
     </div>
@@ -217,8 +286,6 @@
         </div>
     </div>
 
-    <div id="modList" class="modal"><div class="modal-content" style="padding:20px;"><h3>ÉLÈVES</h3><div id="divList"></div><button onclick="fermer('modList')" style="width:100%; padding:12px; background:#10b981; color:white; border:none; border-radius:10px; margin-top:10px;">OK</button></div></div>
-    
     <div id="modPres" class="modal"><div class="modal-content" style="padding:20px;"><h3>POINTAGE</h3><div id="gridP"></div><button onclick="fermer('modPres')" style="width:100%; padding:12px; background:#10b981; color:white; border:none; border-radius:10px; margin-top:10px;">OK</button></div></div>
 
     <script>
@@ -226,14 +293,25 @@
         let db = JSON.parse(localStorage.getItem('adada_db_v7')) || {};
         let eleves = JSON.parse(localStorage.getItem('adada_eleves_v7')) || ["Élève 1", "Élève 2"];
         let editMode = false, activeTrancheIdx = -1, activeField = '', clockH = 8, clockM = 0;
+        let clockMode = 'H';
+
+        document.querySelectorAll('details').forEach((detail) => {
+            detail.addEventListener('toggle', (e) => {
+                if (detail.open) {
+                    document.querySelectorAll('details').forEach((otherDetail) => {
+                        if (otherDetail !== detail) {
+                            otherDetail.open = false;
+                        }
+                    });
+                }
+            });
+        });
 
         function canEdit() { return (dateJ === today) || editMode; }
 
         function toggleEditMode() { 
             editMode = !editMode; 
-            // On bascule la classe sur le body pour activer les styles de pulsation
-            if (editMode) document.body.classList.add('is-editing');
-            else document.body.classList.remove('is-editing');
+            document.body.classList.toggle('is-editing', editMode);
             maj(); 
         }
 
@@ -261,22 +339,68 @@
             document.getElementById('inKm').disabled = !editing;
             document.getElementById('inCom').disabled = !editing;
             document.getElementById('halfH').checked = !!data.half;
-            document.getElementById('actionRow').style.display = (dateJ === today) ? 'flex' : 'none';
+            
+            const actionRow = document.getElementById('actionRow');
+            actionRow.style.display = (dateJ === today) ? 'flex' : 'none';
 
-            // Tranches
+            const btnD = document.getElementById('btnD');
+            const btnR = document.getElementById('btnR');
+            btnD.classList.remove('is-waiting');
+            btnR.classList.remove('is-waiting');
+
+            if (dateJ === today) {
+                const tranches = data.t || [];
+                if (tranches.length === 0 || tranches[tranches.length-1].e) {
+                    btnD.classList.add('is-waiting');
+                } else if (tranches.length > 0 && !tranches[tranches.length-1].e) {
+                    btnR.classList.add('is-waiting');
+                }
+            }
+
             document.getElementById('listeT').innerHTML = data.t.map((tr, i) => `
                 <div class="heure-box">
+                    <div class="vacation-label">Vacation ${i+1}</div>
                     <div class="heure-display ${!editing?'disabled':''}" onclick="ouvrirHorloge(${i},'s','${tr.s}')">${tr.s || '--:--'}</div>
                     <span style="color:#cbd5e1">➔</span>
                     <div class="heure-display ${!editing?'disabled':''}" onclick="ouvrirHorloge(${i},'e','${tr.e}')">${tr.e || '--:--'}</div>
-                    ${editing ? `<button onclick="delT(${i})" style="color:#f87171; border:none; background:none; font-size:20px; font-weight:bold;">×</button>` : ''}
-                </div>`).join('') || '<p style="text-align:center; color:#94a3b8; font-size:11px;">Vide</p>';
+                    ${editing ? `
+                        <button class="btn-delete" onclick="delT(${i})">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18"></path>
+                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                            </svg>
+                        </button>` : ''}
+                </div>`).join('') || '<p style="text-align:center; color:#94a3b8; font-size:11px;">Aucune vacation</p>';
 
-            // Heures
             let jour = getMinutesForDate(dateJ);
             document.getElementById('txtR').innerText = formatH(jour.r);
             document.getElementById('txtC').innerText = formatH(jour.c);
             
+            let dCur = new Date(dateJ);
+            let day = dCur.getDay(), diff = dCur.getDate() - day + (day === 0 ? -6 : 1);
+            let mon = new Date(dCur.setDate(diff));
+            let semR = 0, semC = 0;
+            for(let i=0; i<7; i++){
+                let dStr = new Date(mon).toISOString().split('T')[0];
+                let res = getMinutesForDate(dStr);
+                semR += res.r; semC += res.c;
+                mon.setDate(mon.getDate()+1);
+            }
+            document.getElementById('semR').innerText = formatH(semR);
+            document.getElementById('semC').innerText = formatH(semC);
+
+            let moisR = 0, moisC = 0;
+            let currentMonth = dateJ.substring(0, 7); 
+            Object.keys(db).forEach(key => {
+                if (key.startsWith(currentMonth)) {
+                    let res = getMinutesForDate(key);
+                    moisR += res.r; moisC += res.c;
+                }
+            });
+            document.getElementById('moisR').innerText = formatH(moisR);
+            document.getElementById('moisC').innerText = formatH(moisC);
+
             document.getElementById('inKm').value = data.km || "";
             document.getElementById('inCom').value = data.com || "";
             majEleves();
@@ -305,16 +429,104 @@
             db[dateJ]=data; sauver();
         }
 
+        function initClock() {
+            const ui = document.getElementById('clockUI');
+            renderClockNumbers();
+
+            const handleClock = (e) => {
+                if(e.type === 'touchmove') e.preventDefault();
+                if(e.buttons !== 1 && e.type !== 'touchmove' && e.type !== 'touchend' && e.type !== 'mouseup') return;
+                if (e.type === 'touchend' || e.type === 'mouseup') {
+                    if (clockMode === 'H') setClockMode('M');
+                    return;
+                }
+                const rect = ui.getBoundingClientRect();
+                const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left - rect.width/2;
+                const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top - rect.height/2;
+                const dist = Math.sqrt(x*x + y*y);
+                const angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+                let rawAngle = (angle < 0 ? angle + 360 : angle) % 360;
+
+                if (clockMode === 'H') {
+                    let h = Math.round(rawAngle / 30);
+                    if (h === 0) h = 12;
+                    if(dist > 105) clockH = (h + 12 === 24) ? 0 : h + 12;
+                    else clockH = h;
+                } else {
+                    clockM = Math.round(rawAngle / 6) % 60;
+                }
+                updateClockUI();
+            };
+            ui.addEventListener('mousedown', handleClock);
+            ui.addEventListener('mousemove', handleClock);
+            ui.addEventListener('mouseup', handleClock);
+            ui.addEventListener('touchstart', handleClock);
+            ui.addEventListener('touchmove', handleClock);
+            ui.addEventListener('touchend', handleClock);
+        }
+
+        function renderClockNumbers() {
+            const ui = document.getElementById('clockUI');
+            ui.querySelectorAll('.clock-number').forEach(n => n.remove());
+            for(let i=1; i<=12; i++) {
+                const angle = (i * 30 - 90) * (Math.PI / 180);
+                if (clockMode === 'H') {
+                    const inner = document.createElement('div');
+                    inner.className = 'clock-number';
+                    inner.innerText = i;
+                    inner.style.left = 50 + 32 * Math.cos(angle) + '%';
+                    inner.style.top = 50 + 32 * Math.sin(angle) + '%';
+                    ui.appendChild(inner);
+                    const outer = document.createElement('div');
+                    outer.className = 'clock-number outer';
+                    let hOuter = i + 12;
+                    if (hOuter === 24) hOuter = 0;
+                    outer.innerText = hOuter;
+                    outer.style.left = 50 + 44 * Math.cos(angle) + '%';
+                    outer.style.top = 50 + 44 * Math.sin(angle) + '%';
+                    ui.appendChild(outer);
+                } else {
+                    const mDiv = document.createElement('div');
+                    mDiv.className = 'clock-number';
+                    let val = i * 5;
+                    if (val === 60) val = 0;
+                    mDiv.innerText = val.toString().padStart(2, '0');
+                    mDiv.style.left = 50 + 40 * Math.cos(angle) + '%';
+                    mDiv.style.top = 50 + 40 * Math.sin(angle) + '%';
+                    ui.appendChild(mDiv);
+                }
+            }
+        }
+
+        function setClockMode(m) {
+            clockMode = m;
+            document.getElementById('clockValH').className = (m === 'H' ? 'active-unit' : 'inactive-unit');
+            document.getElementById('clockValM').className = (m === 'M' ? 'active-unit' : 'inactive-unit');
+            renderClockNumbers();
+            updateClockUI();
+        }
+
         function ouvrirHorloge(idx, f, v) { 
             if(!canEdit()) return; activeTrancheIdx=idx; activeField=f;
             if(v){ let [h,m]=v.split(':').map(Number); clockH=h; clockM=m; }
-            updateClockUI(); openModal('modClock'); 
+            setClockMode('H');
+            openModal('modClock'); 
         }
 
         function updateClockUI() {
             document.getElementById('clockValH').innerText = clockH.toString().padStart(2,'0');
             document.getElementById('clockValM').innerText = clockM.toString().padStart(2,'0');
-            document.getElementById('hand').style.transform = `rotate(${clockH*30}deg)`;
+            const hand = document.getElementById('hand');
+            if (clockMode === 'H') {
+                let rotation = clockH * 30;
+                hand.style.transform = `rotate(${rotation}deg)`;
+                const isOuter = (clockH === 0 || (clockH >= 13 && clockH <= 23));
+                hand.style.height = isOuter ? '125px' : '90px';
+            } else {
+                let rotation = clockM * 6;
+                hand.style.transform = `rotate(${rotation}deg)`;
+                hand.style.height = '112px';
+            }
         }
 
         function validerHeure() {
@@ -330,13 +542,12 @@
 
         function majEleves() {
             let data = db[dateJ] || {p:{}};
-            document.getElementById('divList').innerHTML = eleves.map(e => `<div style="padding:10px; border-bottom:1px solid #eee;"><b>${e}</b></div>`).join('');
             document.getElementById('gridP').innerHTML = eleves.map(e => `
                 <div style="margin-bottom:15px;">
                     <div style="font-weight:bold; color:#334155;">${e}</div>
-                    <div class="pres-container">
-                        <button onclick="toggleP('${e}','MA')" class="check-btn ${(data.p[e]||[]).includes('MA')?'active':''}">ALLER M.</button>
-                        <button onclick="toggleP('${e}','SA')" class="check-btn ${(data.p[e]||[]).includes('SA')?'active':''}">ALLER S.</button>
+                    <div style="display:flex; gap:8px; margin-top:5px;">
+                        <button onclick="toggleP('${e}','MA')" class="nav-link-btn ${(data.p[e]||[]).includes('MA')?'active':''}" style="flex:1">MATIN</button>
+                        <button onclick="toggleP('${e}','SA')" class="nav-link-btn ${(data.p[e]||[]).includes('SA')?'active':''}" style="flex:1">SOIR</button>
                     </div>
                 </div>`).join('');
         }
@@ -366,7 +577,12 @@
             } catch(e) { txt.innerText = ""; }
         }
 
-        window.onload = () => { if(!db[today]) db[today]={t:[], km:"", com:"", p:{}, half:false}; maj(); getWeather(dateJ); };
+        window.onload = () => { 
+            if(!db[today]) db[today]={t:[], km:"", com:"", p:{}, half:false}; 
+            initClock();
+            maj(); 
+            getWeather(dateJ); 
+        };
     </script>
 </body>
 </html>
