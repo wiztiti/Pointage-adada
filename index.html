@@ -117,7 +117,6 @@
         .btn-ctrl:active { background: #e0f2fe; transform: scale(0.95); }
         .btn-ctrl svg { width: 18px; height: 18px; }
 
-        /* Modification demandée : Corbeille plus petite */
         .btn-delete-red { 
             color: #f87171; border: 1px solid #fca5a5; background: #fff1f1;
             width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
@@ -274,6 +273,53 @@
             margin-top: 2px;
             letter-spacing: 0.5px;
         }
+
+        .recap-text-container {
+            font-family: inherit;
+            line-height: 1.6;
+            color: #334155;
+            font-size: 14px;
+        }
+        .recap-date-header {
+            text-align: center;
+            font-weight: 800;
+            margin-bottom: 24px;
+            text-transform: lowercase;
+        }
+        .recap-date-header:first-letter {
+            text-transform: uppercase;
+        }
+        .recap-hours-real { color: #ef4444; font-weight: 800; }
+        .recap-hours-conv { color: #10b981; font-weight: 800; }
+        .recap-section-title { font-weight: 800; margin-top: 16px; margin-bottom: 8px; }
+        .recap-student-line { 
+            margin-bottom: 10px; 
+            padding-bottom: 5px; 
+            border-bottom: 1px dashed #e2e8f0; 
+            text-align: center; 
+        }
+        .recap-student-name {
+            font-weight: 800;
+            color: #0369a1;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .recap-student-detail {
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .recap-student-detail span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .recap-student-detail b {
+            color: #334155;
+            font-weight: 800;
+        }
     </style>
 </head>
 <body>
@@ -351,7 +397,7 @@
         <div id="weather-temps" class="weather-temp"></div>
     </div>
 
-    <!-- Modal Horloge -->
+    <!-- Modals -->
     <div id="modClock" class="modal">
         <div class="modal-content">
             <div style="padding:24px; text-align:center;">
@@ -375,11 +421,17 @@
         </div>
     </div>
 
-    <div id="modRecap" class="modal" onclick="fermer('modRecap')">
-        <div class="modal-content" style="padding:20px;" onclick="event.stopPropagation()">
-            <h3>RAPPORT QUOTIDIEN</h3>
-            <div id="resRecap" style="font-size:12px; background:#f8fafc; padding:15px; border-radius:10px; margin:15px 0; white-space:pre-wrap;"></div>
-            <button onclick="fermer('modRecap')" style="width:100%; padding:12px; background:#64748b; color:white; border:none; border-radius:10px;">FERMER</button>
+    <div id="modRecap" class="modal">
+        <div class="modal-content fixed-footer">
+            <div class="modal-header">
+                <h3>RAPPORT QUOTIDIEN</h3>
+            </div>
+            <div class="modal-body-scroll">
+                <div id="resRecap" class="recap-text-container"></div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="fermer('modRecap')" style="width:100%; padding:14px; background:#10b981; color:white; border:none; border-radius:12px; font-weight: 800; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">FERMER</button>
+            </div>
         </div>
     </div>
 
@@ -423,14 +475,7 @@
             "02-01": "ella", "02-02": "présentation", "02-03": "blaise", "02-04": "véronique", "02-05": "agathe", "02-06": "gaston", "02-07": "eugénie", "02-08": "jacqueline", "02-09": "apolline", "02-10": "arnaud", "02-11": "N.-D. de lourdes", "02-12": "félix", "02-13": "béatrice", "02-14": "valentin", "02-15": "claude", "02-16": "julienne", "02-17": "alexis", "02-18": "bernadette", "02-19": "gabin", "02-20": "aimée", "02-21": "pierre-damien", "02-22": "isabelle", "02-23": "lazare", "02-24": "modeste", "02-25": "roméo", "02-26": "nestor", "02-27": "honorine", "02-28": "romain", "02-29": "auguste",
             "03-01": "aubin", "03-02": "charles le bon", "03-03": "guénolé", "03-04": "casimir", "03-05": "olive", "03-06": "colette", "03-07": "félicité", "03-08": "jean de dieu", "03-09": "françoise", "03-10": "vivien", "03-11": "rosine", "03-12": "justine", "03-13": "rodrigue", "03-14": "mathilde", "03-15": "louise", "03-16": "bénédicte", "03-17": "patrice", "03-18": "cyrille", "03-19": "joseph", "03-20": "herbert", "03-21": "clémence", "03-22": "léa", "03-23": "victorien", "03-24": "catherine de suède", "03-25": "annonciation", "03-26": "larissa", "03-27": "habib", "03-28": "gontran", "03-29": "gwladys", "03-30": "amédée", "03-31": "benjamin",
             "04-01": "hugues", "04-02": "sandrine", "04-03": "richard", "04-04": "isidore", "04-05": "irène", "04-06": "marcellin", "04-07": "J.-B. de la salle", "04-08": "julie", "04-09": "gautier", "04-10": "fulbert", "04-11": "stanislas", "04-12": "jules", "04-13": "ida", "04-14": "maxime", "04-15": "paterne", "04-16": "benoît-joseph", "04-17": "anicet", "04-18": "parfait", "04-19": "emma", "04-20": "odette", "04-21": "anselme", "04-22": "alexandre", "04-23": "georges", "04-24": "fidèle", "04-25": "marc", "04-26": "alida", "04-27": "zita", "04-28": "valérie", "04-29": "catherine de sienne", "04-30": "robert",
-            "05-01": "fête du travail", "05-02": "boris", "05-03": "philippe", "05-04": "sylvain", "05-05": "judith", "05-06": "prudence", "05-07": "gisèle", "05-08": "victoire 1945", "05-09": "pacôme", "05-10": "solange", "05-11": "estelle", "05-12": "achille", "05-13": "rolande", "05-14": "matthias", "05-15": "denise", "05-16": "honoré", "05-17": "pascal", "05-18": "éric", "05-19": "yves", "05-20": "bernardin", "05-21": "constantin", "05-22": "émile", "05-23": "didier", "05-24": "donatien", "05-25": "sophie", "05-26": "bérenger", "05-27": "augustin", "05-28": "germain", "05-29": "aymar", "05-30": "ferdinand", "05-31": "visitation",
-            "06-01": "justin", "06-02": "blandine", "06-03": "kévin", "06-04": "clotilde", "06-05": "igor", "06-06": "norbert", "06-07": "gilbert", "06-08": "médard", "06-09": "diane", "06-10": "landry", "06-11": "barnabé", "06-12": "guy", "06-13": "antoine de padoue", "06-14": "élisée", "06-15": "germaine", "06-16": "jean-françois régis", "06-17": "hervé", "06-18": "léonce", "06-19": "romuald", "06-20": "silvère", "06-21": "rodolphe", "06-22": "alban", "06-23": "audrey", "06-24": "jean-baptiste", "06-25": "prosper", "06-26": "anthelme", "06-27": "fernand", "06-28": "irénée", "06-29": "pierre et paul", "06-30": "martial",
-            "07-01": "thierry", "07-02": "martinien", "07-03": "thomas", "07-04": "florent", "07-05": "antoine", "07-06": "mariette", "07-07": "raoul", "07-08": "thibault", "07-09": "amandine", "07-10": "ulrich", "07-11": "benoît", "07-12": "olivier", "07-13": "henri et joël", "07-14": "fête nationale", "07-15": "donald", "07-16": "N.-D. du mont-carmel", "07-17": "charlotte", "07-18": "frédéric", "07-19": "arsène", "07-20": "marina", "07-21": "victor", "07-22": "marie-madeleine", "07-23": "brigitte", "07-24": "christine", "07-25": "jacques", "07-26": "anne et joachim", "07-27": "nathalie", "07-28": "samson", "07-29": "marthe", "07-30": "juliette", "07-31": "ignace de loyola",
-            "08-01": "alphonse", "08-02": "julien-eymard", "08-03": "lydie", "08-04": "jean-marie vianney", "08-05": "abel", "08-06": "transfiguration", "08-07": "gaétan", "08-08": "dominique", "08-09": "amour", "08-10": "laurent", "08-11": "claire", "08-12": "clarisse", "08-13": "hippolyte", "08-14": "evrard", "08-15": "assomption", "08-16": "armel", "08-17": "hyacinthe", "08-18": "hélène", "08-19": "jean eudes", "08-20": "bernard", "08-21": "christophe", "08-22": "fabrice", "08-23": "rose de lima", "08-24": "barthélemy", "08-25": "louis", "08-26": "natacha", "08-27": "monique", "08-28": "augustin", "08-29": "sabine", "08-30": "fiacre", "08-31": "aristide",
-            "09-01": "gilles", "09-02": "ingrid", "09-03": "grégoire", "09-04": "rosalie", "09-05": "raïssa", "09-06": "bertrand", "09-07": "reine", "09-08": "nativité de marie", "09-09": "alain", "09-10": "inès", "09-11": "adelphe", "09-12": "apollinaire", "09-13": "aimé", "09-14": "sainte-croix", "09-15": "roland", "09-16": "édith", "09-17": "renaud", "09-18": "nadège", "09-19": "émilie", "09-20": "davy", "09-21": "matthieu", "09-22": "maurice", "09-23": "constant", "09-24": "thècle", "09-25": "hermann", "09-26": "côme et damien", "09-27": "vincent de paul", "09-28": "venceslas", "09-29": "michel, gabriel et raphaël", "09-30": "jérôme",
-            "10-01": "thérèse de l'enfant-jésus", "10-02": "léger", "10-03": "gérard", "10-04": "françois d'assise", "10-05": "fleur", "10-06": "bruno", "10-07": "serge", "10-08": "pélagie", "10-09": "denis", "10-10": "ghislain", "10-11": "firmin", "10-12": "wilfried", "10-13": "géraud", "10-14": "juste", "10-15": "thérèse d'avila", "10-16": "edwige", "10-17": "baudouin", "10-18": "luc", "10-19": "rené", "10-20": "adeline", "10-21": "céline", "10-22": "élodie", "10-23": "jean de capistran", "10-24": "florentin", "10-25": "crépin", "10-26": "dimitri", "10-27": "émeline", "10-28": "jude", "10-29": "narcisse", "10-30": "bienvenue", "10-31": "quentin",
-            "11-01": "toussaint", "11-02": "défunts", "11-03": "hubert", "11-04": "charles", "11-05": "sylvie", "11-06": "bertille", "11-07": "carine", "11-08": "geoffroy", "11-09": "théodore", "11-10": "léon", "11-11": "armistice 1918", "11-12": "christian", "11-13": "brice", "11-14": "sidoine", "11-15": "albert", "11-16": "marguerite", "11-17": "élisabeth", "11-18": "aude", "11-19": "tanguy", "11-20": "edmond", "11-21": "présence de marie", "11-22": "cécile", "11-23": "clément", "11-24": "flora", "11-25": "catherine", "11-26": "delphine", "11-27": "séverin", "11-28": "jacques de la marche", "11-29": "saturnin", "11-30": "andré",
-            "12-01": "florence", "12-02": "viviane", "12-03": "françois-xavier", "12-04": "barbara", "12-05": "gérald", "12-06": "nicolas", "12-07": "ambroise", "12-08": "immaculée conception", "12-09": "pierre fourier", "12-10": "romaric", "12-11": "daniel", "12-12": "jeanne-françoise", "12-13": "lucie", "12-14": "odile", "12-15": "ninon", "12-16": "alice", "12-17": "gaël", "12-18": "gatien", "12-19": "urbain", "12-20": "théophile", "12-21": "pierre canisius", "12-22": "françoise-xavier", "12-23": "armand", "12-24": "adèle", "12-25": "noël", "12-26": "étienne", "12-27": "jean", "12-28": "innocents", "12-29": "david", "12-30": "roger", "12-31": "sylvestre"
+            "05-01": "fête du travail", "05-02": "boris", "05-03": "philippe", "05-04": "sylvain", "05-05": "judith", "05-06": "prudence", "05-07": "gisèle", "05-08": "victoire 1945", "05-09": "pacôme", "05-10": "solange", "05-11": "estelle", "05-12": "achille", "05-13": "rolande", "05-14": "matthias", "05-15": "denise", "05-16": "honoré", "05-17": "pascal", "05-18": "éric", "05-19": "yves", "05-20": "bernardin", "05-21": "constantin", "05-22": "émile", "05-23": "didier", "05-24": "donatien", "05-25": "sophie", "05-26": "bérenger", "05-27": "augustin", "05-28": "germain", "05-29": "aymar", "05-30": "ferdinand", "05-31": "visitation"
         };
 
         function getSaint(dateStr) {
@@ -700,8 +745,21 @@
 
         function delT(i) { db[dateJ].t.splice(i,1); sauver(); }
         function ajouterM() { if(!db[dateJ]) db[dateJ]={t:[], km:"", com:"", p:{}, half:false}; db[dateJ].t.push({s:"", e:""}); sauver(); }
-        function saveInputs() { if(!canEdit()) return; db[dateJ].km = document.getElementById('inKm').value; db[dateJ].com = document.getElementById('inCom').value; localStorage.setItem('adada_db_v7', JSON.stringify(db)); }
-        function toggleHalf() { db[dateJ].half = document.getElementById('halfH').checked; sauver(); }
+        
+        function saveInputs() { 
+            if(!canEdit()) return; 
+            if(!db[dateJ]) db[dateJ]={t:[], km:"", com:"", p:{}, half:false};
+            db[dateJ].km = document.getElementById('inKm').value; 
+            db[dateJ].com = document.getElementById('inCom').value; 
+            localStorage.setItem('adada_db_v7', JSON.stringify(db)); 
+        }
+
+        function toggleHalf() { 
+            if(!db[dateJ]) db[dateJ]={t:[], km:"", com:"", p:{}, half:false};
+            db[dateJ].half = document.getElementById('halfH').checked; 
+            sauver(); 
+        }
+
         function sauver() { localStorage.setItem('adada_db_v7', JSON.stringify(db)); maj(); }
 
         function addStudent() {
@@ -801,33 +859,88 @@
         }
 
         function majRecap() {
-            let data = db[dateJ] || {t:[], p:{}}, jour = getMinutesForDate(dateJ);
-            let txt = "RAPPORT DU " + new Date(dateJ).toLocaleDateString('fr-FR', {day:'numeric', month:'long', year:'numeric'}).toUpperCase() + "\n\n";
-            if (data.t.length > 0) {
-                data.t.forEach((tr,i) => txt += `Vacation ${i+1}: ${tr.s || '??'} - ${tr.e || '??'}\n`);
-            } else {
-                txt += "Aucune vacation enregistrée.\n";
-            }
-            txt += `\nTOTAL RÉEL: ${formatH(jour.r)}\nTOTAL CONV: ${formatH(jour.c)}`;
+            let data = db[dateJ] || {t:[], p:{}, km: "", com: ""}, jour = getMinutesForDate(dateJ);
+            const container = document.getElementById('resRecap');
             
+            let html = `<div class="recap-date-header">${new Date(dateJ).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}</div>`;
+            
+            // Vacations
+            if (data.t.length > 0) {
+                data.t.forEach((tr, i) => {
+                    let durStr = "??";
+                    if(tr.s && tr.e){
+                        let [h1,m1]=tr.s.split(':').map(Number), [h2,m2]=tr.e.split(':').map(Number);
+                        durStr = formatH((h2*60+m2)-(h1*60+m1));
+                    }
+                    html += `<div style="text-align:center">Vacation ${i+1} :&nbsp;&nbsp;&nbsp;<b>${tr.s || '??'}</b> - <b>${tr.e || '??'}</b> (${durStr})</div>`;
+                });
+            } else {
+                html += "<div style='text-align:center'>Aucune vacation enregistrée.</div>";
+            }
+            
+            // Totaux
+            html += `<div style="margin-top:12px; text-align:center">Total : <span class="recap-hours-real">${formatH(jour.r)}</span> (<span class="recap-hours-conv">${formatH(jour.c)} conventionnelles</span>)</div>`;
+            
+            // Kilométrage intelligent
+            let currentKm = parseInt(data.km) || 0;
+            let kmEffectues = 0;
+            let dates = Object.keys(db).sort();
+            let currentIndex = dates.indexOf(dateJ);
+            if (currentIndex > 0 && currentKm > 0) {
+                for (let i = currentIndex - 1; i >= 0; i--) {
+                    let prevKm = parseInt(db[dates[i]].km);
+                    if (prevKm && prevKm > 0) {
+                        kmEffectues = currentKm - prevKm;
+                        break;
+                    }
+                }
+            }
+            
+            html += `<br><div style="text-align:center; line-height:1.4;"><b>${kmEffectues >= 0 ? kmEffectues : 0} kms</b> effectués aujourd'hui<br><span style="font-size:12px; color:#64748b;">(compteur à ${currentKm} kms)</span></div>`;
+            
+            // Notes
+            if (data.com && data.com.trim()) {
+                const formattedCom = data.com.trim().replace(/\n/g, '<br><br>');
+                html += `<br><div style="text-align:center; padding: 10px; background:#f8fafc; border-radius:10px; margin:0 10px;">${formattedCom}</div>`;
+            } else {
+                html += `<br><div style="text-align:center; color:#94a3b8; font-style:italic;">Aucune note.</div>`;
+            }
+            
+            // Élèves - Présentation simplifiée "Matin" / "Soir"
+            html += `<br><div class="recap-section-title" style="text-align: center; border-bottom: 2px solid #e0f2fe; padding-bottom:5px; margin-bottom:15px;">Élèves du jour :</div>`;
             let presences = [];
             eleves.forEach(e => {
                 let p = (data.p && data.p[e]) ? data.p[e] : [];
                 if (p.length > 0) {
-                    const labels = p.map(code => {
-                        if(code === 'M_A') return 'Matin Aller';
-                        if(code === 'M_R') return 'Matin Retour';
-                        if(code === 'S_A') return 'Soir Aller';
-                        if(code === 'S_R') return 'Soir Retour';
-                        return code;
-                    });
-                    presences.push(`${e}: ${labels.join(', ')}`);
+                    const matinA = p.includes('M_A') ? '<b>A</b>' : '';
+                    const matinR = p.includes('M_R') ? '<b>R</b>' : '';
+                    const soirA = p.includes('S_A') ? '<b>A</b>' : '';
+                    const soirR = p.includes('S_R') ? '<b>R</b>' : '';
+                    
+                    const matinPoints = [matinA, matinR].filter(x => x !== "").join(' ');
+                    const soirPoints = [soirA, soirR].filter(x => x !== "").join(' ');
+                    
+                    const formattedName = e.charAt(0).toUpperCase() + e.slice(1);
+                    presences.push(`
+                        <div class="recap-student-line">
+                            <span class="recap-student-name">${formattedName} :</span>
+                            <div class="recap-student-detail">
+                                <span>Matin &nbsp; ${matinPoints || ' '}</span>
+                                <span style="color:#e2e8f0">|</span>
+                                <span>Soir &nbsp; ${soirPoints || ' '}</span>
+                            </div>
+                        </div>`);
                 }
             });
+            
             if (presences.length > 0) {
-                txt += "\n\nPRÉSENCES ÉLÈVES :\n" + presences.join('\n');
+                html += presences.join('');
+                html += `<div style="font-size:10px; text-align:center; color:#94a3b8; margin-top:10px;">( A = Aller | R = Retour )</div>`;
+            } else {
+                html += "<div style='text-align:center; color:#94a3b8;'>Aucun élève pointé.</div>";
             }
-            document.getElementById('resRecap').innerText = txt;
+            
+            container.innerHTML = html;
         }
 
         async function getWeather(d) {
