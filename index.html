@@ -109,12 +109,20 @@
         .heure-display { background: white; padding: 6px 12px; border-radius: 8px; font-weight: 700; border: 1px solid #cbd5e1; min-width: 60px; text-align: center; }
         .heure-display.disabled { background: #f8fafc; color: #94a3b8; border-color: #e2e8f0; cursor: default; }
 
-        .btn-delete { 
-            color: #f87171; border: none; background: none; 
-            padding: 8px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: transform 0.1s ease;
+        .btn-ctrl { 
+            background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; 
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #0369a1; transition: all 0.2s;
         }
-        .btn-delete:active { transform: scale(0.9); }
+        .btn-ctrl:active { background: #e0f2fe; transform: scale(0.95); }
+        .btn-ctrl svg { width: 18px; height: 18px; }
+
+        .btn-delete-red { 
+            color: #f87171; border: 1px solid #fca5a5; background: #fff1f1;
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border-radius: 10px; transition: transform 0.1s ease;
+        }
+        .btn-delete-red:active { transform: scale(0.9); }
 
         .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); padding: 10px; z-index: 100; align-items: center; justify-content: center; }
         .modal-content { background: white; border-radius: 24px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
@@ -129,7 +137,7 @@
         #clockNumbersLayer {
             position: absolute;
             inset: 0;
-            transition: opacity 0.2s ease-in-out; /* Plus rapide ici */
+            transition: opacity 0.2s ease-in-out; 
         }
 
         .clock-center { 
@@ -214,13 +222,6 @@
         }
         .student-name { flex-grow: 1; font-weight: 800; font-size: 13px; color: #334155; text-transform: uppercase; }
         .student-controls { display: flex; gap: 8px; }
-        .btn-ctrl { 
-            background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; 
-            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: #0369a1; transition: all 0.2s;
-        }
-        .btn-ctrl:active { background: #e0f2fe; transform: scale(0.95); }
-        .btn-ctrl svg { width: 18px; height: 18px; }
 
         .pres-row {
             margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;
@@ -262,6 +263,16 @@
             border-top: 1px solid #f1f5f9;
             flex-shrink: 0;
         }
+
+        /* Modification demandée : Couleur violet pastel et majuscule uniquement sur l'initiale */
+        #saintAffichage {
+            color: #a78bfa;
+            font-weight: 700;
+            font-size: 12px;
+            text-transform: capitalize;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
     </style>
 </head>
 <body>
@@ -271,7 +282,7 @@
             <button onclick="navDate(-1)" style="border:none; background:none; font-size:22px; color:#64748b;">❮</button>
             <div style="flex-grow: 1;">
                 <b id="dateAffichage" style="font-size: 13px; color:#334155;">...</b>
-                <div id="saintAffichage" style="font-size:11px; font-weight:600; color:#0369a1; margin-top:4px;"></div>
+                <div id="saintAffichage">...</div>
             </div>
             <button id="btnNext" onclick="navDate(1)" style="border:none; background:none; font-size:22px; color:#64748b;">❯</button>
         </div>
@@ -378,7 +389,7 @@
             </div>
             <div id="gridP" class="modal-body-scroll"></div>
             <div class="modal-footer">
-                <button onclick="fermer('modPres')" style="width:100%; padding:14px; background:#10b981; color:white; border:none; border-radius:12px; font-weight: 800; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">VALIDER LE POINTAGE</button>
+                <button onclick="fermer('modPres')" style="width:100%; padding:14px; background:#10b981; color:white; border:none; border-radius:12px; font-weight: 800; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">VALIDER</button>
             </div>
         </div>
     </div>
@@ -405,6 +416,28 @@
         let eleves = JSON.parse(localStorage.getItem('adada_eleves_v7')) || [];
         let editMode = false, activeTrancheIdx = -1, activeField = '', clockH = 8, clockM = 0;
         let clockMode = 'H';
+
+        const saints = {
+            "01-01": "jour de l'an", "01-02": "basile", "01-03": "geneviève", "01-04": "odilon", "01-05": "édouard", "01-06": "mélaine", "01-07": "raymond", "01-08": "lucien", "01-09": "alix", "01-10": "guillaume", "01-11": "pauline", "01-12": "tatiana", "01-13": "yvette", "01-14": "nina", "01-15": "rémi", "01-16": "marcel", "01-17": "roseline", "01-18": "prisca", "01-19": "marius", "01-20": "sébastien", "01-21": "agnès", "01-22": "vincent", "01-23": "barnard", "01-24": "françois de sales", "01-25": "conversion de paul", "01-26": "paule", "01-27": "angèle", "01-28": "thomas d'aquin", "01-29": "gildas", "01-30": "martine", "01-31": "marcelle",
+            "02-01": "ella", "02-02": "présentation", "02-03": "blaise", "02-04": "véronique", "02-05": "agathe", "02-06": "gaston", "02-07": "eugénie", "02-08": "jacqueline", "02-09": "apolline", "02-10": "arnaud", "02-11": "N.-D. de lourdes", "02-12": "félix", "02-13": "béatrice", "02-14": "valentin", "02-15": "claude", "02-16": "julienne", "02-17": "alexis", "02-18": "bernadette", "02-19": "gabin", "02-20": "aimée", "02-21": "pierre-damien", "02-22": "isabelle", "02-23": "lazare", "02-24": "modeste", "02-25": "roméo", "02-26": "nestor", "02-27": "honorine", "02-28": "romain", "02-29": "auguste",
+            "03-01": "aubin", "03-02": "charles le bon", "03-03": "guénolé", "03-04": "casimir", "03-05": "olive", "03-06": "colette", "03-07": "félicité", "03-08": "jean de dieu", "03-09": "françoise", "03-10": "vivien", "03-11": "rosine", "03-12": "justine", "03-13": "rodrigue", "03-14": "mathilde", "03-15": "louise", "03-16": "bénédicte", "03-17": "patrice", "03-18": "cyrille", "03-19": "joseph", "03-20": "herbert", "03-21": "clémence", "03-22": "léa", "03-23": "victorien", "03-24": "catherine de suède", "03-25": "annonciation", "03-26": "larissa", "03-27": "habib", "03-28": "gontran", "03-29": "gwladys", "03-30": "amédée", "03-31": "benjamin",
+            "04-01": "hugues", "04-02": "sandrine", "04-03": "richard", "04-04": "isidore", "04-05": "irène", "04-06": "marcellin", "04-07": "J.-B. de la salle", "04-08": "julie", "04-09": "gautier", "04-10": "fulbert", "04-11": "stanislas", "04-12": "jules", "04-13": "ida", "04-14": "maxime", "04-15": "paterne", "04-16": "benoît-joseph", "04-17": "anicet", "04-18": "parfait", "04-19": "emma", "04-20": "odette", "04-21": "anselme", "04-22": "alexandre", "04-23": "georges", "04-24": "fidèle", "04-25": "marc", "04-26": "alida", "04-27": "zita", "04-28": "valérie", "04-29": "catherine de sienne", "04-30": "robert",
+            "05-01": "fête du travail", "05-02": "boris", "05-03": "philippe", "05-04": "sylvain", "05-05": "judith", "05-06": "prudence", "05-07": "gisèle", "05-08": "victoire 1945", "05-09": "pacôme", "05-10": "solange", "05-11": "estelle", "05-12": "achille", "05-13": "rolande", "05-14": "matthias", "05-15": "denise", "05-16": "honoré", "05-17": "pascal", "05-18": "éric", "05-19": "yves", "05-20": "bernardin", "05-21": "constantin", "05-22": "émile", "05-23": "didier", "05-24": "donatien", "05-25": "sophie", "05-26": "bérenger", "05-27": "augustin", "05-28": "germain", "05-29": "aymar", "05-30": "ferdinand", "05-31": "visitation",
+            "06-01": "justin", "06-02": "blandine", "06-03": "kévin", "06-04": "clotilde", "06-05": "igor", "06-06": "norbert", "06-07": "gilbert", "06-08": "médard", "06-09": "diane", "06-10": "landry", "06-11": "barnabé", "06-12": "guy", "06-13": "antoine de padoue", "06-14": "élisée", "06-15": "germaine", "06-16": "jean-françois régis", "06-17": "hervé", "06-18": "léonce", "06-19": "romuald", "06-20": "silvère", "06-21": "rodolphe", "06-22": "alban", "06-23": "audrey", "06-24": "jean-baptiste", "06-25": "prosper", "06-26": "anthelme", "06-27": "fernand", "06-28": "irénée", "06-29": "pierre et paul", "06-30": "martial",
+            "07-01": "thierry", "07-02": "martinien", "07-03": "thomas", "07-04": "florent", "07-05": "antoine", "07-06": "mariette", "07-07": "raoul", "07-08": "thibault", "07-09": "amandine", "07-10": "ulrich", "07-11": "benoît", "07-12": "olivier", "07-13": "henri et joël", "07-14": "fête nationale", "07-15": "donald", "07-16": "N.-D. du mont-carmel", "07-17": "charlotte", "07-18": "frédéric", "07-19": "arsène", "07-20": "marina", "07-21": "victor", "07-22": "marie-madeleine", "07-23": "brigitte", "07-24": "christine", "07-25": "jacques", "07-26": "anne et joachim", "07-27": "nathalie", "07-28": "samson", "07-29": "marthe", "07-30": "juliette", "07-31": "ignace de loyola",
+            "08-01": "alphonse", "08-02": "julien-eymard", "08-03": "lydie", "08-04": "jean-marie vianney", "08-05": "abel", "08-06": "transfiguration", "08-07": "gaétan", "08-08": "dominique", "08-09": "amour", "08-10": "laurent", "08-11": "claire", "08-12": "clarisse", "08-13": "hippolyte", "08-14": "evrard", "08-15": "assomption", "08-16": "armel", "08-17": "hyacinthe", "08-18": "hélène", "08-19": "jean eudes", "08-20": "bernard", "08-21": "christophe", "08-22": "fabrice", "08-23": "rose de lima", "08-24": "barthélemy", "08-25": "louis", "08-26": "natacha", "08-27": "monique", "08-28": "augustin", "08-29": "sabine", "08-30": "fiacre", "08-31": "aristide",
+            "09-01": "gilles", "09-02": "ingrid", "09-03": "grégoire", "09-04": "rosalie", "09-05": "raïssa", "09-06": "bertrand", "09-07": "reine", "09-08": "nativité de marie", "09-09": "alain", "09-10": "inès", "09-11": "adelphe", "09-12": "apollinaire", "09-13": "aimé", "09-14": "sainte-croix", "09-15": "roland", "09-16": "édith", "09-17": "renaud", "09-18": "nadège", "09-19": "émilie", "09-20": "davy", "09-21": "matthieu", "09-22": "maurice", "09-23": "constant", "09-24": "thècle", "09-25": "hermann", "09-26": "côme et damien", "09-27": "vincent de paul", "09-28": "venceslas", "09-29": "michel, gabriel et raphaël", "09-30": "jérôme",
+            "10-01": "thérèse de l'enfant-jésus", "10-02": "léger", "10-03": "gérard", "10-04": "françois d'assise", "10-05": "fleur", "10-06": "bruno", "10-07": "serge", "10-08": "pélagie", "10-09": "denis", "10-10": "ghislain", "10-11": "firmin", "10-12": "wilfried", "10-13": "géraud", "10-14": "juste", "10-15": "thérèse d'avila", "10-16": "edwige", "10-17": "baudouin", "10-18": "luc", "10-19": "rené", "10-20": "adeline", "10-21": "céline", "10-22": "élodie", "10-23": "jean de capistran", "10-24": "florentin", "10-25": "crépin", "10-26": "dimitri", "10-27": "émeline", "10-28": "jude", "10-29": "narcisse", "10-30": "bienvenue", "10-31": "quentin",
+            "11-01": "toussaint", "11-02": "défunts", "11-03": "hubert", "11-04": "charles", "11-05": "sylvie", "11-06": "bertille", "11-07": "carine", "11-08": "geoffroy", "11-09": "théodore", "11-10": "léon", "11-11": "armistice 1918", "11-12": "christian", "11-13": "brice", "11-14": "sidoine", "11-15": "albert", "11-16": "marguerite", "11-17": "élisabeth", "11-18": "aude", "11-19": "tanguy", "11-20": "edmond", "11-21": "présence de marie", "11-22": "cécile", "11-23": "clément", "11-24": "flora", "11-25": "catherine", "11-26": "delphine", "11-27": "séverin", "11-28": "jacques de la marche", "11-29": "saturnin", "11-30": "andré",
+            "12-01": "florence", "12-02": "viviane", "12-03": "françois-xavier", "12-04": "barbara", "12-05": "gérald", "12-06": "nicolas", "12-07": "ambroise", "12-08": "immaculée conception", "12-09": "pierre fourier", "12-10": "romaric", "12-11": "daniel", "12-12": "jeanne-françoise", "12-13": "lucie", "12-14": "odile", "12-15": "ninon", "12-16": "alice", "12-17": "gaël", "12-18": "gatien", "12-19": "urbain", "12-20": "théophile", "12-21": "pierre canisius", "12-22": "françoise-xavier", "12-23": "armand", "12-24": "adèle", "12-25": "noël", "12-26": "étienne", "12-27": "jean", "12-28": "innocents", "12-29": "david", "12-30": "roger", "12-31": "sylvestre"
+        };
+
+        function getSaint(dateStr) {
+            const parts = dateStr.split('-');
+            const key = parts[1] + '-' + parts[2];
+            // On s'assure que le texte est en minuscules ici, le CSS se charge de la capitale sur l'initiale
+            return saints[key] ? "Saint " + saints[key].toLowerCase() : "";
+        }
 
         document.querySelectorAll('details').forEach((detail) => {
             detail.addEventListener('toggle', (e) => {
@@ -439,6 +472,10 @@
         function maj() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
             document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'}).toUpperCase();
+            
+            // Mise à jour du Saint
+            document.getElementById('saintAffichage').innerText = getSaint(dateJ);
+
             document.getElementById('btnNext').style.visibility = (dateJ >= today) ? 'hidden' : 'visible';
             document.getElementById('btnToday').style.display = (dateJ === today) ? 'none' : 'flex';
             
@@ -475,11 +512,10 @@
                     <span style="color:#cbd5e1">➔</span>
                     <div class="heure-display ${!editing?'disabled':''}" onclick="ouvrirHorloge(${i},'e','${tr.e}')">${tr.e || '--:--'}</div>
                     ${editing ? `
-                        <button class="btn-delete" onclick="delT(${i})">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M3 6h18"></path>
-                                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                        <button class="btn-delete-red" onclick="delT(${i})">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
                         </button>` : ''}
                 </div>`).join('') || '<p style="text-align:center; color:#94a3b8; font-size:11px;">Aucune vacation</p>';
@@ -553,7 +589,7 @@
                     if (clockMode === 'H') {
                         setTimeout(() => {
                             if (clockMode === 'H') setClockMode('M');
-                        }, 250); // Plus rapide pour la transition automatique
+                        }, 250); 
                     }
                     return;
                 }
@@ -617,18 +653,13 @@
 
         function setClockMode(m) {
             const layer = document.getElementById('clockNumbersLayer');
-            
             layer.style.opacity = '0';
-            
             clockMode = m;
             document.getElementById('clockValH').className = (m === 'H' ? 'active-unit' : 'inactive-unit');
             document.getElementById('clockValM').className = (m === 'M' ? 'active-unit' : 'inactive-unit');
-            
-            // Délai raccourci pour plus de réactivité
             setTimeout(() => {
                 renderClockNumbers();
                 updateClockUI();
-                
                 requestAnimationFrame(() => {
                     layer.style.opacity = '1';
                 });
@@ -638,17 +669,13 @@
         function ouvrirHorloge(idx, f, v) { 
             if(!canEdit()) return; activeTrancheIdx=idx; activeField=f;
             if(v){ let [h,m]=v.split(':').map(Number); clockH=h; clockM=m; }
-            
             const hand = document.getElementById('hand');
             hand.classList.add('no-transition');
-            
             setClockMode('H');
             updateClockUI();
-            
             setTimeout(() => {
                 hand.classList.remove('no-transition');
             }, 50);
-
             openModal('modClock'); 
         }
 
@@ -731,7 +758,7 @@
                         <button onclick="moveStudent(${i}, 1)" class="btn-ctrl" ${i === eleves.length - 1 ? 'disabled style="opacity:0.3; cursor:default"' : ''}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
-                        <button onclick="removeStudent(${i})" class="btn-ctrl" style="color:#f87171; border-color:#fca5a5; background:#fff1f1">
+                        <button onclick="removeStudent(${i})" class="btn-delete-red">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -803,7 +830,6 @@
             if (presences.length > 0) {
                 txt += "\n\nPRÉSENCES ÉLÈVES :\n" + presences.join('\n');
             }
-            
             document.getElementById('resRecap').innerText = txt;
         }
 
