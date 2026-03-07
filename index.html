@@ -88,6 +88,13 @@
             50% { box-shadow: 0 0 20px 8px rgba(248, 113, 113, 0.25); transform: scale(1.04); border-color: #ef4444; }
             100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0); transform: scale(1); border-color: #f87171; }
         }
+
+        /* Nouvelle animation de pulsation pour le bouton Éditer */
+        @keyframes pulse-edit {
+            0% { background: #fecaca; box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4); }
+            50% { background: #fca5a5; box-shadow: 0 0 12px 4px rgba(248, 113, 113, 0.3); }
+            100% { background: #fecaca; box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.4); }
+        }
         
         .btn-waiting-retour {
             animation: pulse-green 1.5s infinite;
@@ -132,12 +139,12 @@
 
         .nav-link-btn:active { transform: scale(0.95); filter: brightness(0.95); }
         
-        /* Couleur modifiée pour le bouton éditer actif (Rouge doux/corail) */
+        /* Style et Pulsation pour le bouton éditer actif */
         #btnEdit.active {
-            background: #fecaca; 
+            animation: pulse-edit 2s infinite ease-in-out;
             color: #991b1b;    
             border-color: #f87171;
-            box-shadow: 0 0 10px rgba(248, 113, 113, 0.3);
+            font-weight: 900;
         }
 
         .heure-box { background: #f8fafc; padding: 10px; border-radius: 12px; margin-top: 6px; display: flex; align-items: center; justify-content: space-around; border: 1px solid #f1f5f9; }
