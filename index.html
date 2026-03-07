@@ -290,7 +290,7 @@
             text-transform: uppercase;
         }
         .recap-hours-real { color: #ef4444; font-weight: 800; }
-        .recap-hours-conv { color: #10b981; font-weight: 800; }
+        .recap-hours-conv { color: #10b981; font-weight: 400; } 
         .recap-section-title { font-weight: 800; margin-top: 16px; margin-bottom: 8px; }
         .recap-student-line { 
             margin-bottom: 10px; 
@@ -864,8 +864,7 @@
             
             let html = `<div class="recap-date-header">${new Date(dateJ).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'})}</div>`;
             
-            // Vacations
-            if (data.t.length > 0) {
+            if (data.t && data.t.length > 0) {
                 data.t.forEach((tr, i) => {
                     let durStr = "??";
                     if(tr.s && tr.e){
@@ -874,39 +873,33 @@
                     }
                     html += `<div style="text-align:center">Vacation ${i+1} :&nbsp;&nbsp;&nbsp;<b>${tr.s || '??'}</b> - <b>${tr.e || '??'}</b> (${durStr})</div>`;
                 });
+                html += `<div style="margin-top:12px; text-align:center">Total : <span class="recap-hours-real">${formatH(jour.r)}</span> (<span class="recap-hours-conv">${formatH(jour.c)} conventionnelles</span>)</div>`;
             } else {
-                html += "<div style='text-align:center'>Aucune vacation enregistrée.</div>";
+                html += `<div style="text-align:center; color:#94a3b8; font-style:italic;">Aucune vacation aujourd'hui</div>`;
             }
             
-            // Totaux
-            html += `<div style="margin-top:12px; text-align:center">Total : <span class="recap-hours-real">${formatH(jour.r)}</span> (<span class="recap-hours-conv">${formatH(jour.c)} conventionnelles</span>)</div>`;
-            
-            // Kilométrage intelligent
             let currentKm = parseInt(data.km) || 0;
-            let kmEffectues = 0;
-            let dates = Object.keys(db).sort();
-            let currentIndex = dates.indexOf(dateJ);
-            if (currentIndex > 0 && currentKm > 0) {
-                for (let i = currentIndex - 1; i >= 0; i--) {
-                    let prevKm = parseInt(db[dates[i]].km);
-                    if (prevKm && prevKm > 0) {
-                        kmEffectues = currentKm - prevKm;
-                        break;
+            if (currentKm > 0) {
+                let kmEffectues = 0;
+                let dates = Object.keys(db).sort();
+                let currentIndex = dates.indexOf(dateJ);
+                if (currentIndex > 0) {
+                    for (let i = currentIndex - 1; i >= 0; i--) {
+                        let prevKm = parseInt(db[dates[i]].km);
+                        if (prevKm && prevKm > 0) {
+                            kmEffectues = currentKm - prevKm;
+                            break;
+                        }
                     }
                 }
+                html += `<br><div style="text-align:center; line-height:1.4;"><b>${kmEffectues >= 0 ? kmEffectues : 0} kms</b> effectués aujourd'hui<br><span style="font-size:12px; color:#64748b;">(compteur à ${currentKm} kms)</span></div>`;
             }
             
-            html += `<br><div style="text-align:center; line-height:1.4;"><b>${kmEffectues >= 0 ? kmEffectues : 0} kms</b> effectués aujourd'hui<br><span style="font-size:12px; color:#64748b;">(compteur à ${currentKm} kms)</span></div>`;
-            
-            // Notes
             if (data.com && data.com.trim()) {
                 const formattedCom = data.com.trim().replace(/\n/g, '<br><br>');
                 html += `<br><div style="text-align:center; padding: 10px; background:#f8fafc; border-radius:10px; margin:0 10px;">${formattedCom}</div>`;
-            } else {
-                html += `<br><div style="text-align:center; color:#94a3b8; font-style:italic;">Aucune note.</div>`;
             }
             
-            // Élèves - Présentation simplifiée "Matin" / "Soir"
             html += `<br><div class="recap-section-title" style="text-align: center; border-bottom: 2px solid #e0f2fe; padding-bottom:5px; margin-bottom:15px;">Élèves du jour :</div>`;
             let presences = [];
             eleves.forEach(e => {
