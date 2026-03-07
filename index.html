@@ -123,7 +123,15 @@
             width: 280px; height: 280px; border-radius: 50%; background: #f8fafc; 
             margin: 20px auto; position: relative; touch-action: none; 
             border: 4px solid #f1f5f9; box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
         }
+        
+        #clockNumbersLayer {
+            position: absolute;
+            inset: 0;
+            transition: opacity 0.2s ease-in-out; /* Plus rapide ici */
+        }
+
         .clock-center { 
             position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; 
             background: #10b981; border-radius: 50%; transform: translate(-50%, -50%); z-index: 10; 
@@ -131,8 +139,11 @@
         .clock-hand { 
             position: absolute; width: 2px; background: #10b981; 
             bottom: 50%; left: calc(50% - 1px); transform-origin: bottom center; z-index: 5; 
-            transition: all 0.1s ease;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), height 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+        
+        .clock-hand.no-transition { transition: none !important; }
+
         .clock-hand::after { 
             content: ''; position: absolute; top: -16px; left: -16px; 
             width: 32px; height: 32px; background: rgba(16, 185, 129, 0.1); 
@@ -145,8 +156,8 @@
         }
         .clock-number.outer { color: #94a3b8; font-size: 11px; }
 
-        .active-unit { color: #10b981 !important; border-bottom: 3px solid #10b981; padding-bottom: 2px; }
-        .inactive-unit { color: #cbd5e1 !important; cursor: pointer; }
+        .active-unit { color: #10b981 !important; border-bottom: 3px solid #10b981; padding-bottom: 2px; transition: color 0.2s; }
+        .inactive-unit { color: #cbd5e1 !important; cursor: pointer; transition: color 0.2s; }
 
         .input-harmonized { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-weight: bold; width: 85%; text-align: center; display: block; margin: 0 auto; font-family: inherit; background: #fff; }
         
@@ -192,7 +203,6 @@
         .stat-val-r { font-weight: 700; font-size: 15px; color: #3b82f6; } 
         .stat-val-c { font-weight: 800; font-size: 16px; color: #059669; }
 
-        /* Styles for Student List Management */
         .student-item {
             display: flex;
             align-items: center;
@@ -212,12 +222,12 @@
         .btn-ctrl:active { background: #e0f2fe; transform: scale(0.95); }
         .btn-ctrl svg { width: 18px; height: 18px; }
 
-        /* Pointage specific layout */
         .pres-row {
             margin-bottom: 15px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;
         }
         .pres-name {
             font-weight:bold; color:#334155; margin-bottom: 10px; text-transform: uppercase; font-size: 13px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;
+            text-align: center;
         }
         .pres-grid {
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
@@ -229,7 +239,6 @@
             font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; grid-column: span 2; margin-top: 4px;
         }
 
-        /* Fixed Modal Footer Layout */
         .modal-content.fixed-footer {
             display: flex;
             flex-direction: column;
@@ -341,6 +350,7 @@
                 </div>
                 
                 <div class="clock-container" id="clockUI">
+                    <div id="clockNumbersLayer"></div>
                     <div class="clock-center"></div>
                     <div class="clock-hand" id="hand"></div>
                 </div>
@@ -353,7 +363,6 @@
         </div>
     </div>
 
-    <!-- Modal Rapport -->
     <div id="modRecap" class="modal" onclick="fermer('modRecap')">
         <div class="modal-content" style="padding:20px;" onclick="event.stopPropagation()">
             <h3>RAPPORT QUOTIDIEN</h3>
@@ -362,7 +371,6 @@
         </div>
     </div>
 
-    <!-- Modal Pointage Présences -->
     <div id="modPres" class="modal">
         <div class="modal-content fixed-footer">
             <div class="modal-header">
@@ -375,7 +383,6 @@
         </div>
     </div>
 
-    <!-- Modal Liste des Élèves -->
     <div id="modList" class="modal">
         <div class="modal-content fixed-footer">
             <div class="modal-header">
@@ -541,8 +548,13 @@
             const handleClock = (e) => {
                 if(e.type === 'touchmove') e.preventDefault();
                 if(e.buttons !== 1 && e.type !== 'touchmove' && e.type !== 'touchend' && e.type !== 'mouseup') return;
+                
                 if (e.type === 'touchend' || e.type === 'mouseup') {
-                    if (clockMode === 'H') setClockMode('M');
+                    if (clockMode === 'H') {
+                        setTimeout(() => {
+                            if (clockMode === 'H') setClockMode('M');
+                        }, 250); // Plus rapide pour la transition automatique
+                    }
                     return;
                 }
                 const rect = ui.getBoundingClientRect();
@@ -571,8 +583,8 @@
         }
 
         function renderClockNumbers() {
-            const ui = document.getElementById('clockUI');
-            ui.querySelectorAll('.clock-number').forEach(n => n.remove());
+            const layer = document.getElementById('clockNumbersLayer');
+            layer.innerHTML = "";
             for(let i=1; i<=12; i++) {
                 const angle = (i * 30 - 90) * (Math.PI / 180);
                 if (clockMode === 'H') {
@@ -581,7 +593,7 @@
                     inner.innerText = i;
                     inner.style.left = 50 + 32 * Math.cos(angle) + '%';
                     inner.style.top = 50 + 32 * Math.sin(angle) + '%';
-                    ui.appendChild(inner);
+                    layer.appendChild(inner);
                     const outer = document.createElement('div');
                     outer.className = 'clock-number outer';
                     let hOuter = i + 12;
@@ -589,7 +601,7 @@
                     outer.innerText = hOuter;
                     outer.style.left = 50 + 44 * Math.cos(angle) + '%';
                     outer.style.top = 50 + 44 * Math.sin(angle) + '%';
-                    ui.appendChild(outer);
+                    layer.appendChild(outer);
                 } else {
                     const mDiv = document.createElement('div');
                     mDiv.className = 'clock-number';
@@ -598,23 +610,45 @@
                     mDiv.innerText = val.toString().padStart(2, '0');
                     mDiv.style.left = 50 + 40 * Math.cos(angle) + '%';
                     mDiv.style.top = 50 + 40 * Math.sin(angle) + '%';
-                    ui.appendChild(mDiv);
+                    layer.appendChild(mDiv);
                 }
             }
         }
 
         function setClockMode(m) {
+            const layer = document.getElementById('clockNumbersLayer');
+            
+            layer.style.opacity = '0';
+            
             clockMode = m;
             document.getElementById('clockValH').className = (m === 'H' ? 'active-unit' : 'inactive-unit');
             document.getElementById('clockValM').className = (m === 'M' ? 'active-unit' : 'inactive-unit');
-            renderClockNumbers();
-            updateClockUI();
+            
+            // Délai raccourci pour plus de réactivité
+            setTimeout(() => {
+                renderClockNumbers();
+                updateClockUI();
+                
+                requestAnimationFrame(() => {
+                    layer.style.opacity = '1';
+                });
+            }, 80); 
         }
 
         function ouvrirHorloge(idx, f, v) { 
             if(!canEdit()) return; activeTrancheIdx=idx; activeField=f;
             if(v){ let [h,m]=v.split(':').map(Number); clockH=h; clockM=m; }
+            
+            const hand = document.getElementById('hand');
+            hand.classList.add('no-transition');
+            
             setClockMode('H');
+            updateClockUI();
+            
+            setTimeout(() => {
+                hand.classList.remove('no-transition');
+            }, 50);
+
             openModal('modClock'); 
         }
 
@@ -645,8 +679,6 @@
         function saveInputs() { if(!canEdit()) return; db[dateJ].km = document.getElementById('inKm').value; db[dateJ].com = document.getElementById('inCom').value; localStorage.setItem('adada_db_v7', JSON.stringify(db)); }
         function toggleHalf() { db[dateJ].half = document.getElementById('halfH').checked; sauver(); }
         function sauver() { localStorage.setItem('adada_db_v7', JSON.stringify(db)); maj(); }
-
-        // --- Student Management Functions ---
 
         function addStudent() {
             const input = document.getElementById('newStudent');
@@ -715,7 +747,7 @@
             if (!data.p) data.p = {};
             const grid = document.getElementById('gridP');
             if (eleves.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px;">Veuillez d\'abord ajouter des élèves dans l\'onglet "LISTE DES ÉLÈVES".</p>';
+                grid.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:40px; font-weight: 700; text-transform: uppercase; font-size: 13px;">Ajouter d\'abord des élèves</p>';
                 return;
             }
             grid.innerHTML = eleves.map(e => {
