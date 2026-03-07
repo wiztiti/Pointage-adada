@@ -19,6 +19,7 @@
             padding: 12px; border-radius: 16px; 
             margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); 
             border: 1px solid #bae6fd;
+            text-align: center;
         }
 
         .card { 
@@ -187,7 +188,6 @@
         .modal-footer { padding: 12px 16px 16px; background: white; border-top: 1px solid #f1f5f9; }
         .modal-header { padding: 16px 16px 8px; border-bottom: 1px solid #f1f5f9; }
 
-        /* Style Météo Agrandie */
         #weather-widget {
             display: flex;
             align-items: center;
@@ -200,6 +200,16 @@
         .weather-icon { width: 70px; height: 70px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
         .weather-temp { font-weight: 800; font-size: 20px; color: #334155; display: flex; align-items: baseline; gap: 8px; }
         .weather-temp span { color: #94a3b8; font-weight: 500; font-size: 13px; text-transform: uppercase; }
+
+        /* Style Saint du jour */
+        .saint-display {
+            font-size: 11px;
+            font-weight: 600;
+            color: #0369a1;
+            margin-top: 4px;
+            letter-spacing: 0.3px;
+            opacity: 0.85;
+        }
     </style>
 </head>
 <body>
@@ -207,7 +217,10 @@
     <div class="top-card">
         <div style="display:flex; justify-content: space-between; align-items: center;">
             <button onclick="navDate(-1)" style="border:none; background:none; font-size:22px; color:#64748b; cursor:pointer; padding: 5px 15px;">❮</button>
-            <b id="dateAffichage" style="font-size: 13px; color:#334155; text-align: center;">...</b>
+            <div style="flex-grow: 1;">
+                <b id="dateAffichage" style="font-size: 13px; color:#334155;">...</b>
+                <div id="saintAffichage" class="saint-display"></div>
+            </div>
             <button id="btnNext" onclick="navDate(1)" style="border:none; background:none; font-size:22px; color:#64748b; cursor:pointer; padding: 5px 15px;">❯</button>
         </div>
         <div class="top-nav-links">
@@ -401,10 +414,39 @@
             return lastKm;
         }
 
+        // --- NOUVELLE FONCTION SAINT DU JOUR ---
+        function getSaint(dateStr) {
+            const d = new Date(dateStr);
+            const mois = d.getMonth() + 1;
+            const jour = d.getDate();
+            
+            const saints = {
+                "1-1": "Jour de l'An", "1-2": "Basile", "1-3": "Geneviève", "1-4": "Odilon", "1-5": "Édouard", "1-6": "Mélaine", "1-20": "Sébastien", "1-21": "Agnès",
+                "2-1": "Ella", "2-2": "Présentation", "2-3": "Blaise", "2-5": "Agathe", "2-14": "Valentin",
+                "3-1": "Aubin", "3-2": "Charles le Bon", "3-3": "Gwenolé", "3-4": "Casimir", "3-5": "Olive", "3-6": "Colette", "3-7": "Félicité", "3-8": "Jean de Dieu", "3-17": "Patrick", "3-19": "Joseph",
+                "4-1": "Hugues", "4-2": "Sandrine", "4-23": "Georges", "4-25": "Marc", "4-28": "Valérie",
+                "5-1": "Fête du Travail", "5-11": "Estelle", "5-19": "Yves", "5-22": "Émile", "5-30": "Ferdinand",
+                "6-1": "Justin", "6-5": "Igor", "6-13": "Antoine de P.", "6-21": "Rodolphe", "6-24": "Jean-Baptiste", "6-29": "Pierre - Paul",
+                "7-1": "Thierry", "7-3": "Thomas", "7-11": "Benoît", "7-14": "Fête Nationale", "7-20": "Marina", "7-25": "Jacques", "7-26": "Anne",
+                "8-1": "Alphonse", "8-10": "Laurent", "8-15": "Assomption", "8-18": "Hélène", "8-25": "Louis",
+                "9-1": "Gilles", "9-8": "Adrien", "9-21": "Matthieu", "9-29": "Michel", "9-30": "Jérôme",
+                "10-1": "Thérèse de l'E.", "10-2": "Léger", "10-4": "François d'Assise", "10-5": "Fleur", "10-9": "Denis", "10-15": "Aurélie", "10-18": "Luc",
+                "11-1": "Toussaint", "11-11": "Martin", "11-22": "Cécile", "11-25": "Catherine",
+                "12-1": "Florence", "12-6": "Nicolas", "12-13": "Lucie", "12-24": "Adèle", "12-25": "Noël", "12-26": "Étienne"
+            };
+
+            const key = `${mois}-${jour}`;
+            return saints[key] ? "St " + saints[key] : "Bonne journée !";
+        }
+
         function maj() {
             let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
             let options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
             document.getElementById('dateAffichage').innerText = new Date(dateJ).toLocaleDateString('fr-FR', options).toUpperCase();
+            
+            // Mise à jour du saint
+            document.getElementById('saintAffichage').innerText = getSaint(dateJ);
+
             document.getElementById('btnNext').disabled = (dateJ >= today);
             document.getElementById('btnToday').style.display = (dateJ === today) ? 'none' : 'flex';
 
