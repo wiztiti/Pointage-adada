@@ -11,14 +11,14 @@
             background-attachment: fixed;
             padding: 10px; margin: 0; color: #1e293b; 
             min-height: 100vh;
-            padding-bottom: 40px; 
+            padding-bottom: 60px; 
         }
         
         .top-card {
-            background: #fff1f2; /* Rose pastel très léger */
+            background: #e0f2fe;
             padding: 12px; border-radius: 16px; 
             margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); 
-            border: 1px solid #ffe4e6; /* Bordure assortie au rose */
+            border: 1px solid #bae6fd;
         }
 
         .card { 
@@ -107,7 +107,7 @@
             justify-content: center;
             gap: 10px; 
             margin-top: 12px;
-            border-top: 1px solid #ffe4e6;
+            border-top: 1px solid #bae6fd;
             padding-top: 12px;
         }
         
@@ -121,9 +121,9 @@
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-            background: #fff1f2; 
-            color: #9f1239;    
-            border: 1px solid #fecdd3;
+            background: #f0f9ff; 
+            color: #0369a1;    
+            border: 1px solid #bae6fd;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -132,10 +132,10 @@
         .nav-link-btn:active { transform: scale(0.95); filter: brightness(0.95); }
         
         #btnEdit.active {
-            background: #ffd1dc; 
-            color: #b91c1c;    
-            border-color: #ffb7c5;
-            box-shadow: 0 0 10px rgba(255, 183, 197, 0.3);
+            background: #bae6fd; 
+            color: #0c4a6e;    
+            border-color: #7dd3fc;
+            box-shadow: 0 0 10px rgba(125, 211, 252, 0.3);
         }
 
         .heure-box { background: #f8fafc; padding: 10px; border-radius: 12px; margin-top: 6px; display: flex; align-items: center; justify-content: space-around; border: 1px solid #f1f5f9; }
@@ -147,6 +147,9 @@
         
         .input-harmonized { border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px; font-weight: bold; width: 85%; text-align: center; display: block; margin: 0 auto; font-family: inherit; background: #fff; }
         
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
         .btn-valider { width:100%; padding:14px; background:#10b981; color:white; font-weight:bold; border-radius:12px; border:none; cursor:pointer; }
         .btn-gestion-vert { width:100%; padding:14px; border-radius:12px; border:1px solid #bae6fd; background: #f0f9ff; font-size:13px; font-weight:800; color:#0369a1; cursor:pointer; margin-bottom: 10px; }
 
@@ -173,7 +176,7 @@
 
         .eleve-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f5f9; align-items: center; }
         .eleve-controls { display: flex; gap: 10px; align-items: center; }
-        .btn-move { border: none; background: #f1f5f9; color: #64748b; width: 32px; height: 32px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-move { border: none; background: #f1f5f9; color: #64748b; width: 32px; height: 32px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-del-eleve { color: #f87171; border: none; background: none; cursor: pointer; font-size: 20px; font-weight: bold; margin-left: 5px; }
         
         .rapport-total-red { color: #f87171; font-weight: bold; }
@@ -183,6 +186,20 @@
         .modal-body { padding: 10px 16px; overflow-y: auto; flex-grow: 1; -webkit-overflow-scrolling: touch; }
         .modal-footer { padding: 12px 16px 16px; background: white; border-top: 1px solid #f1f5f9; }
         .modal-header { padding: 16px 16px 8px; border-bottom: 1px solid #f1f5f9; }
+
+        /* Style Météo Agrandie */
+        #weather-widget {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 10px;
+            opacity: 0.9;
+        }
+        .weather-icon { width: 70px; height: 70px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        .weather-temp { font-weight: 800; font-size: 20px; color: #334155; display: flex; align-items: baseline; gap: 8px; }
+        .weather-temp span { color: #94a3b8; font-weight: 500; font-size: 13px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -263,6 +280,11 @@
         </div>
     </details>
 
+    <div id="weather-widget">
+        <img id="weather-img" class="weather-icon" src="" style="display:none;">
+        <div id="weather-temps" class="weather-temp"></div>
+    </div>
+
     <!-- Modals -->
     <div id="modClock" class="modal">
         <div class="modal-content" style="text-align:center;">
@@ -329,10 +351,7 @@
         let activeTrancheIdx = -1, activeField = '', clockH = 0, clockM = 0, clockMode = 'H';
 
         function canEdit() { return (dateJ === today) || editMode; }
-        
-        function resetDetails() { 
-            document.querySelectorAll('.section-toggle').forEach(det => det.removeAttribute('open')); 
-        }
+        function resetDetails() { document.querySelectorAll('.section-toggle').forEach(det => det.removeAttribute('open')); }
 
         function navDate(n) { 
             let d = new Date(dateJ); d.setDate(d.getDate() + n); 
@@ -342,9 +361,10 @@
             editMode = false; 
             resetDetails(); 
             maj(); 
+            getWeather(dateJ);
         }
 
-        function goToToday() { dateJ = today; editMode = false; resetDetails(); maj(); }
+        function goToToday() { dateJ = today; editMode = false; resetDetails(); maj(); getWeather(dateJ); }
         function toggleEditMode() { editMode = !editMode; resetDetails(); maj(); }
 
         function clicAction(type) {
@@ -409,27 +429,15 @@
             let running = data.t.length > 0 && lastTranche.s !== "" && lastTranche.e === "";
             let noActivity = data.t.length === 0 || (lastTranche.s !== "" && lastTranche.e !== "");
 
-            // Bouton DÉPART
             let btnD = document.getElementById('btnD');
             btnD.disabled = running;
-            if (noActivity && dateJ === today) {
-                btnD.classList.add('btn-waiting-depart');
-                btnD.innerText = "DÉPART EN ATTENTE";
-            } else {
-                btnD.classList.remove('btn-waiting-depart');
-                btnD.innerText = "DÉPART";
-            }
+            if (noActivity && dateJ === today) { btnD.classList.add('btn-waiting-depart'); btnD.innerText = "DÉPART EN ATTENTE"; }
+            else { btnD.classList.remove('btn-waiting-depart'); btnD.innerText = "DÉPART"; }
 
-            // Bouton RETOUR
             let btnR = document.getElementById('btnR');
             btnR.disabled = !running;
-            if (running && dateJ === today) {
-                btnR.classList.add('btn-waiting-retour');
-                btnR.innerText = "RETOUR EN ATTENTE";
-            } else {
-                btnR.classList.remove('btn-waiting-retour');
-                btnR.innerText = "RETOUR";
-            }
+            if (running && dateJ === today) { btnR.classList.add('btn-waiting-retour'); btnR.innerText = "RETOUR EN ATTENTE"; }
+            else { btnR.classList.remove('btn-waiting-retour'); btnR.innerText = "RETOUR"; }
 
             document.getElementById('listeT').innerHTML = data.t.map((tr, i) => `
                 <div class="heure-box">
@@ -568,6 +576,40 @@
         function toggleHalf() { if(!canEdit()) return; let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false }; data.half = document.getElementById('halfH').checked; db[dateJ] = data; sauver(); }
         function sauver() { localStorage.setItem('adada_db_v5', JSON.stringify(db)); localStorage.setItem('adada_eleves_v5', JSON.stringify(eleves)); maj(); }
         
+        async function getWeather(targetDate) {
+            const img = document.getElementById('weather-img');
+            const txt = document.getElementById('weather-temps');
+            img.style.display = 'none';
+            txt.innerText = 'Chargement...';
+
+            try {
+                const lat = 48.8566;
+                const lon = 2.3522;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&start_date=${targetDate}&end_date=${targetDate}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.daily) {
+                    const max = Math.round(data.daily.temperature_2m_max[0]);
+                    const min = Math.round(data.daily.temperature_2m_min[0]);
+                    const code = data.daily.weathercode[0];
+
+                    let iconUrl = "https://openweathermap.org/img/wn/01d@2x.png";
+                    if (code >= 1 && code <= 3) iconUrl = "https://openweathermap.org/img/wn/02d@2x.png";
+                    if (code >= 45 && code <= 48) iconUrl = "https://openweathermap.org/img/wn/50d@2x.png";
+                    if (code >= 51 && code <= 67) iconUrl = "https://openweathermap.org/img/wn/09d@2x.png";
+                    if (code >= 71 && code <= 77) iconUrl = "https://openweathermap.org/img/wn/13d@2x.png";
+                    if (code >= 80 && code <= 82) iconUrl = "https://openweathermap.org/img/wn/10d@2x.png";
+                    if (code >= 95) iconUrl = "https://openweathermap.org/img/wn/11d@2x.png";
+
+                    img.src = iconUrl;
+                    img.style.display = 'block';
+                    txt.innerHTML = `${min}° <span>min</span>  ${max}° <span>max</span>`;
+                } else { txt.innerText = ""; }
+            } catch (e) { txt.innerText = ""; }
+        }
+
         function ouvrir(id) { 
             if(id === 'modRecap') {
                 let data = db[dateJ] || { t: [], km: "", com: "", p: {}, half: false };
@@ -578,12 +620,9 @@
                 let resDiv = document.getElementById('resRecap');
 
                 if (jour.r === 0 && !data.km && !data.com && presents.length === 0) {
-                    resDiv.innerHTML = "";
-                    resDiv.style.background = "transparent";
-                    resDiv.style.border = "none";
+                    resDiv.innerHTML = ""; resDiv.style.background = "transparent"; resDiv.style.border = "none";
                 } else {
-                    resDiv.style.background = "#f8fafc";
-                    resDiv.style.border = "1px solid #e2e8f0";
+                    resDiv.style.background = "#f8fafc"; resDiv.style.border = "1px solid #e2e8f0";
                     let htmlCont = "<div style='text-align:center; font-weight:bold; margin-bottom:15px;'>" + dateFormatee + "</div>";
                     data.t.forEach((tr, i) => {
                         if(tr.s && tr.e) {
@@ -593,14 +632,12 @@
                         }
                     });
                     if (jour.r > 0) htmlCont += "<span class='rapport-total-red'>Total : " + formatH(jour.r) + "</span> <span class='rapport-total-green'>(" + formatH(jour.c) + ") conv</span><br><br>";
-                    
                     if(data.km) {
                         let prevKm = findLastKm(dateJ);
                         let diffKm = prevKm > 0 ? Math.round(data.km - prevKm) : 0;
                         htmlCont += "<span class='rapport-km-blue-pastel'>" + diffKm + " kms effectués ce jour</span><br>";
                         htmlCont += "<span class='rapport-km-blue-pastel'>(" + Math.round(data.km) + " au compteur)</span><br><br>";
                     }
-                    
                     if(data.com) htmlCont += data.com.replace(/\n/g, '<br>') + "<br><br>";
                     if(presents.length > 0) {
                         presents.forEach(e => {
@@ -616,7 +653,8 @@
             document.getElementById(id).style.display = 'flex'; 
         }
         function fermer(id) { document.getElementById(id).style.display = 'none'; }
-        window.onload = maj;
+        
+        window.onload = () => { maj(); getWeather(dateJ); };
     </script>
 </body>
 </html>
