@@ -601,12 +601,13 @@ html, body {
 .rv-dur { color: var(--text-light); font-size: 0.8rem; }
 .rapport-total {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 12px;
   padding: 12px 0 4px;
 }
-.rt-real { font-family: 'Quicksand', sans-serif; font-size: 1.1rem; font-weight: 700; color: #ef4444; }
-.rt-conv { font-family: 'Quicksand', sans-serif; font-size: 1rem; font-weight: 400; color: #16a34a; }
+.rt-real { font-family: 'Quicksand', sans-serif; font-size: 0.9rem; font-weight: 400; color: #ef4444; }
+.rt-conv { font-family: 'Quicksand', sans-serif; font-size: 0.9rem; font-weight: 400; color: #16a34a; }
 .rapport-km-block { padding: 10px 0; font-size: 0.9rem; color: var(--text-dark); line-height: 1.8; }
 .rapport-note-block { padding: 10px 0; font-size: 0.88rem; color: var(--text-dark); line-height: 1.6; white-space: pre-wrap; }
 .rapport-eleve-entry { padding: 5px 0; font-size: 0.88rem; color: var(--text-dark); }
@@ -1283,8 +1284,8 @@ function openRapport(){
   html+=`<div class="rapport-date-title">${JOURS[d.getDay()]} ${d.getDate()} ${MOIS[d.getMonth()]} ${d.getFullYear()}</div>`;
 
   // Vacations
-  html+='<div class="rapport-section-title">Vacations</div>';
   if(allVacs.length){
+    html+='<div class="rapport-section-title">Vacations</div>';
     allVacs.forEach((v,i)=>{
       const dur=durMin(v.dep,v.ret);
       const durTxt=dur!==null?'durée ('+minToHM(dur)+')':'';
@@ -1294,29 +1295,31 @@ function openRapport(){
         <span class="rv-dur">${durTxt}</span>
       </div>`;
     });
-  } else {html+='<div style="color:#aaa;font-size:.88rem;padding:8px 0;">Aucune vacation</div>';}
 
-  // Totaux
-  html+='<div class="rapport-total">';
-  html+=`<div class="rt-real">Heures réelles : ${minToHM(rMin)}</div>`;
-  html+=`<div class="rt-conv">(Conventionnelles : ${minToHM(cMin)})</div>`;
-  html+='</div>';
-  html+='<div class="divider"></div>';
+    // Totaux
+    html+='<div class="rapport-total">';
+    html+=`<div class="rt-real" style="font-weight:400;">Heures réelles : ${minToHM(rMin)}</div>`;
+    html+=`<div class="rt-conv">(Conv : ${minToHM(cMin)})</div>`;
+    html+='</div>';
+    html+='<div class="divider"></div>';
+  }
 
   // Km
-  const prevDs=prevDay(ds);
-  const prevKm=getDayData(prevDs).km?parseInt(getDayData(prevDs).km):null;
-  const todayKm=dd.km?parseInt(dd.km):null;
-  html+='<div class="rapport-km-block">';
-  if(todayKm){
-    const dist=prevKm!==null?todayKm-prevKm:null;
-    html+=dist!==null?`${dist} kms effectués ce jour<br>`:'';
-    html+=`Compteur à ${todayKm}`;
-  } else {
-    html+='<span style="color:#94a3b8;font-style:italic;font-size:0.85rem;">Vous n\'avez pas relevé le compteur kilométrique aujourd\'hui</span>';
+  if(allVacs.length){
+    const prevDs=prevDay(ds);
+    const prevKm=getDayData(prevDs).km?parseInt(getDayData(prevDs).km):null;
+    const todayKm=dd.km?parseInt(dd.km):null;
+    html+='<div class="rapport-km-block">';
+    if(todayKm){
+      const dist=prevKm!==null?todayKm-prevKm:null;
+      html+=dist!==null?`${dist} kms effectués ce jour<br>`:'';
+      html+=`Compteur à <strong>${todayKm}</strong>`;
+    } else {
+      html+='<span style="display:block;text-align:center;color:#94a3b8;font-style:italic;font-size:0.85rem;">Vous n\'avez pas relevé le compteur kilométrique aujourd\'hui</span>';
+    }
+    html+='</div>';
+    html+='<div class="divider"></div>';
   }
-  html+='</div>';
-  html+='<div class="divider"></div>';
 
   // Note
   if(dd.note&&dd.note.trim()){
@@ -1325,8 +1328,8 @@ function openRapport(){
   }
 
   // Élèves transportés
-  html+='<div class="rapport-section-title">Élèves transportés aujourd\'hui</div>';
   let hasElv=false;
+  let elvHtml='';
   state.eleves.forEach(p=>{
     const pr=pres[p];if(!pr)return;
     const moments=MOMENTS.filter(m=>pr[m]);if(!moments.length)return;
@@ -1336,13 +1339,16 @@ function openRapport(){
       const sens='<strong>'+m[1]+'</strong>';
       return periode+' '+sens;
     }).join(' - ');
-    html+=`<div class="rapport-eleve-entry">
+    elvHtml+=`<div class="rapport-eleve-entry">
       <div class="en">${capitalize(p)}</div>
       <div class="ep">${mTxt}</div>
     </div>`;
   });
-  if(!hasElv)html+='<div style="color:#aaa;font-size:.88rem;padding:6px 0;">Aucun élève pointé</div>';
-  html+='<div class="rapport-legend">A = aller &nbsp;&nbsp; R = retour</div>';
+  if(hasElv){
+    html+='<div class="rapport-section-title">Élèves transportés aujourd\'hui</div>';
+    html+=elvHtml;
+    html+='<div class="rapport-legend">A = aller &nbsp;&nbsp; R = retour</div>';
+  }
 
   document.getElementById('rapportBody').innerHTML=html;
   document.getElementById('modalRapport').classList.add('open');
