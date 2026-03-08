@@ -519,12 +519,21 @@ html, body {
   background: #f8fafc;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  font-size: 0.65rem;
   line-height: 1;
   color: var(--text-med);
   transition: all 0.15s;
   padding: 0;
+  font-size: 0;
 }
+.mgmt-arrow::before {
+  content: '';
+  display: block;
+  width: 7px; height: 7px;
+  border-left: 2px solid var(--text-med);
+  border-top: 2px solid var(--text-med);
+}
+.mgmt-arrow.up::before { transform: rotate(45deg) translate(1px, 1px); }
+.mgmt-arrow.down::before { transform: rotate(225deg) translate(1px, 1px); }
 .mgmt-arrow:hover { background: #e0f2fe; border-color: var(--blue-p); }
 .mgmt-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
 .mgmt-nom { flex: 1; font-family: 'Quicksand', sans-serif; font-weight: 600; font-size: 0.95rem; color: var(--text-dark); }
@@ -1209,8 +1218,8 @@ function renderGestion(){
     const row=document.createElement('div');row.className='eleve-mgmt-row';
     row.innerHTML=`
       <div class="mgmt-order">
-        <button class="mgmt-arrow" onclick="moveEleve(${i},-1)" ${i===0?'disabled':''}>▲</button>
-        <button class="mgmt-arrow" onclick="moveEleve(${i},1)" ${i===state.eleves.length-1?'disabled':''}>▼</button>
+        <button class="mgmt-arrow up" onclick="moveEleve(${i},-1)" ${i===0?'disabled':''}></button>
+        <button class="mgmt-arrow down" onclick="moveEleve(${i},1)" ${i===state.eleves.length-1?'disabled':''}></button>
       </div>
       <div class="mgmt-nom">${capitalize(p)}</div>
       <button class="mgmt-del" id="del-${i}" onclick="confirmDel(${i})">🗑</button>`;
