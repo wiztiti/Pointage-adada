@@ -513,15 +513,17 @@ html, body {
 .eleve-mgmt-row:last-child { border-bottom: none; }
 .mgmt-order { display: flex; flex-direction: column; gap: 3px; }
 .mgmt-arrow {
-  width: 24px; height: 24px;
+  width: 26px; height: 26px;
   border-radius: 6px;
   border: 1.5px solid #e2e8f0;
   background: #f8fafc;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
+  line-height: 1;
   color: var(--text-med);
   transition: all 0.15s;
+  padding: 0;
 }
 .mgmt-arrow:hover { background: #e0f2fe; border-color: var(--blue-p); }
 .mgmt-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
