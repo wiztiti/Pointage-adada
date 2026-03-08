@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Vacations</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1206,14 +1209,19 @@ function openModalGestion(){
   document.getElementById('modalGestion').classList.add('open');
 }
 
+let showDeleted=false;
+
 function renderGestion(){
   const body=document.getElementById('gestionBody');
   body.innerHTML='';
+
   // Add row at top
   const addRow=document.createElement('div');addRow.className='add-eleve-row';
   addRow.innerHTML=`<input class="add-eleve-input" id="addEleveInput" placeholder="Prénom..." onkeydown="if(event.key==='Enter')addEleve()">
     <button class="add-eleve-btn" onclick="addEleve()">+ Ajouter</button>`;
   body.appendChild(addRow);
+
+  // Active eleves
   state.eleves.forEach((p,i)=>{
     const row=document.createElement('div');row.className='eleve-mgmt-row';
     row.innerHTML=`
@@ -1225,6 +1233,48 @@ function renderGestion(){
       <button class="mgmt-del" id="del-${i}" onclick="confirmDel(${i})">🗑</button>`;
     body.appendChild(row);
   });
+
+  // Ghost eleves (supprimés mais présents dans l'historique)
+  const allPresenceKeys=new Set();
+  Object.values(state.presence||{}).forEach(day=>Object.keys(day).forEach(p=>{
+    if(Object.values(day[p]).some(v=>v)) allPresenceKeys.add(p);
+  }));
+  const ghostEleves=[...allPresenceKeys].filter(p=>!state.eleves.includes(p));
+
+  if(ghostEleves.length){
+    // Toggle button
+    const toggleRow=document.createElement('div');
+    toggleRow.style.cssText='margin-top:14px;text-align:center;';
+    toggleRow.innerHTML=`<button onclick="toggleShowDeleted()" style="background:none;border:none;font-size:0.78rem;color:#94a3b8;font-style:italic;cursor:pointer;">
+      ${showDeleted?'Masquer':'Afficher'} les élèves supprimés (${ghostEleves.length})
+    </button>`;
+    body.appendChild(toggleRow);
+
+    if(showDeleted){
+      const ghostSection=document.createElement('div');
+      ghostSection.style.cssText='margin-top:8px;padding:10px;background:rgba(241,245,249,0.7);border-radius:12px;border:1px dashed #cbd5e1;';
+      ghostEleves.forEach(p=>{
+        const row=document.createElement('div');
+        row.style.cssText='display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #f1f5f9;';
+        row.innerHTML=`
+          <div style="flex:1;font-size:0.88rem;color:#94a3b8;font-style:italic;">${capitalize(p)}</div>
+          <button onclick="reintegrerEleve('${p}')" style="font-size:0.72rem;padding:4px 10px;border-radius:8px;border:1.5px solid #86efac;background:#f0fdf4;color:#16a34a;cursor:pointer;font-weight:600;">↩ Réintégrer</button>`;
+        ghostSection.appendChild(row);
+      });
+      body.appendChild(ghostSection);
+    }
+  }
+}
+
+function toggleShowDeleted(){
+  showDeleted=!showDeleted;
+  renderGestion();
+}
+
+function reintegrerEleve(p){
+  if(!state.eleves.includes(p)) state.eleves.push(p);
+  saveState();
+  renderGestion();
 }
 
 let delPending=-1;
@@ -1285,6 +1335,8 @@ function toggleSubCard(name){
 // RAPPORT MODAL
 // ============================================================
 function openRapport(){
+  // Fermer toutes les cartes
+  ['vac','hrs','notes','elv'].forEach(c=>document.getElementById('card-'+c).classList.remove('open'));
   const ds=viewDate;
   const d=new Date(ds+'T12:00:00');
   const ded=getDeduc(ds);
@@ -1365,7 +1417,8 @@ function openRapport(){
     </div>`;
   });
   if(hasElv){
-    html+='<div class="rapport-section-title">Élèves transportés aujourd\'hui</div>';
+    const elvCount=elvHtml.split('rapport-eleve-entry').length-1;
+    html+=`<div class="rapport-section-title">${elvCount} élève${elvCount>1?'s':''} transporté${elvCount>1?'s':''} aujourd'hui</div>`;
     html+=elvHtml;
     html+='<div class="rapport-legend">A = aller &nbsp;&nbsp; R = retour</div>';
   }
