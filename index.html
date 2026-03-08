@@ -120,19 +120,22 @@ html, body {
 }
 .h-btn-rapport:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(100,200,150,0.3); }
 .h-btn-cejourhui {
-  background: #e0f2fe;
-  color: var(--text-med);
-  border: 1.5px solid var(--border-light);
+  background: linear-gradient(135deg, #7ec8e3, #6fcf97);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(100,200,150,0.25);
 }
+.h-btn-cejourhui:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(100,200,150,0.3); }
 .h-btn-edit {
-  background: #f0fdf4;
-  color: #16a34a;
-  border: 1.5px solid #bbf7d0;
+  background: linear-gradient(135deg, #7ec8e3, #6fcf97);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(100,200,150,0.25);
 }
+.h-btn-edit:hover { transform: translateY(-1px); box-shadow: 0 5px 14px rgba(100,200,150,0.3); }
 .h-btn-edit.active {
   background: #ef4444;
   color: white;
   border-color: #ef4444;
+  box-shadow: 0 3px 10px rgba(239,68,68,0.3);
 }
 
 /* ===== MAIN SCROLL ===== */
@@ -707,7 +710,7 @@ html, body {
   </div>
   <!-- Row 2 : all 3 buttons (history) -->
   <div id="historyBtns" style="display:none;width:100%;justify-content:center;gap:8px;padding-top:6px;">
-    <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Éditer</button>
+    <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
     <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
   </div>
@@ -988,7 +991,7 @@ function renderHeader(){
   },0);
   const hdr=document.getElementById('header');
   if(editMode){hdr.classList.add('edit-mode');document.getElementById('btnEdit').classList.add('active');document.getElementById('btnEdit').textContent='Édition';}
-  else{hdr.classList.remove('edit-mode');document.getElementById('btnEdit').classList.remove('active');document.getElementById('btnEdit').textContent='Éditer';}
+  else{hdr.classList.remove('edit-mode');document.getElementById('btnEdit').classList.remove('active');document.getElementById('btnEdit').textContent='Édition';}
 }
 
 function toggleEdit(){
