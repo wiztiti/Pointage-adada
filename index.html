@@ -703,7 +703,7 @@ html, body {
   </div>
   <!-- Row 2 : Rapport only (today) -->
   <div id="rapportToday" style="width:100%;display:flex;justify-content:center;padding-top:6px;">
-    <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
+    <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport quotidien</button>
   </div>
   <!-- Row 2 : all 3 buttons (history) -->
   <div id="historyBtns" style="display:none;width:100%;justify-content:center;gap:8px;padding-top:6px;">
@@ -834,7 +834,7 @@ html, body {
 <div class="modal-overlay" id="modalRapport">
   <div class="modal-sheet" style="max-height:95vh;">
     <div class="modal-handle"></div>
-    <div class="modal-head">📄 Rapport journalier</div>
+    <div class="modal-head" style="display:none;">📄 Rapport journalier</div>
     <div class="modal-body" id="rapportBody"></div>
     <div class="modal-footer">
       <button class="btn-fermer" onclick="closeModal('modalRapport')">Fermer</button>
