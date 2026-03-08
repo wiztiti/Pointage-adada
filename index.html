@@ -309,15 +309,12 @@ html, body {
 .deduc-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  background: #f0fdf4;
-  border-radius: 10px;
-  border: 1.5px solid #bbf7d0;
-  margin-top: 14px;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 0 0;
 }
 .deduc-cb { width: 18px; height: 18px; accent-color: var(--btn-green-dark); cursor: pointer; flex-shrink: 0; }
-.deduc-lbl { font-size: 0.84rem; color: var(--text-dark); cursor: pointer; }
+.deduc-lbl { font-size: 0.84rem; color: #f9a8d4; cursor: pointer; }
 
 /* ===== CARD 3 - NOTES ===== */
 .notes-field-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-light); margin-bottom: 6px; margin-top: 12px; }
@@ -579,6 +576,7 @@ html, body {
   color: var(--text-dark);
   margin-bottom: 16px;
   text-transform: capitalize;
+  text-align: center;
 }
 .rapport-section-title {
   font-size: 0.72rem;
@@ -603,12 +601,12 @@ html, body {
 .rv-dur { color: var(--text-light); font-size: 0.8rem; }
 .rapport-total {
   display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 4px;
   padding: 12px 0 4px;
 }
 .rt-real { font-family: 'Quicksand', sans-serif; font-size: 1.1rem; font-weight: 700; color: #ef4444; }
-.rt-conv { font-family: 'Quicksand', sans-serif; font-size: 1rem; font-weight: 600; color: #16a34a; }
+.rt-conv { font-family: 'Quicksand', sans-serif; font-size: 1rem; font-weight: 400; color: #16a34a; }
 .rapport-km-block { padding: 10px 0; font-size: 0.9rem; color: var(--text-dark); line-height: 1.8; }
 .rapport-note-block { padding: 10px 0; font-size: 0.88rem; color: var(--text-dark); line-height: 1.6; white-space: pre-wrap; }
 .rapport-eleve-entry { padding: 5px 0; font-size: 0.88rem; color: var(--text-dark); }
@@ -828,6 +826,25 @@ html, body {
   </div>
 </div>
 
+<!-- ===== MODAL SUPPRESSION ELEVE ===== -->
+<div class="modal-overlay" id="modalDelEleve">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+    <div class="modal-handle"></div>
+    <div class="modal-head" id="delEleveHead">Supprimer ?</div>
+    <div class="modal-body" style="padding:20px;">
+      <p id="delEleveMsg" style="font-size:0.92rem;color:var(--text-dark);line-height:1.6;margin-bottom:18px;text-align:center;"></p>
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fef2f2;border-radius:12px;border:1.5px solid #fecaca;cursor:pointer;">
+        <input type="checkbox" id="delElevePresence" style="width:20px;height:20px;accent-color:#ef4444;cursor:pointer;">
+        <span style="font-size:0.88rem;color:#ef4444;font-weight:600;">Supprimer aussi de l'historique des transports</span>
+      </label>
+    </div>
+    <div class="modal-footer" style="display:flex;gap:10px;">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalDelEleve')">Annuler</button>
+      <button class="btn-valider" style="background:linear-gradient(135deg,#f87171,#ef4444);" onclick="doDeleteEleve()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL HORLOGE ===== -->
 <div class="modal-overlay" id="modalClock">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
@@ -852,9 +869,9 @@ html, body {
           <!-- Minutes -->
           <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
             <div style="font-size:0.72rem;font-weight:700;color:var(--text-light);letter-spacing:1px;">MINUTES</div>
-            <button class="spin-btn" onclick="spinM(-1)">▲</button>
+            <button class="spin-btn" onclick="spinM(1)">▲</button>
             <div class="spin-val" id="spinMval" style="width:62px;">30</div>
-            <button class="spin-btn" onclick="spinM(1)">▼</button>
+            <button class="spin-btn" onclick="spinM(-1)">▼</button>
           </div>
         </div>
         <!-- Quick minute buttons -->
@@ -896,8 +913,7 @@ function loadState(){
     d.vacations=(d.vacations||[]).map(v=>({...v,dep:v.dep?new Date(v.dep):null,ret:v.ret?new Date(v.ret):null}));
     return d;
   }}catch(e){}
-  return{eleves:['Lucas','Emma','Mathis','Chloé','Nathan','Léa','Hugo','Manon'],
-    vacations:[],presence:{},dayData:{},deduc:{}};
+  return{eleves:[],vacations:[],presence:{},dayData:{},deduc:{}};
 }
 function saveState(){
   const s={...state,
@@ -906,6 +922,11 @@ function saveState(){
   localStorage.setItem(SK,JSON.stringify(s));
 }
 let state=loadState();
+// Nettoyer les exemples de l'ancienne version si présents
+const OLD_EXAMPLES=['lucas','emma','mathis','chloé','nathan','léa','hugo','manon'];
+if(state.eleves.length===8 && OLD_EXAMPLES.every((e,i)=>state.eleves[i]&&state.eleves[i].toLowerCase()===e)){
+  state.eleves=[];saveState();
+}
 
 // ============================================================
 // DATE NAV
@@ -957,6 +978,14 @@ function toggleEdit(){
 // VACATION STATE
 // ============================================================
 function getVacs(){return state.vacations.filter(v=>v.date===viewDate);}
+function getVacsSorted(){
+  return getVacs().slice().sort((a,b)=>{
+    if(!a.dep && !b.dep) return 0;
+    if(!a.dep) return 1;
+    if(!b.dep) return -1;
+    return a.dep - b.dep;
+  });
+}
 function canEdit(){return isToday()||editMode;}
 
 function clickDep(){
@@ -1015,7 +1044,7 @@ function durMin(dep,ret){if(!dep||!ret)return null;return Math.round((ret-dep)/6
 function minToHM(m){if(m===null)return'';return Math.floor(m/60)+'h'+String(m%60).padStart(2,'0');}
 
 function renderVacations(){
-  const vacs=getVacs();
+  const vacs=getVacsSorted();
   const list=document.getElementById('vacList');
   const canE=canEdit();
   if(!vacs.length){list.innerHTML='<div class="empty-state">Aucune vacation pour cette journée</div>';return;}
@@ -1030,7 +1059,7 @@ function renderVacations(){
       <span class="vac-sep">–</span>
       <span class="vac-time-slot ${retCls}" onclick="${canE?`openClockFor('${v.id}','ret')`:'void 0'}">${fmt(v.ret)}</span>
       <span class="vac-dur">${durTxt}</span>
-      ${canE?`<button class="vac-del" onclick="deleteVac('${v.id}')">✕</button>`:''}
+      ${canE?`<button class="vac-del mgmt-del" onclick="deleteVac('${v.id}')">🗑</button>`:''}
     </div>`;
   }).join('');
   document.getElementById('btnAjoutManuel').style.display=canE?'flex':'none';
@@ -1124,6 +1153,8 @@ function togglePresence(ds,prenom,moment){
 }
 
 function openModalPointage(){
+  if(!state.eleves.length){showToast('👶 Ajoutez d\'abord des élèves');return;}
+  if(!getVacs().length){showToast('🚍 Définissez d\'abord une vacation');return;}
   const body=document.getElementById('pointageBody');
   body.innerHTML='';
   const ds=viewDate;
@@ -1178,29 +1209,35 @@ function renderGestion(){
 }
 
 let delPending=-1;
+let delEleveIdx=-1;
+
 function confirmDel(i){
-  if(delPending===i){
-    // second tap = confirm
-    deleteEleve(i);
-    delPending=-1;
+  const p=state.eleves[i];
+  // Check if this eleve has any presence recorded
+  const hasHistory=Object.values(state.presence||{}).some(day=>day[p]&&Object.values(day[p]).some(v=>v));
+  if(hasHistory){
+    delEleveIdx=i;
+    document.getElementById('delEleveHead').textContent='Supprimer '+capitalize(p)+' ?';
+    document.getElementById('delEleveMsg').textContent=capitalize(p)+' a déjà été transporté(e). Voulez-vous aussi le supprimer des transports effectués ?';
+    document.getElementById('delElevePresence').checked=false;
+    document.getElementById('modalDelEleve').classList.add('open');
   } else {
-    // first tap: highlight button, ask for second tap
-    if(delPending>=0){
-      const prev=document.getElementById('del-'+delPending);
-      if(prev){prev.textContent='🗑';prev.style.background='';}
-    }
-    delPending=i;
-    const btn=document.getElementById('del-'+i);
-    if(btn){btn.textContent='✓ Confirmer';btn.style.background='#ef4444';btn.style.color='#fff';btn.style.fontSize='0.7rem';}
-    // auto reset after 3s
-    setTimeout(()=>{
-      if(delPending===i){
-        delPending=-1;
-        const b=document.getElementById('del-'+i);
-        if(b){b.textContent='🗑';b.style.background='';b.style.color='';b.style.fontSize='';}
-      }
-    },3000);
+    deleteEleve(i);
   }
+}
+
+function doDeleteEleve(){
+  if(delEleveIdx<0)return;
+  const p=state.eleves[delEleveIdx];
+  if(document.getElementById('delElevePresence').checked){
+    // Remove from all presence records
+    Object.values(state.presence||{}).forEach(day=>{ delete day[p]; });
+  }
+  state.eleves.splice(delEleveIdx,1);
+  delEleveIdx=-1;
+  saveState();
+  closeModal('modalDelEleve');
+  renderGestion();
 }
 
 function moveEleve(i,dir){
@@ -1235,7 +1272,7 @@ function openRapport(){
   const d=new Date(ds+'T12:00:00');
   const ded=getDeduc(ds);
   const vacs=vacsForDate(ds);
-  const allVacs=getVacs();
+  const allVacs=getVacsSorted();
   const dd=getDayData(ds);
   const rMin=realMins(vacs);
   const cMin=convMins(vacs,ded);
@@ -1261,24 +1298,22 @@ function openRapport(){
 
   // Totaux
   html+='<div class="rapport-total">';
-  html+=`<span class="rt-real">Total réel : ${minToHM(rMin)}</span>`;
-  html+=`<span class="rt-conv">(Conv. : ${minToHM(cMin)})</span>`;
+  html+=`<div class="rt-real">Heures réelles : ${minToHM(rMin)}</div>`;
+  html+=`<div class="rt-conv">(Conventionnelles : ${minToHM(cMin)})</div>`;
   html+='</div>';
   html+='<div class="divider"></div>';
 
   // Km
-  html+='<div class="rapport-km-block">';
   const prevDs=prevDay(ds);
   const prevKm=getDayData(prevDs).km?parseInt(getDayData(prevDs).km):null;
   const todayKm=dd.km?parseInt(dd.km):null;
+  html+='<div class="rapport-km-block">';
   if(todayKm){
     const dist=prevKm!==null?todayKm-prevKm:null;
-    html+=dist!==null?`${dist} kms effectués ce jour<br>`:'' ;
+    html+=dist!==null?`${dist} kms effectués ce jour<br>`:'';
     html+=`Compteur à ${todayKm}`;
   } else {
-    html+='Pas de roulage aujourd\'hui<br>';
-    if(todayKm) html+=`Compteur à ${todayKm}`;
-    else if(prevKm) html+=`Compteur à ${prevKm} (dernier connu)`;
+    html+='<span style="color:#94a3b8;font-style:italic;font-size:0.85rem;">Vous n\'avez pas relevé le compteur kilométrique aujourd\'hui</span>';
   }
   html+='</div>';
   html+='<div class="divider"></div>';
