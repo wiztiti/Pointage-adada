@@ -1597,8 +1597,8 @@ function renderRappelCard(){
     html+=`<div class="rappel-item today">
       <div class="rappel-item-head">
         <span class="rappel-item-date">🔔 Aujourd'hui</span>
-        <button onclick="editRappel('${today}')" style="margin-left:auto;background:none;border:none;font-size:0.75rem;color:#ef4444;cursor:pointer;font-weight:600;">✏️ Modifier</button>
-        <button onclick="deleteRappel('${today}')" style="background:none;border:none;cursor:pointer;padding:2px 4px;">🗑</button>
+        <button onclick="editRappel('${today}')" style="margin-left:auto;background:none;border:none;font-size:1.1rem;cursor:pointer;padding:4px 10px;">✏️</button>
+        <button onclick="deleteRappel('${today}')" style="background:none;border:none;cursor:pointer;padding:4px 10px;font-size:1.1rem;">🗑</button>
       </div>
       <div class="rappel-item-text">${escHtml(todayRappel)}</div>
     </div>`;
@@ -1607,26 +1607,26 @@ function renderRappelCard(){
   // Add new rappel button
   html+=`<button class="btn-add-rappel" onclick="openNewRappel()" style="width:100%;margin-top:${todayRappel?'8px':'0'};">+ Nouveau rappel</button>`;
 
-  // Future rappels toggle
+  // Future rappels
   if(futureRappels.length){
-    html+=`<div class="rappel-toggle-row">
-      <input type="checkbox" id="cbFutureRappels" ${showFutureRappels?'checked':''} onchange="toggleFutureRappels()" style="accent-color:#ef4444;width:16px;height:16px;cursor:pointer;">
-      <label class="rappel-toggle-lbl" for="cbFutureRappels">Afficher les rappels à venir (${futureRappels.length})</label>
-    </div>`;
+    const label=showFutureRappels?`Masquer les rappels à venir`:`Afficher les rappels à venir (${futureRappels.length})`;
+    html+=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #fee2e2;">
+      <div onclick="toggleFutureRappels()" style="font-size:0.82rem;color:#7dd3fc;font-style:italic;cursor:pointer;text-align:center;font-weight:600;padding:4px 0;">${label}</div>`;
     if(showFutureRappels){
       futureRappels.forEach(([d,msg])=>{
         const fd=new Date(d+'T12:00:00');
-        const label=JOURS[fd.getDay()]+' '+fd.getDate()+' '+MOIS[fd.getMonth()];
+        const lbl=JOURS[fd.getDay()]+' '+fd.getDate()+' '+MOIS[fd.getMonth()];
         html+=`<div class="rappel-item" style="margin-top:8px;">
           <div class="rappel-item-head">
-            <span class="rappel-item-date">📅 ${label}</span>
-            <button onclick="editRappel('${d}')" style="margin-left:auto;background:none;border:none;font-size:0.75rem;color:#ef4444;cursor:pointer;font-weight:600;">✏️ Modifier</button>
-            <button onclick="deleteRappel('${d}')" style="background:none;border:none;cursor:pointer;padding:2px 4px;">🗑</button>
+            <span class="rappel-item-date">📅 ${lbl}</span>
+            <button onclick="editRappel('${d}')" style="margin-left:auto;background:none;border:none;font-size:1.1rem;cursor:pointer;padding:4px 10px;">✏️</button>
+            <button onclick="deleteRappel('${d}')" style="background:none;border:none;cursor:pointer;padding:4px 10px;font-size:1.1rem;">🗑</button>
           </div>
           <div class="rappel-item-text">${escHtml(msg)}</div>
         </div>`;
       });
     }
+    html+=`</div>`;
   }
 
   html+='</div>';
@@ -1687,6 +1687,8 @@ function saveRappel(){
 function deleteRappel(ds){
   if(state.rappels) delete state.rappels[ds];
   saveState();
+  const todayHasRappel=!!(state.rappels||{})[todayStr()];
+  if(!todayHasRappel) document.getElementById('card-rappel').classList.remove('open');
   renderRappelCard();
 }
 
