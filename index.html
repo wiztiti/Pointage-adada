@@ -627,10 +627,12 @@ html, body {
 .rt-conv { font-family: 'Quicksand', sans-serif; font-size: 0.9rem; font-weight: 400; color: #16a34a; }
 .rapport-km-block { padding: 10px 0; font-size: 0.9rem; color: var(--text-dark); line-height: 1.8; text-align: center; }
 .rapport-note-block { padding: 10px 0; font-size: 0.88rem; color: var(--text-dark); line-height: 1.6; white-space: pre-wrap; }
-.rapport-eleve-entry { padding: 5px 0; font-size: 0.88rem; color: var(--text-dark); }
-.rapport-eleve-entry .en { font-weight: 600; }
-.rapport-eleve-entry .ep { color: var(--text-med); font-size: 0.82rem; }
-.rapport-eleve-entry .ep strong { color: var(--text-dark); }
+.rapport-eleve-entry { padding: 6px 0; border-bottom: 1px solid #f8fafc; }
+.rapport-eleve-entry:last-child { border-bottom: none; }
+.rapport-eleve-entry .en { font-family:'Quicksand',sans-serif; font-weight: 600; font-size:0.88rem; color: var(--text-dark); margin-bottom:5px; }
+.rp-btns { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:4px; }
+.rp-btn { padding:4px 2px; border-radius:6px; border:1.5px solid #e2e8f0; background:#f8fafc; color:#cbd5e1; font-size:0.62rem; font-weight:700; text-align:center; line-height:1.3; }
+.rp-btn.on { background:linear-gradient(135deg,#7ec8e3,#6fcf97); border-color:#6fcf97; color:#fff; }
 .rapport-legend { text-align: center; color: var(--text-light); font-size: 0.78rem; margin-top: 14px; padding-top: 10px; border-top: 1px solid #f1f5f9; }
 .divider { height: 1.5px; background: linear-gradient(90deg, transparent, #bae6fd, transparent); margin: 14px 0; }
 
@@ -1473,14 +1475,13 @@ function openRapport(){
     const pr=pres[p];if(!pr)return;
     const moments=MOMENTS.filter(m=>pr[m]);if(!moments.length)return;
     hasElv=true;
-    const mTxt=moments.map(m=>{
-      const periode=m[0]==='M'?'Matin':'Soir';
-      const sens='<strong>'+m[1]+'</strong>';
-      return periode+' '+sens;
-    }).join(' - ');
+    const btns=MOMENTS.map((m,i)=>{
+      const on=pr[m]?'on':'';
+      return `<div class="rp-btn ${on}">${MOMENT_LABELS[i]}</div>`;
+    }).join('');
     elvHtml+=`<div class="rapport-eleve-entry">
       <div class="en">${capitalize(p)}</div>
-      <div class="ep">${mTxt}</div>
+      <div class="rp-btns">${btns}</div>
     </div>`;
   });
   if(hasElv){
