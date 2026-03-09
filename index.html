@@ -1070,7 +1070,7 @@ function clickDep(){
   const vacs=getVacs();
   const last=vacs[vacs.length-1];
   if(last&&!last.ret)return;
-  const now=new Date();
+  const now=new Date();now.setSeconds(0,0);
   const others=state.vacations.filter(v=>v.date===viewDate&&v.dep&&v.ret);
   if(others.some(o=>now>=o.dep&&now<o.ret)){
     showToast('⚠️ Cette heure est dans une vacation existante');return;
@@ -1085,7 +1085,7 @@ function clickRet(){
   const vacs=getVacs();
   const last=vacs[vacs.length-1];
   if(!last||last.ret)return;
-  const now=new Date();
+  const now=new Date();now.setSeconds(0,0);
   const others=state.vacations.filter(v=>v.id!==last.id&&v.date===viewDate&&v.dep&&v.ret);
   if(others.some(o=>now>=o.dep&&now<o.ret)){
     showToast('⚠️ Cette heure est dans une vacation existante');return;
