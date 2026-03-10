@@ -803,7 +803,7 @@ html, body {
           <div class="heure-cell"><div class="heure-period">Mois</div><div class="heure-val conv" id="cMois">0h00</div></div>
         </div>
       </div>
-      <div class="deduc-row">
+      <div class="deduc-row" id="deducRow">
         <input type="checkbox" class="deduc-cb" id="cbDeduc" onchange="saveDeduc()">
         <label class="deduc-lbl" for="cbDeduc">Déduction de la ½ heure</label>
       </div>
@@ -1213,8 +1213,8 @@ function renderVacations(){
 // ============================================================
 function getDayData(ds){if(!state.dayData)state.dayData={};if(!state.dayData[ds])state.dayData[ds]={};return state.dayData[ds];}
 function peekDayData(ds){return(state.dayData&&state.dayData[ds])||{};}
-function getDeduc(ds){if(!state.deduc)state.deduc={};return!!state.deduc[ds];}
-function saveDeduc(){if(!state.deduc)state.deduc={};state.deduc[viewDate]=document.getElementById('cbDeduc').checked;saveState();refreshHeures();}
+function getDeduc(ds){return!!(state.deduc&&state.deduc.global);}
+function saveDeduc(){if(!state.deduc)state.deduc={};state.deduc.global=document.getElementById('cbDeduc').checked;saveState();refreshHeures();}
 
 function vacsForDate(ds){return state.vacations.filter(v=>v.date===ds&&v.dep&&v.ret);}
 function realMins(vacs){return vacs.reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
@@ -1253,9 +1253,15 @@ function refreshHeures(){
   monthDates(ds).forEach(d=>{const v=vacsForDate(d);rM+=realMins(v);cM+=convMins(v,getDeduc(d));});
   document.getElementById('rMois').textContent=minToHM(rM);
   document.getElementById('cMois').textContent=minToHM(cM);
-  document.getElementById('cbDeduc').checked=getDeduc(ds);
-  // disable deduc if not editable
-  document.getElementById('cbDeduc').disabled=!canEdit();
+  // Case déduction : visible uniquement aujourd'hui
+  const deducRow=document.getElementById('deducRow');
+  if(isToday()){
+    deducRow.style.display='';
+    document.getElementById('cbDeduc').checked=getDeduc(ds);
+    document.getElementById('cbDeduc').disabled=false;
+  } else {
+    deducRow.style.display='none';
+  }
 }
 
 // ============================================================
