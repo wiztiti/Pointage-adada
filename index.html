@@ -2426,6 +2426,22 @@ function confirmClock(){
   saveState();closeModal('modalClock');renderVacations();refreshHeures();
 }
 
+function showImportSuccess(msg){
+  let popup=document.getElementById('importSuccessPopup');
+  if(!popup){
+    popup=document.createElement('div');
+    popup.id='importSuccessPopup';
+    popup.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);';
+    popup.innerHTML=`<div style="background:#fff;border-radius:20px;padding:28px 24px;text-align:center;max-width:280px;box-shadow:0 8px 32px rgba(0,0,0,0.25);font-family:Quicksand,sans-serif;">
+      <div id="importSuccessMsg" style="font-size:1rem;font-weight:700;color:#1e3a5f;margin-bottom:20px;line-height:1.5;"></div>
+      <button onclick="document.getElementById('importSuccessPopup').style.display='none'" style="background:linear-gradient(135deg,#4ade80,#22c55e);color:#fff;border:none;border-radius:12px;padding:12px 32px;font-family:Quicksand,sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;">OK</button>
+    </div>`;
+    document.body.appendChild(popup);
+  }
+  document.getElementById('importSuccessMsg').textContent=msg;
+  popup.style.display='flex';
+}
+
 function showToast(msg){
   let t=document.getElementById('toast');
   if(!t){
@@ -2559,7 +2575,8 @@ function doImport(mode){
   renderAll();
   closeModal('modalImportConfirm');
   importPendingData=null;
-  showToast(mode==='replace'?'✅ Données remplacées !':'✅ Données fusionnées !');
+  const msg=mode==='replace'?'✅ Données remplacées avec succès !':'✅ Données fusionnées avec succès !';
+  setTimeout(()=>showImportSuccess(msg),300);
 }
 
 </script>
