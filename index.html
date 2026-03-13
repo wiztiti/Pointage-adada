@@ -824,7 +824,7 @@ html, body {
         <span>Note libre</span>
         <button onclick="clearNote()" style="background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;" title="Effacer la note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
       </div>
-      <textarea class="note-text-input" id="noteInput" placeholder="" oninput="saveNotes(); autoResize(this)"></textarea>
+      <textarea class="note-text-input" id="noteInput" placeholder="" autocomplete="off" oninput="saveNotes(); autoResize(this)"></textarea>
     </div>
   </div>
 
@@ -1096,9 +1096,16 @@ function renderHeader(){
   const isFem=femEndings.some(e=>saint.toLowerCase().endsWith(e));
   const prefix=isFem?'Ste':'St';
   const isNoel=d.getMonth()===11&&d.getDate()===25;
-  document.getElementById('hDateSaint').innerHTML=isNoel
+  // Numéro de semaine ISO
+  const jan4=new Date(d.getFullYear(),0,4);
+  const startOfWeek1=new Date(jan4);
+  startOfWeek1.setDate(jan4.getDate()-(jan4.getDay()||7)+1);
+  const weekNum=Math.round((d-startOfWeek1)/604800000)+1;
+
+  document.getElementById('hDateSaint').innerHTML=(isNoel
     ? `Ste ${saint} &nbsp;🎅 Noël !`
-    : prefix+' '+saint;
+    : prefix+' '+saint)
+    +` <span style="opacity:0.55;font-size:0.8em;">· Sem. ${weekNum}</span>`;
   document.getElementById('btnNext').disabled=isToday();
   const histRow=document.getElementById('historyBtns');
   const today=isToday();
@@ -1278,6 +1285,7 @@ function loadNotes(){
   noteEl.disabled=!canEdit();
 }
 function saveNotes(){
+  if(!canEdit()) return;
   const dd=getDayData(viewDate);
   dd.km=document.getElementById('kmInput').value.replace(/[^0-9]/g,'');
   dd.note=document.getElementById('noteInput').value;
