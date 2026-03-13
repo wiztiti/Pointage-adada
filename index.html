@@ -357,6 +357,37 @@ html, body {
 }
 .note-text-input:focus { border-color: var(--blue-p); }
 
+/* ===== RECAP SEMAINE / MOIS ===== */
+.recap-day-row {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 10px; border-radius:10px; margin-bottom:5px;
+  font-size:0.82rem; font-family:'Nunito',sans-serif;
+}
+.recap-day-row.worked   { background:#f0fdf4; }
+.recap-day-row.weekend  { background:#eff6ff; color:#94a3b8; }
+.recap-day-row.absent   { background:#fff7ed; color:#c4975a; }
+.recap-day-name { font-weight:700; min-width:32px; }
+.recap-day-date { min-width:60px; color:#64748b; font-size:0.78rem; }
+.recap-day-vacs { flex:1; font-size:0.78rem; color:#475569; }
+.recap-day-hrs  { font-weight:700; font-size:0.78rem; color:#1e3a5f; white-space:nowrap; }
+.recap-total-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:9px 10px; border-radius:10px; margin-top:8px;
+  background:linear-gradient(135deg,#e0f2fe,#d1fae5);
+  font-family:'Quicksand',sans-serif; font-weight:700; font-size:0.85rem; color:#1e3a5f;
+}
+.recap-semaine-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; border-radius:12px; margin-bottom:6px;
+  background:#f8fafc; border:1.5px solid #e2e8f0; cursor:pointer;
+}
+.recap-semaine-row:active { background:#f1f5f9; }
+.recap-sem-label { font-family:'Quicksand',sans-serif; font-weight:700; font-size:0.82rem; color:#1e3a5f; }
+.recap-sem-dates { font-size:0.75rem; color:#94a3b8; margin-top:2px; }
+.recap-sem-hrs   { font-size:0.8rem; font-weight:700; color:#475569; text-align:right; }
+.recap-sem-chev  { font-size:0.9rem; color:#94a3b8; margin-left:8px; transition:transform 0.2s; }
+.recap-sem-detail { padding:0 4px 6px; }
+
 /* ===== CARD 5 - RAPPELS ===== */
 .rappel-form { display:flex; flex-direction:column; gap:10px; margin-bottom:14px; }
 .rappel-date-input {
@@ -808,6 +839,10 @@ html, body {
         <label class="deduc-lbl" for="cbDeduc">Déduction de la ½ heure</label>
       </div>
       <div style="text-align:center;margin-top:14px;font-style:italic;font-size:0.78rem;color:#4ade80;">Les totaux d'heures sont donnés à titre indicatif</div>
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button class="btn-open-modal" style="flex:1;font-size:0.82rem;" onclick="openRecapSemaine()">📅 Récap Semaine</button>
+        <button class="btn-open-modal" style="flex:1;font-size:0.82rem;" onclick="openRecapMois()">📆 Récap Mois</button>
+      </div>
     </div>
   </div>
 
@@ -932,6 +967,46 @@ html, body {
     <div class="modal-footer" style="display:flex;gap:10px;">
       <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalRappel')">Annuler</button>
       <button class="btn-valider" style="background:linear-gradient(135deg,#fca5a5,#ef4444);" onclick="saveRappel()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL RECAP SEMAINE ===== -->
+<div class="modal-overlay" id="modalRecapSemaine">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;">
+      <button onclick="navRecapSem(-1)" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">‹</button>
+      <div id="recapSemTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.95rem;color:#1e3a5f;text-align:center;"></div>
+      <button onclick="navRecapSem(1)" id="btnRecapSemNext" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">›</button>
+    </div>
+    <div class="modal-body" id="recapSemaineBody" style="padding:14px 20px;overflow-y:auto;flex:1;"></div>
+    <div class="modal-footer">
+      <button class="btn-valider" onclick="closeModal('modalRecapSemaine')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL RECAP MOIS ===== -->
+<div class="modal-overlay" id="modalRecapMois">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;">
+      <button onclick="navRecapMois(-1)" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">‹</button>
+      <div id="recapMoisTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.95rem;color:#1e3a5f;text-align:center;"></div>
+      <button onclick="navRecapMois(1)" id="btnRecapMoisNext" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">›</button>
+    </div>
+    <!-- Bandeau fixe : total + déduction -->
+    <div style="padding:10px 20px 8px;border-bottom:1px solid #e2e8f0;background:#fff;flex-shrink:0;">
+      <div id="recapMoisTotal" class="recap-total-row" style="margin:0 0 8px;"></div>
+      <div class="deduc-row" style="justify-content:center;">
+        <input type="checkbox" class="deduc-cb" id="cbDeducMois" onchange="toggleDeducMois()">
+        <label class="deduc-lbl" for="cbDeducMois">Déduction de la ½ heure</label>
+      </div>
+    </div>
+    <div class="modal-body" id="recapMoisBody" style="padding:14px 20px;overflow-y:auto;flex:1;"></div>
+    <div class="modal-footer">
+      <button class="btn-valider" onclick="closeModal('modalRecapMois')">Fermer</button>
     </div>
   </div>
 </div>
@@ -1222,6 +1297,7 @@ function getDayData(ds){if(!state.dayData)state.dayData={};if(!state.dayData[ds]
 function peekDayData(ds){return(state.dayData&&state.dayData[ds])||{};}
 function getDeduc(ds){return!!(state.deduc&&state.deduc.global);}
 function saveDeduc(){if(!state.deduc)state.deduc={};state.deduc.global=document.getElementById('cbDeduc').checked;saveState();refreshHeures();}
+function toggleDeducMois(){if(!state.deduc)state.deduc={};state.deduc.global=document.getElementById('cbDeducMois').checked;saveState();refreshHeures();renderRecapMois();}
 
 function vacsForDate(ds){return state.vacations.filter(v=>v.date===ds&&v.dep&&v.ret);}
 function realMins(vacs){return vacs.reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
@@ -1580,6 +1656,223 @@ function prevDay(ds){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()-1);r
 // ============================================================
 // CARDS
 // ============================================================
+// ============================================================
+// RECAP SEMAINE / MOIS
+// ============================================================
+let recapSemDate=null; // lundi de la semaine affichée
+let recapMoisDate=null; // {y, m} du mois affiché
+let recapMoisOpenSem=null; // index semaine ouverte dans récap mois
+
+function isoWeekNum(d){
+  const tmp=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7));
+  const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
+  return Math.ceil((((tmp-yearStart)/86400000)+1)/7);
+}
+
+function mondayOf(ds){
+  const d=new Date(ds+'T12:00:00');
+  const day=d.getDay()||7;
+  d.setDate(d.getDate()-day+1);
+  return dateStr(d);
+}
+
+function weekDatesFrom(mondayDs){
+  const days=[];
+  const d=new Date(mondayDs+'T12:00:00');
+  for(let i=0;i<7;i++){
+    days.push(dateStr(new Date(d)));
+    d.setDate(d.getDate()+1);
+  }
+  return days;
+}
+
+function formatShortDate(ds){
+  const d=new Date(ds+'T12:00:00');
+  return d.getDate()+' '+MOIS[d.getMonth()].substring(0,4)+'.';
+}
+
+function semaineLabelDuAu(mondayDs){
+  const days=weekDatesFrom(mondayDs);
+  const d0=new Date(days[0]+'T12:00:00');
+  const d6=new Date(days[6]+'T12:00:00');
+  const m0=MOIS[d0.getMonth()].substring(0,4)+'.';
+  const m6=MOIS[d6.getMonth()].substring(0,4)+'.';
+  if(d0.getMonth()===d6.getMonth())
+    return `du ${d0.getDate()} au ${d6.getDate()} ${m6}`;
+  return `du ${d0.getDate()} ${m0} au ${d6.getDate()} ${m6}`;
+}
+
+function buildDayRow(ds){
+  const d=new Date(ds+'T12:00:00');
+  const dow=d.getDay();
+  const isWE=dow===0||dow===6;
+  const vacs=vacsForDate(ds);
+  const worked=vacs.length>0;
+  const ded=getDeduc(ds);
+  const rMin=realMins(vacs);
+  const cMin=convMins(vacs,ded);
+  const nomJour=JOURS[dow].substring(0,3);
+  const dateLabel=d.getDate()+' '+MOIS[d.getMonth()].substring(0,4)+'.';
+
+  let cls=isWE?'weekend':worked?'worked':'absent';
+  let vacsHtml='';
+  if(worked){
+    vacsHtml=vacs.map(v=>{
+      const dep=new Date(v.dep);const ret=new Date(v.ret);
+      return `${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')}`;
+    }).join(' / ');
+  } else {
+    vacsHtml=isWE?'—':'—';
+  }
+
+  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>`:'';
+
+  return `<div class="recap-day-row ${cls}">
+    <span class="recap-day-name">${nomJour}</span>
+    <span class="recap-day-date">${dateLabel}</span>
+    <span class="recap-day-vacs">${vacsHtml}</span>
+    <span class="recap-day-hrs">${hrsHtml}</span>
+  </div>`;
+}
+
+// ---- RECAP SEMAINE ----
+function openRecapSemaine(){
+  recapSemDate=mondayOf(viewDate);
+  renderRecapSemaine();
+  document.getElementById('modalRecapSemaine').classList.add('open');
+}
+
+function navRecapSem(delta){
+  const d=new Date(recapSemDate+'T12:00:00');
+  d.setDate(d.getDate()+delta*7);
+  recapSemDate=dateStr(d);
+  renderRecapSemaine();
+}
+
+function renderRecapSemaine(){
+  const days=weekDatesFrom(recapSemDate);
+  const d0=new Date(recapSemDate+'T12:00:00');
+  const weekNum=isoWeekNum(d0);
+  document.getElementById('recapSemTitre').innerHTML=`Semaine ${weekNum} &nbsp;·&nbsp; ${semaineLabelDuAu(recapSemDate)}`;
+  // Désactiver next si semaine en cours ou future
+  const todayMonday=mondayOf(todayStr());
+  document.getElementById('btnRecapSemNext').disabled=recapSemDate>=todayMonday;
+
+  let rTotal=0,cTotal=0;
+  let html='';
+  days.forEach(ds=>{
+    const vacs=vacsForDate(ds);
+    rTotal+=realMins(vacs);
+    cTotal+=convMins(vacs,getDeduc(ds));
+    html+=buildDayRow(ds);
+  });
+  html+=`<div class="recap-total-row">
+    <span>Total semaine</span>
+    <span>${minToHM(rTotal)} <span style="color:#64748b;font-size:0.8rem;font-weight:500;">(conv. ${minToHM(cTotal)})</span></span>
+  </div>`;
+  document.getElementById('recapSemaineBody').innerHTML=html;
+}
+
+// ---- RECAP MOIS ----
+function openRecapMois(){
+  const d=new Date(viewDate+'T12:00:00');
+  recapMoisDate={y:d.getFullYear(),m:d.getMonth()};
+  recapMoisOpenSem=null;
+  renderRecapMois();
+  document.getElementById('modalRecapMois').classList.add('open');
+}
+
+function navRecapMois(delta){
+  let {y,m}=recapMoisDate;
+  m+=delta;
+  if(m<0){m=11;y--;}
+  if(m>11){m=0;y++;}
+  recapMoisDate={y,m};
+  recapMoisOpenSem=null;
+  renderRecapMois();
+}
+
+function renderRecapMois(){
+  const {y,m}=recapMoisDate;
+  document.getElementById('recapMoisTitre').textContent=`${MOIS[m]} ${y}`;
+  // Désactiver next si mois en cours ou futur
+  const now=new Date();
+  document.getElementById('btnRecapMoisNext').disabled=(y>now.getFullYear()||(y===now.getFullYear()&&m>=now.getMonth()));
+
+  // Trouver toutes les semaines qui touchent ce mois
+  const firstDay=new Date(y,m,1);
+  const lastDay=new Date(y,m+1,0);
+  // Lundi de la première semaine
+  let monday=new Date(firstDay);
+  const dow=monday.getDay()||7;
+  monday.setDate(monday.getDate()-dow+1);
+
+  const semaines=[];
+  while(monday<=lastDay){
+    semaines.push(dateStr(monday));
+    monday=new Date(monday);
+    monday.setDate(monday.getDate()+7);
+  }
+
+  let rMoisTotal=0,cMoisTotal=0;
+
+  // Calcul des totaux d'abord
+  semaines.forEach((mondayDs)=>{
+    const days=weekDatesFrom(mondayDs);
+    days.forEach(ds=>{
+      const vacs=vacsForDate(ds);
+      rMoisTotal+=realMins(vacs);
+      cMoisTotal+=convMins(vacs,getDeduc(ds));
+    });
+  });
+
+  // Mise à jour du bandeau fixe
+  document.getElementById('recapMoisTotal').innerHTML=`<span>Total ${MOIS[m]}</span>
+    <span>${minToHM(rMoisTotal)} <span style="color:#64748b;font-size:0.8rem;font-weight:500;">(conv. ${minToHM(cMoisTotal)})</span></span>`;
+  document.getElementById('cbDeducMois').checked=getDeduc();
+
+  let html='';
+
+  semaines.forEach((mondayDs,idx)=>{
+    const days=weekDatesFrom(mondayDs);
+    const d0=new Date(mondayDs+'T12:00:00');
+    const weekNum=isoWeekNum(d0);
+    let rSem=0,cSem=0;
+    days.forEach(ds=>{
+      const vacs=vacsForDate(ds);
+      rSem+=realMins(vacs);
+      cSem+=convMins(vacs,getDeduc(ds));
+    });
+    rMoisTotal+=rSem;
+    cMoisTotal+=cSem;
+    const isOpen=recapMoisOpenSem===idx;
+    const duAu=semaineLabelDuAu(mondayDs);
+
+    html+=`<div class="recap-semaine-row" onclick="toggleRecapMoisSem(${idx})">
+      <div style="flex:1;">
+        <div class="recap-sem-label">Semaine ${weekNum}</div>
+        <div class="recap-sem-dates">${duAu}</div>
+      </div>
+      <div class="recap-sem-hrs">${minToHM(rSem)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cSem)}</span></div>
+      <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
+    </div>`;
+
+    if(isOpen){
+      html+=`<div class="recap-sem-detail">`;
+      days.forEach(ds=>{ html+=buildDayRow(ds); });
+      html+=`</div>`;
+    }
+  });
+
+  document.getElementById('recapMoisBody').innerHTML=html;
+}
+
+function toggleRecapMoisSem(idx){
+  recapMoisOpenSem=recapMoisOpenSem===idx?null:idx;
+  renderRecapMois();
+}
+
 // ============================================================
 // RAPPELS
 // ============================================================
