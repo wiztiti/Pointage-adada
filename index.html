@@ -1236,7 +1236,10 @@ function loadState(){
 }
 function saveState(){
   const s={...state,
-    vacations:state.vacations.map(v=>({...v,dep:v.dep?v.dep.toISOString():null,ret:v.ret?v.ret.toISOString():null}))
+    vacations:state.vacations.map(v=>({...v,
+      dep:v.dep?(v.dep instanceof Date?v.dep.toISOString():v.dep):null,
+      ret:v.ret?(v.ret instanceof Date?v.ret.toISOString():v.ret):null
+    }))
   };
   localStorage.setItem(SK,JSON.stringify(s));
 }
@@ -2526,9 +2529,7 @@ function handleImportFile(e){
 }
 
 function doImport(mode){
-  alert('doImport appelé : mode='+mode+' data='+(importPendingData?'OK':'NULL'));
   if(!importPendingData){closeModal('modalImportConfirm');return;}
-  alert('on continue...');
   if(mode==='replace'){
     state=importPendingData;
   } else {
