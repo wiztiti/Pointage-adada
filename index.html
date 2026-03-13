@@ -2537,6 +2537,7 @@ function handleImportFile(e){
   const file=files[0];
   const reader=new FileReader();
   reader.onload=function(ev){
+    alert('onload déclenché, longueur : '+ev.target.result.length);
     try{
       const parsed=JSON.parse(ev.target.result);
       if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide : pas de eleves ni vacations');
@@ -2559,6 +2560,7 @@ function handleImportFile(e){
     alert('❌ Erreur lecture fichier');
   };
   reader.readAsText(file);
+  alert('readAsText lancé pour : '+file.name);
 }
 
 function doImport(mode){
