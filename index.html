@@ -1690,15 +1690,19 @@ function buildDayRow(ds){
   const rMin=realMins(vacs);
   const cMin=convMins(vacs,ded);
   const nomJour=JOURS[dow].substring(0,3);
-  const dateLabel=d.getDate()+' '+MOIS[d.getMonth()].substring(0,4)+'.';
+  const dateLabel=nomJour+' '+d.getDate();
 
   let cls=isWE?'weekend':worked?'worked':'absent';
   let vacsHtml='';
   if(worked){
-    vacsHtml=vacs.map(v=>{
+    const vacsFormatted=vacs.map(v=>{
       const dep=new Date(v.dep);const ret=new Date(v.ret);
       return `(${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')})`;
-    }).join(' ');
+    });
+    // 2 max par ligne
+    const lines=[];
+    for(let i=0;i<vacsFormatted.length;i+=2) lines.push(vacsFormatted.slice(i,i+2).join(' '));
+    vacsHtml=lines.join('<br>');
   } else {
     vacsHtml=isWE?'—':'—';
   }
@@ -1706,8 +1710,7 @@ function buildDayRow(ds){
   const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>`:'';
 
   return `<div class="recap-day-row ${cls}">
-    <span class="recap-day-name">${nomJour}</span>
-    <span class="recap-day-date">${dateLabel}</span>
+    <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
     <span class="recap-day-vacs">${vacsHtml}</span>
     <span class="recap-day-hrs">${hrsHtml}</span>
   </div>`;
