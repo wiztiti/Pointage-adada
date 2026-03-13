@@ -1096,16 +1096,16 @@ function renderHeader(){
   const isFem=femEndings.some(e=>saint.toLowerCase().endsWith(e));
   const prefix=isFem?'Ste':'St';
   const isNoel=d.getMonth()===11&&d.getDate()===25;
-  // Numéro de semaine ISO
-  const jan4=new Date(d.getFullYear(),0,4);
-  const startOfWeek1=new Date(jan4);
-  startOfWeek1.setDate(jan4.getDate()-(jan4.getDay()||7)+1);
-  const weekNum=Math.round((d-startOfWeek1)/604800000)+1;
+  // Numéro de semaine ISO correct
+  const tmp=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7));
+  const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
+  const weekNum=Math.ceil((((tmp-yearStart)/86400000)+1)/7);
 
   document.getElementById('hDateSaint').innerHTML=(isNoel
     ? `Ste ${saint} &nbsp;🎅 Noël !`
     : prefix+' '+saint)
-    +` <span style="opacity:0.75;font-size:0.8em;">&nbsp;&nbsp;·&nbsp;&nbsp;Sem. ${weekNum}</span>`;
+    +` <span style="opacity:0.9;font-size:0.8em;">&nbsp;&nbsp;·&nbsp;&nbsp;Sem. ${weekNum}</span>`;
   document.getElementById('btnNext').disabled=isToday();
   const histRow=document.getElementById('historyBtns');
   const today=isToday();
