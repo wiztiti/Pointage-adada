@@ -818,31 +818,15 @@ html, body {
       <span class="card-chevron">▼</span>
     </div>
     <div class="card-body">
-      <div class="heures-section" style="margin-top:6px;">
-        <div class="heures-section-title">Heures réelles</div>
-        <div class="heures-grid">
-          <div class="heure-cell"><div class="heure-period">Jour</div><div class="heure-val real" id="rJour">0h00</div></div>
-          <div class="heure-cell"><div class="heure-period">Semaine</div><div class="heure-val real" id="rSem">0h00</div></div>
-          <div class="heure-cell"><div class="heure-period">Mois</div><div class="heure-val real" id="rMois">0h00</div></div>
-        </div>
+      <div style="display:flex;gap:10px;margin-top:6px;">
+        <button class="btn-open-modal" style="flex:1;font-size:0.82rem;" onclick="openRecapSemaine()">📅 Semaine</button>
+        <button class="btn-open-modal" style="flex:1;font-size:0.82rem;" onclick="openRecapMois()">📆 Mois</button>
       </div>
-      <div class="heures-section">
-        <div class="heures-section-title">Heures conventionnelles</div>
-        <div class="heures-grid">
-          <div class="heure-cell"><div class="heure-period">Jour</div><div class="heure-val conv" id="cJour">0h00</div></div>
-          <div class="heure-cell"><div class="heure-period">Semaine</div><div class="heure-val conv" id="cSem">0h00</div></div>
-          <div class="heure-cell"><div class="heure-period">Mois</div><div class="heure-val conv" id="cMois">0h00</div></div>
-        </div>
-      </div>
-      <div class="deduc-row" id="deducRow">
+      <div class="deduc-row" id="deducRow" style="margin-top:14px;justify-content:flex-start;">
         <input type="checkbox" class="deduc-cb" id="cbDeduc" onchange="saveDeduc()">
         <label class="deduc-lbl" for="cbDeduc">Déduction de la ½ heure</label>
       </div>
       <div style="text-align:center;margin-top:14px;font-style:italic;font-size:0.78rem;color:#4ade80;">Les totaux d'heures sont donnés à titre indicatif</div>
-      <div style="display:flex;gap:10px;margin-top:14px;">
-        <button class="btn-open-modal" style="flex:1;font-size:0.82rem;" onclick="openRecapSemaine()">📅 Récap Semaine</button>
-        <button class="btn-open-modal" style="flex:1;font-size:0.82rem;" onclick="openRecapMois()">📆 Récap Mois</button>
-      </div>
     </div>
   </div>
 
@@ -975,10 +959,13 @@ html, body {
 <div class="modal-overlay" id="modalRecapSemaine">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
     <div class="modal-handle"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;">
-      <button onclick="navRecapSem(-1)" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">‹</button>
-      <div id="recapSemTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.95rem;color:#1e3a5f;text-align:center;"></div>
-      <button onclick="navRecapSem(1)" id="btnRecapSemNext" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">›</button>
+    <div style="display:flex;align-items:center;gap:4px;padding:12px 16px 10px;border-bottom:1px solid #e2e8f0;background:#fff;flex-shrink:0;">
+      <button onclick="navRecapSem(-1)" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:2px 6px;color:#64748b;flex-shrink:0;">‹</button>
+      <div style="flex:1;min-width:0;">
+        <div id="recapSemTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.88rem;color:#1e3a5f;text-align:center;"></div>
+        <div id="recapSemTotal" style="font-size:0.78rem;color:#475569;margin-top:1px;text-align:center;"></div>
+      </div>
+      <button onclick="navRecapSem(1)" id="btnRecapSemNext" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:2px 6px;color:#64748b;flex-shrink:0;">›</button>
     </div>
     <div class="modal-body" id="recapSemaineBody" style="padding:14px 20px;overflow-y:auto;flex:1;"></div>
     <div class="modal-footer">
@@ -1269,6 +1256,13 @@ function renderVacations(){
   const list=document.getElementById('vacList');
   const canE=canEdit();
   if(!vacs.length){list.innerHTML='<div class="empty-state">Aucune vacation pour cette journée</div>';return;}
+  const vacsComplete=vacsForDate(viewDate);
+  const rMin=realMins(vacsComplete);
+  const cMin=convMins(vacsComplete,getDeduc(viewDate));
+  const totalsHtml=vacsComplete.length?`<div style="text-align:center;margin-top:10px;font-size:0.82rem;">
+    <span style="color:#3b82f6;font-weight:600;">${minToHM(rMin)} réelles</span>
+    <span style="color:#22c55e;font-weight:600;"> (${minToHM(cMin)} Conv.)</span>
+  </div>`:'';
   list.innerHTML=vacs.map((v,i)=>{
     const dur=durMin(v.dep,v.ret);
     const durTxt=dur!==null?'('+minToHM(dur)+')':'';
@@ -1282,7 +1276,7 @@ function renderVacations(){
       <span class="vac-dur">${durTxt}</span>
       ${canE?`<button class="vac-del mgmt-del" onclick="deleteVac('${v.id}')">🗑</button>`:''}
     </div>`;
-  }).join('');
+  }).join('')+totalsHtml;
   document.getElementById('btnAjoutManuel').style.display=canE?'flex':'none';
 }
 
@@ -1319,23 +1313,11 @@ function monthDates(ds){
 }
 
 function refreshHeures(){
-  const ds=viewDate,ded=getDeduc(ds);
-  const vD=vacsForDate(ds);const rD=realMins(vD),cD=convMins(vD,ded);
-  document.getElementById('rJour').textContent=minToHM(rD);
-  document.getElementById('cJour').textContent=minToHM(cD);
-  let rS=0,cS=0;
-  weekDates(ds).forEach(d=>{const v=vacsForDate(d);rS+=realMins(v);cS+=convMins(v,getDeduc(d));});
-  document.getElementById('rSem').textContent=minToHM(rS);
-  document.getElementById('cSem').textContent=minToHM(cS);
-  let rM=0,cM=0;
-  monthDates(ds).forEach(d=>{const v=vacsForDate(d);rM+=realMins(v);cM+=convMins(v,getDeduc(d));});
-  document.getElementById('rMois').textContent=minToHM(rM);
-  document.getElementById('cMois').textContent=minToHM(cM);
   // Case déduction : visible uniquement aujourd'hui
   const deducRow=document.getElementById('deducRow');
   if(isToday()){
     deducRow.style.display='';
-    document.getElementById('cbDeduc').checked=getDeduc(ds);
+    document.getElementById('cbDeduc').checked=getDeduc();
     document.getElementById('cbDeduc').disabled=false;
   } else {
     deducRow.style.display='none';
@@ -1715,8 +1697,8 @@ function buildDayRow(ds){
   if(worked){
     vacsHtml=vacs.map(v=>{
       const dep=new Date(v.dep);const ret=new Date(v.ret);
-      return `${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')}`;
-    }).join(' / ');
+      return `(${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')})`;
+    }).join(' ');
   } else {
     vacsHtml=isWE?'—':'—';
   }
@@ -1750,7 +1732,6 @@ function renderRecapSemaine(){
   const d0=new Date(recapSemDate+'T12:00:00');
   const weekNum=isoWeekNum(d0);
   document.getElementById('recapSemTitre').innerHTML=`Semaine ${weekNum} &nbsp;·&nbsp; ${semaineLabelDuAu(recapSemDate)}`;
-  // Désactiver next si semaine en cours ou future
   const todayMonday=mondayOf(todayStr());
   document.getElementById('btnRecapSemNext').disabled=recapSemDate>=todayMonday;
 
@@ -1762,10 +1743,7 @@ function renderRecapSemaine(){
     cTotal+=convMins(vacs,getDeduc(ds));
     html+=buildDayRow(ds);
   });
-  html+=`<div class="recap-total-row">
-    <span>Total semaine</span>
-    <span>${minToHM(rTotal)} <span style="color:#64748b;font-size:0.8rem;font-weight:500;">(conv. ${minToHM(cTotal)})</span></span>
-  </div>`;
+  document.getElementById('recapSemTotal').innerHTML=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
   document.getElementById('recapSemaineBody').innerHTML=html;
 }
 
