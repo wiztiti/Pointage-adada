@@ -2281,7 +2281,9 @@ function closeModal(id){
   }
 }
 document.querySelectorAll('.modal-overlay').forEach(m=>{
-  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open');});
+  m.addEventListener('click',e=>{
+    if(e.target===m && m.id!=='modalImportConfirm') m.classList.remove('open');
+  });
 });
 
 // ============================================================
@@ -2498,7 +2500,7 @@ let importPendingData=null;
 
 function handleImportFile(e){
   const file=e.target.files[0];
-  if(!file) return;
+  if(!file){e.target.value='';return;}
   const reader=new FileReader();
   reader.onload=function(ev){
     try{
@@ -2510,18 +2512,23 @@ function handleImportFile(e){
       document.getElementById('importConfirmMsg').innerHTML=
         `Fichier lu : <strong>${nbEleves} élève(s)</strong>, <strong>${nbVacs} vacation(s)</strong>.<br><br>
         <span style="color:#ef4444;font-size:0.8rem;">⚠️ "Remplacer" écrasera définitivement toutes vos données actuelles.</span>`;
-      closeModal('modalSettings');
-      setTimeout(()=>document.getElementById('modalImportConfirm').classList.add('open'),300);
+      // Fermer settings et ouvrir confirmation avec délai suffisant pour mobile
+      document.getElementById('modalSettings').classList.remove('open');
+      setTimeout(()=>{
+        document.getElementById('modalImportConfirm').classList.add('open');
+      },500);
     }catch(err){
       showToast('❌ Fichier invalide');
     }
-    e.target.value='';
   };
   reader.readAsText(file);
+  e.target.value='';
 }
 
 function doImport(mode){
+  alert('doImport appelé : mode='+mode+' data='+(importPendingData?'OK':'NULL'));
   if(!importPendingData){closeModal('modalImportConfirm');return;}
+  alert('on continue...');
   if(mode==='replace'){
     state=importPendingData;
   } else {
