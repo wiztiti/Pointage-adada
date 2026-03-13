@@ -2521,11 +2521,11 @@ let importPendingData=null;
 
 function handleImportFile(e){
   const files=e.target.files;
-  if(!files||!files.length){e.target.value='';return;}
+  if(!files||!files.length) return;
   const file=files[0];
-  e.target.value='';
   const reader=new FileReader();
   reader.onload=function(ev){
+    e.target.value='';
     try{
       const parsed=JSON.parse(ev.target.result);
       if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide : pas de eleves ni vacations');
@@ -2546,7 +2546,8 @@ function handleImportFile(e){
     }
   };
   reader.onerror=function(){
-    showToast('❌ Erreur lecture fichier');
+    e.target.value='';
+    alert('❌ Erreur lecture fichier');
   };
   reader.readAsText(file);
 }
