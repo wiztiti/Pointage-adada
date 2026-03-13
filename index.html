@@ -992,7 +992,7 @@ html, body {
 </div>
 
 <!-- Input file hors modal pour compatibilité mobile -->
-<input type="file" id="importFileInput" accept=".json" style="display:none;position:fixed;top:-9999px;" onchange="handleImportFile(event)">
+<!-- Input file créé dynamiquement par JS -->
 
 <!-- ===== MODAL SETTINGS ===== -->
 <div class="modal-overlay" id="modalSettings">
@@ -1012,9 +1012,7 @@ html, body {
       <div style="padding:12px 16px;background:#fff7ed;border-radius:12px;border:1.5px solid #fed7aa;">
         <div style="font-size:0.9rem;font-weight:600;color:#9a3412;margin-bottom:6px;">📂 Importer des données</div>
         <div style="font-size:0.78rem;color:#fb923c;margin-bottom:10px;">Fusionner ou remplacer vos données depuis un fichier JSON.</div>
-        <label for="importFileInput" style="display:block;width:100%;text-align:center;padding:12px;border-radius:12px;background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">
-          Choisir un fichier JSON
-        </label>
+        <button class="btn-valider" style="background:linear-gradient(135deg,#fb923c,#ea580c);width:100%;" onclick="triggerImport()">Choisir un fichier JSON</button>
       </div>
 
     </div>
@@ -2519,17 +2517,28 @@ function exportData(){
 // ---- IMPORT ----
 let importPendingData=null;
 
+function triggerImport(){
+  const old=document.getElementById('importFileInput');
+  if(old) old.remove();
+  const input=document.createElement('input');
+  input.type='file';
+  input.id='importFileInput';
+  input.accept='.json';
+  input.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0;';
+  input.addEventListener('change', handleImportFile);
+  document.body.appendChild(input);
+  input.click();
+}
+
 function handleImportFile(e){
   const files=e.target.files;
   if(!files||!files.length) return;
   const file=files[0];
   const reader=new FileReader();
   reader.onload=function(ev){
-    e.target.value='';
     try{
       const parsed=JSON.parse(ev.target.result);
       if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide : pas de eleves ni vacations');
-      // Stocker dans le DOM ET dans la variable pour double sécurité
       importPendingData=parsed;
       document.getElementById('modalImportConfirm').dataset.pending=ev.target.result;
       const nbVacs=(parsed.vacations||[]).length;
@@ -2546,7 +2555,6 @@ function handleImportFile(e){
     }
   };
   reader.onerror=function(){
-    e.target.value='';
     alert('❌ Erreur lecture fichier');
   };
   reader.readAsText(file);
