@@ -1384,7 +1384,11 @@ function renderVacations(){
   const vacs=getVacsSorted();
   const list=document.getElementById('vacList');
   const canE=canEdit();
-  if(!vacs.length){list.innerHTML='<div class="empty-state">Aucune vacation pour cette journée</div>';return;}
+  if(!vacs.length){
+    list.innerHTML='<div class="empty-state">Aucune vacation pour cette journée</div>';
+    document.getElementById('btnAjoutManuel').style.display=canE?'flex':'none';
+    return;
+  }
   const vacsComplete=vacsForDate(viewDate);
   const rMin=realMins(vacsComplete);
   const cMin=convMins(vacsComplete,getDeduc(viewDate));
