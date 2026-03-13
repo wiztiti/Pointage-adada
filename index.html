@@ -2526,16 +2526,17 @@ function triggerImport(){
     const parsed=Array.isArray(raw)?raw[0]:raw;
     if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
     importPendingData=parsed;
-    document.getElementById('modalImportConfirm').dataset.pending=text;
     const nbVacs=(parsed.vacations||[]).length;
     const nbEleves=(parsed.eleves||[]).length;
     document.getElementById('importConfirmMsg').innerHTML=
       `Fichier lu : <strong>${nbEleves} élève(s)</strong>, <strong>${nbVacs} vacation(s)</strong>.<br><br>
       <span style="color:#ef4444;font-size:0.8rem;">⚠️ "Remplacer" écrasera définitivement toutes vos données actuelles.</span>`;
+    // Fermer settings, ouvrir confirmation
     document.getElementById('modalSettings').classList.remove('open');
+    document.getElementById('modalImportConfirm').classList.remove('open');
     setTimeout(()=>{
       document.getElementById('modalImportConfirm').classList.add('open');
-    },300);
+    },350);
   }catch(err){
     showToast('❌ JSON invalide : '+err.message);
   }
