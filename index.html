@@ -991,18 +991,14 @@ html, body {
 <div class="modal-overlay" id="modalRecapMois">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
     <div class="modal-handle"></div>
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;">
-      <button onclick="navRecapMois(-1)" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">‹</button>
-      <div id="recapMoisTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.95rem;color:#1e3a5f;text-align:center;"></div>
-      <button onclick="navRecapMois(1)" id="btnRecapMoisNext" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:4px 10px;color:#64748b;">›</button>
-    </div>
-    <!-- Bandeau fixe : total + déduction -->
-    <div style="padding:10px 20px 8px;border-bottom:1px solid #e2e8f0;background:#fff;flex-shrink:0;">
-      <div id="recapMoisTotal" class="recap-total-row" style="margin:0 0 8px;"></div>
-      <div class="deduc-row" style="justify-content:center;">
-        <input type="checkbox" class="deduc-cb" id="cbDeducMois" onchange="toggleDeducMois()">
-        <label class="deduc-lbl" for="cbDeducMois">Déduction de la ½ heure</label>
+    <!-- Bandeau fixe : nav + titre + totaux -->
+    <div style="display:flex;align-items:center;gap:4px;padding:12px 16px 10px;border-bottom:1px solid #e2e8f0;background:#fff;flex-shrink:0;">
+      <button onclick="navRecapMois(-1)" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:2px 6px;color:#64748b;flex-shrink:0;">‹</button>
+      <div style="flex:1;min-width:0;">
+        <div id="recapMoisTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.88rem;color:#1e3a5f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+        <div id="recapMoisTotal" style="font-size:0.78rem;color:#475569;margin-top:1px;"></div>
       </div>
+      <button onclick="navRecapMois(1)" id="btnRecapMoisNext" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:2px 6px;color:#64748b;flex-shrink:0;">›</button>
     </div>
     <div class="modal-body" id="recapMoisBody" style="padding:14px 20px;overflow-y:auto;flex:1;"></div>
     <div class="modal-footer">
@@ -1297,7 +1293,6 @@ function getDayData(ds){if(!state.dayData)state.dayData={};if(!state.dayData[ds]
 function peekDayData(ds){return(state.dayData&&state.dayData[ds])||{};}
 function getDeduc(ds){return!!(state.deduc&&state.deduc.global);}
 function saveDeduc(){if(!state.deduc)state.deduc={};state.deduc.global=document.getElementById('cbDeduc').checked;saveState();refreshHeures();}
-function toggleDeducMois(){if(!state.deduc)state.deduc={};state.deduc.global=document.getElementById('cbDeducMois').checked;saveState();refreshHeures();renderRecapMois();}
 
 function vacsForDate(ds){return state.vacations.filter(v=>v.date===ds&&v.dep&&v.ret);}
 function realMins(vacs){return vacs.reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
@@ -1672,8 +1667,8 @@ function isoWeekNum(d){
 
 function mondayOf(ds){
   const d=new Date(ds+'T12:00:00');
-  const day=d.getDay()||7;
-  d.setDate(d.getDate()-day+1);
+  const day=(d.getDay()+6)%7; // lun=0 ... dim=6
+  d.setDate(d.getDate()-day);
   return dateStr(d);
 }
 
@@ -1795,7 +1790,7 @@ function navRecapMois(delta){
 
 function renderRecapMois(){
   const {y,m}=recapMoisDate;
-  document.getElementById('recapMoisTitre').textContent=`${MOIS[m]} ${y}`;
+  document.getElementById('recapMoisTitre').textContent=`Mois de ${MOIS[m]} ${y}`;
   // Désactiver next si mois en cours ou futur
   const now=new Date();
   document.getElementById('btnRecapMoisNext').disabled=(y>now.getFullYear()||(y===now.getFullYear()&&m>=now.getMonth()));
@@ -1805,8 +1800,8 @@ function renderRecapMois(){
   const lastDay=new Date(y,m+1,0);
   // Lundi de la première semaine
   let monday=new Date(firstDay);
-  const dow=monday.getDay()||7;
-  monday.setDate(monday.getDate()-dow+1);
+  const dow=(monday.getDay()+6)%7;
+  monday.setDate(monday.getDate()-dow);
 
   const semaines=[];
   while(monday<=lastDay){
@@ -1828,9 +1823,7 @@ function renderRecapMois(){
   });
 
   // Mise à jour du bandeau fixe
-  document.getElementById('recapMoisTotal').innerHTML=`<span>Total ${MOIS[m]}</span>
-    <span>${minToHM(rMoisTotal)} <span style="color:#64748b;font-size:0.8rem;font-weight:500;">(conv. ${minToHM(cMoisTotal)})</span></span>`;
-  document.getElementById('cbDeducMois').checked=getDeduc();
+  document.getElementById('recapMoisTotal').innerHTML=`${minToHM(rMoisTotal)} réelles &nbsp;·&nbsp; conv. ${minToHM(cMoisTotal)}`;
 
   let html='';
 
