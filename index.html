@@ -2529,7 +2529,9 @@ function handleImportFile(e){
     try{
       const parsed=JSON.parse(ev.target.result);
       if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
+      // Stocker dans le DOM ET dans la variable pour double sécurité
       importPendingData=parsed;
+      document.getElementById('modalImportConfirm').dataset.pending=ev.target.result;
       const nbVacs=(parsed.vacations||[]).length;
       const nbEleves=(parsed.eleves||[]).length;
       document.getElementById('importConfirmMsg').innerHTML=
@@ -2550,7 +2552,12 @@ function handleImportFile(e){
 }
 
 function doImport(mode){
-  if(!importPendingData){closeModal('modalImportConfirm');return;}
+  // Récupérer depuis la variable OU depuis le DOM si la variable est perdue
+  if(!importPendingData){
+    const raw=document.getElementById('modalImportConfirm').dataset.pending;
+    if(raw) try{ importPendingData=JSON.parse(raw); }catch(e){}
+  }
+  if(!importPendingData){closeModal('modalImportConfirm');showToast('❌ Données perdues, réessayez');return;}
   if(mode==='replace'){
     state=importPendingData;
   } else {
@@ -2580,6 +2587,7 @@ function doImport(mode){
   renderAll();
   closeModal('modalImportConfirm');
   importPendingData=null;
+  document.getElementById('modalImportConfirm').dataset.pending='';
   const msg=mode==='replace'?'✅ Données remplacées avec succès !':'✅ Données fusionnées avec succès !';
   setTimeout(()=>showImportSuccess(msg),300);
 }
