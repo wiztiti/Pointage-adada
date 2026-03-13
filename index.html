@@ -992,7 +992,7 @@ html, body {
 </div>
 
 <!-- Input file hors modal pour compatibilité mobile -->
-<!-- Input file créé dynamiquement par JS -->
+
 
 <!-- ===== MODAL SETTINGS ===== -->
 <div class="modal-overlay" id="modalSettings">
@@ -1011,8 +1011,9 @@ html, body {
       <!-- Import -->
       <div style="padding:12px 16px;background:#fff7ed;border-radius:12px;border:1.5px solid #fed7aa;">
         <div style="font-size:0.9rem;font-weight:600;color:#9a3412;margin-bottom:6px;">📂 Importer des données</div>
-        <div style="font-size:0.78rem;color:#fb923c;margin-bottom:10px;">Fusionner ou remplacer vos données depuis un fichier JSON.</div>
-        <button class="btn-valider" style="background:linear-gradient(135deg,#fb923c,#ea580c);width:100%;" onclick="triggerImport()">Choisir un fichier JSON</button>
+        <div style="font-size:0.78rem;color:#fb923c;margin-bottom:10px;">Collez le contenu de votre fichier JSON ci-dessous.</div>
+        <textarea id="importTextarea" placeholder='Collez ici le contenu JSON...' style="width:100%;height:80px;border-radius:10px;border:1.5px solid #fed7aa;padding:8px;font-size:0.78rem;font-family:monospace;resize:none;box-sizing:border-box;background:#fffbf5;"></textarea>
+        <button class="btn-valider" style="background:linear-gradient(135deg,#fb923c,#ea580c);width:100%;margin-top:8px;" onclick="triggerImport()">Importer ce JSON</button>
       </div>
 
     </div>
@@ -2518,51 +2519,26 @@ function exportData(){
 let importPendingData=null;
 
 function triggerImport(){
-  const old=document.getElementById('importFileInput');
-  if(old) old.remove();
-  const input=document.createElement('input');
-  input.type='file';
-  input.id='importFileInput';
-  input.accept='.json';
-  input.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0;';
-  input.addEventListener('change', handleImportFile);
-  document.body.appendChild(input);
-  input.click();
-}
-
-function handleImportFile(e){
-  const files=e.target.files;
-  if(!files||!files.length) return;
-  const file=files[0];
-  const input=e.target;
-  const reader=new FileReader();
-  reader.onload=function(ev){
-    input.remove(); // supprimer l'input immédiatement après lecture
-    try{
-      const raw=JSON.parse(ev.target.result);
-      // Accepter tableau (ancien format) ou objet (nouveau format)
-      const parsed=Array.isArray(raw)?raw[0]:raw;
-      if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide : pas de eleves ni vacations');
-      importPendingData=parsed;
-      document.getElementById('modalImportConfirm').dataset.pending=ev.target.result;
-      const nbVacs=(parsed.vacations||[]).length;
-      const nbEleves=(parsed.eleves||[]).length;
-      document.getElementById('importConfirmMsg').innerHTML=
-        `Fichier lu : <strong>${nbEleves} élève(s)</strong>, <strong>${nbVacs} vacation(s)</strong>.<br><br>
-        <span style="color:#ef4444;font-size:0.8rem;">⚠️ "Remplacer" écrasera définitivement toutes vos données actuelles.</span>`;
-      document.getElementById('modalSettings').classList.remove('open');
-      setTimeout(()=>{
-        document.getElementById('modalImportConfirm').classList.add('open');
-      },500);
-    }catch(err){
-      showToast('❌ Fichier invalide');
-    }
-  };
-  reader.onerror=function(){
-    input.remove();
-    showToast('❌ Erreur lecture fichier');
-  };
-  reader.readAsText(file);
+  const text=document.getElementById('importTextarea').value.trim();
+  if(!text){showToast('❌ Collez d\'abord le contenu JSON');return;}
+  try{
+    const raw=JSON.parse(text);
+    const parsed=Array.isArray(raw)?raw[0]:raw;
+    if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
+    importPendingData=parsed;
+    document.getElementById('modalImportConfirm').dataset.pending=text;
+    const nbVacs=(parsed.vacations||[]).length;
+    const nbEleves=(parsed.eleves||[]).length;
+    document.getElementById('importConfirmMsg').innerHTML=
+      `Fichier lu : <strong>${nbEleves} élève(s)</strong>, <strong>${nbVacs} vacation(s)</strong>.<br><br>
+      <span style="color:#ef4444;font-size:0.8rem;">⚠️ "Remplacer" écrasera définitivement toutes vos données actuelles.</span>`;
+    document.getElementById('modalSettings').classList.remove('open');
+    setTimeout(()=>{
+      document.getElementById('modalImportConfirm').classList.add('open');
+    },300);
+  }catch(err){
+    showToast('❌ JSON invalide : '+err.message);
+  }
 }
 
 function doImport(mode){
@@ -2602,6 +2578,8 @@ function doImport(mode){
   closeModal('modalImportConfirm');
   importPendingData=null;
   document.getElementById('modalImportConfirm').dataset.pending='';
+  const ta=document.getElementById('importTextarea');
+  if(ta) ta.value='';
   const msg=mode==='replace'?'✅ Données remplacées avec succès !':'✅ Données fusionnées avec succès !';
   setTimeout(()=>showImportSuccess(msg),300);
 }
