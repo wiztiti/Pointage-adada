@@ -2509,7 +2509,7 @@ function handleImportFile(e){
         `Fichier lu : <strong>${nbEleves} élève(s)</strong>, <strong>${nbVacs} vacation(s)</strong>.<br><br>
         <span style="color:#ef4444;font-size:0.8rem;">⚠️ "Remplacer" écrasera définitivement toutes vos données actuelles.</span>`;
       closeModal('modalSettings');
-      document.getElementById('modalImportConfirm').classList.add('open');
+      setTimeout(()=>document.getElementById('modalImportConfirm').classList.add('open'),300);
     }catch(err){
       showToast('❌ Fichier invalide');
     }
