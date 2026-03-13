@@ -2542,6 +2542,7 @@ function triggerImport(){
 }
 
 function doImport(mode){
+  alert('doImport : mode='+mode+' data='+(importPendingData?'OK':'NULL')+' dataset='+(document.getElementById('modalImportConfirm').dataset.pending?'OK':'NULL'));
   // Récupérer depuis la variable OU depuis le DOM si la variable est perdue
   if(!importPendingData){
     const raw=document.getElementById('modalImportConfirm').dataset.pending;
