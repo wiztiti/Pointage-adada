@@ -2532,15 +2532,14 @@ function triggerImport(){
 
 function handleImportFile(e){
   const files=e.target.files;
-  alert('handleImportFile appelé, nb fichiers : '+(files?files.length:0)+', nom : '+(files&&files.length?files[0].name:'aucun')+', taille : '+(files&&files.length?files[0].size:0));
   if(!files||!files.length) return;
   const file=files[0];
   const reader=new FileReader();
   reader.onload=function(ev){
-    alert('onload déclenché, longueur : '+ev.target.result.length);
-    alert('premiers caractères : ['+ev.target.result.substring(0,30)+']');
     try{
-      const parsed=JSON.parse(ev.target.result);
+      const raw=JSON.parse(ev.target.result);
+      // Accepter tableau (ancien format) ou objet (nouveau format)
+      const parsed=Array.isArray(raw)?raw[0]:raw;
       if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide : pas de eleves ni vacations');
       importPendingData=parsed;
       document.getElementById('modalImportConfirm').dataset.pending=ev.target.result;
@@ -2554,14 +2553,13 @@ function handleImportFile(e){
         document.getElementById('modalImportConfirm').classList.add('open');
       },500);
     }catch(err){
-      alert('❌ Erreur : '+err.message);
+      showToast('❌ Fichier invalide');
     }
   };
   reader.onerror=function(){
-    alert('❌ Erreur lecture fichier');
+    showToast('❌ Erreur lecture fichier');
   };
   reader.readAsText(file);
-  alert('readAsText lancé pour : '+file.name);
 }
 
 function doImport(mode){
