@@ -1698,8 +1698,15 @@ function openRapport(){
   const todayKm=dd.km?parseInt(dd.km):null;
   html+='<div class="rapport-km-block">';
   if(todayKm){
-    const prevDs=prevDay(ds);
-    const prevKm=peekDayData(prevDs).km?parseInt(peekDayData(prevDs).km):null;
+    // Chercher le dernier km connu en remontant (ignorer jours sans relevé)
+    let prevKm=null;
+    let d2=new Date(ds+'T12:00:00');
+    for(let i=0;i<365;i++){
+      d2.setDate(d2.getDate()-1);
+      const s=dateStr(d2);
+      const km=peekDayData(s).km?parseInt(peekDayData(s).km):null;
+      if(km){prevKm=km;break;}
+    }
     const dist=prevKm!==null?todayKm-prevKm:null;
     html+=dist!==null?`<strong>${dist}</strong> kms effectués ce jour<br>`:'';
     html+=`Compteur à <strong>${todayKm}</strong>`;
