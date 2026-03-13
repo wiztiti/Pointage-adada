@@ -1011,9 +1011,10 @@ html, body {
       <!-- Import -->
       <div style="padding:12px 16px;background:#fff7ed;border-radius:12px;border:1.5px solid #fed7aa;">
         <div style="font-size:0.9rem;font-weight:600;color:#9a3412;margin-bottom:6px;">📂 Importer des données</div>
-        <div style="font-size:0.78rem;color:#fb923c;margin-bottom:10px;">Collez le contenu de votre fichier JSON ci-dessous.</div>
-        <textarea id="importTextarea" placeholder='Collez ici le contenu JSON...' style="width:100%;height:80px;border-radius:10px;border:1.5px solid #fed7aa;padding:8px;font-size:0.78rem;font-family:monospace;resize:none;box-sizing:border-box;background:#fffbf5;"></textarea>
-        <button class="btn-valider" style="background:linear-gradient(135deg,#fb923c,#ea580c);width:100%;margin-top:8px;" onclick="triggerImport()">Importer ce JSON</button>
+        <div style="font-size:0.78rem;color:#fb923c;margin-bottom:6px;">Choisissez un fichier JSON ou collez son contenu.</div>
+        <button class="btn-valider" style="background:linear-gradient(135deg,#fb923c,#ea580c);width:100%;margin-bottom:8px;" onclick="pickImportFile()">📁 Choisir un fichier JSON</button>
+        <textarea id="importTextarea" placeholder='Le contenu JSON apparaîtra ici, ou collez-le directement...' style="width:100%;height:80px;border-radius:10px;border:1.5px solid #fed7aa;padding:8px;font-size:0.78rem;font-family:monospace;resize:none;box-sizing:border-box;background:#fffbf5;"></textarea>
+        <button class="btn-valider" style="background:linear-gradient(135deg,#22c55e,#16a34a);width:100%;margin-top:8px;" onclick="triggerImport()">✅ Importer ce JSON</button>
       </div>
 
     </div>
@@ -2518,11 +2519,32 @@ function exportData(){
 // ---- IMPORT ----
 let importPendingData=null;
 
+function pickImportFile(){
+  const old=document.getElementById('importFileInput');
+  if(old) old.remove();
+  const input=document.createElement('input');
+  input.type='file';
+  input.id='importFileInput';
+  input.accept='.json';
+  input.style.cssText='position:fixed;top:-9999px;left:-9999px;';
+  input.addEventListener('change',function(){
+    const file=input.files[0];
+    if(!file) return;
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      document.getElementById('importTextarea').value=ev.target.result;
+      showToast('✅ Fichier chargé, cliquez Importer');
+    };
+    reader.readAsText(file);
+  });
+  document.body.appendChild(input);
+  input.click();
+}
+
 function triggerImport(){
   const text=document.getElementById('importTextarea').value.trim();
   if(!text){showToast('❌ Collez d\'abord le contenu JSON');return;}
   try{
-    alert('longueur texte: '+text.length+' premiers chars: ['+text.substring(0,20)+']');
     const raw=JSON.parse(text);
     const parsed=Array.isArray(raw)?raw[0]:raw;
     if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
