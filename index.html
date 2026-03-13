@@ -1009,8 +1009,10 @@ html, body {
       <div style="padding:12px 16px;background:#fff7ed;border-radius:12px;border:1.5px solid #fed7aa;">
         <div style="font-size:0.9rem;font-weight:600;color:#9a3412;margin-bottom:6px;">📂 Importer des données</div>
         <div style="font-size:0.78rem;color:#fb923c;margin-bottom:10px;">Fusionner ou remplacer vos données depuis un fichier JSON.</div>
-        <button class="btn-valider" style="background:linear-gradient(135deg,#fb923c,#ea580c);width:100%;" onclick="document.getElementById('importFileInput').click()">Choisir un fichier JSON</button>
-        <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="handleImportFile(event)">
+        <label style="display:block;width:100%;text-align:center;padding:12px;border-radius:12px;background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;">
+          Choisir un fichier JSON
+          <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="handleImportFile(event)">
+        </label>
       </div>
 
     </div>
