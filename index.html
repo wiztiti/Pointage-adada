@@ -2525,20 +2525,35 @@ function triggerImport(){
     const raw=JSON.parse(text);
     const parsed=Array.isArray(raw)?raw[0]:raw;
     if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
-    importPendingData=parsed;
     const nbVacs=(parsed.vacations||[]).length;
     const nbEleves=(parsed.eleves||[]).length;
-    document.getElementById('importConfirmMsg').innerHTML=
-      `Fichier lu : <strong>${nbEleves} élève(s)</strong>, <strong>${nbVacs} vacation(s)</strong>.<br><br>
-      <span style="color:#ef4444;font-size:0.8rem;">⚠️ "Remplacer" écrasera définitivement toutes vos données actuelles.</span>`;
-    // Fermer settings, ouvrir confirmation
-    document.getElementById('modalSettings').classList.remove('open');
-    document.getElementById('modalImportConfirm').classList.remove('open');
-    setTimeout(()=>{
-      document.getElementById('modalImportConfirm').classList.add('open');
-    },350);
+    const mode=confirm(
+      'Fichier lu : '+nbEleves+' élève(s), '+nbVacs+' vacation(s).\n\n'+
+      'Cliquez OK pour FUSIONNER (recommandé)\nou Annuler pour abandonner.'
+    );
+    if(!mode) return;
+    // Fusionner
+    const s=parsed;
+    (s.eleves||[]).forEach(e=>{if(!state.eleves.includes(e))state.eleves.push(e);});
+    (s.vacations||[]).forEach(v=>{if(!state.vacations.find(x=>x.id===v.id))state.vacations.push(v);});
+    Object.entries(s.presence||{}).forEach(([d,p])=>{
+      if(!state.presence[d]) state.presence[d]=p;
+      else Object.assign(state.presence[d],p);
+    });
+    Object.entries(s.dayData||{}).forEach(([d,dd])=>{
+      if(!state.dayData[d]) state.dayData[d]=dd;
+    });
+    Object.entries(s.rappels||{}).forEach(([d,r])=>{
+      if(!state.rappels) state.rappels={};
+      if(!state.rappels[d]) state.rappels[d]=r;
+    });
+    saveState();
+    renderAll();
+    document.getElementById('importTextarea').value='';
+    closeModal('modalSettings');
+    setTimeout(()=>showImportSuccess('✅ Données fusionnées avec succès !'),300);
   }catch(err){
-    showToast('❌ JSON invalide : '+err.message);
+    showToast('❌ JSON invalide');
   }
 }
 
