@@ -2534,8 +2534,10 @@ function handleImportFile(e){
   const files=e.target.files;
   if(!files||!files.length) return;
   const file=files[0];
+  const input=e.target;
   const reader=new FileReader();
   reader.onload=function(ev){
+    input.remove(); // supprimer l'input immédiatement après lecture
     try{
       const raw=JSON.parse(ev.target.result);
       // Accepter tableau (ancien format) ou objet (nouveau format)
@@ -2557,6 +2559,7 @@ function handleImportFile(e){
     }
   };
   reader.onerror=function(){
+    input.remove();
     showToast('❌ Erreur lecture fichier');
   };
   reader.readAsText(file);
