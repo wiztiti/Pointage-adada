@@ -2528,7 +2528,7 @@ function handleImportFile(e){
   reader.onload=function(ev){
     try{
       const parsed=JSON.parse(ev.target.result);
-      if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
+      if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide : pas de eleves ni vacations');
       // Stocker dans le DOM ET dans la variable pour double sécurité
       importPendingData=parsed;
       document.getElementById('modalImportConfirm').dataset.pending=ev.target.result;
@@ -2542,7 +2542,7 @@ function handleImportFile(e){
         document.getElementById('modalImportConfirm').classList.add('open');
       },500);
     }catch(err){
-      showToast('❌ Fichier invalide');
+      alert('❌ Erreur : '+err.message);
     }
   };
   reader.onerror=function(){
