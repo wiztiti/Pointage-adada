@@ -2522,6 +2522,7 @@ function triggerImport(){
   const text=document.getElementById('importTextarea').value.trim();
   if(!text){showToast('❌ Collez d\'abord le contenu JSON');return;}
   try{
+    alert('longueur texte: '+text.length+' premiers chars: ['+text.substring(0,20)+']');
     const raw=JSON.parse(text);
     const parsed=Array.isArray(raw)?raw[0]:raw;
     if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
