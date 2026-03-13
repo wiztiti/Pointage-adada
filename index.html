@@ -995,8 +995,8 @@ html, body {
     <div style="display:flex;align-items:center;gap:4px;padding:12px 16px 10px;border-bottom:1px solid #e2e8f0;background:#fff;flex-shrink:0;">
       <button onclick="navRecapMois(-1)" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:2px 6px;color:#64748b;flex-shrink:0;">‹</button>
       <div style="flex:1;min-width:0;">
-        <div id="recapMoisTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.88rem;color:#1e3a5f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-        <div id="recapMoisTotal" style="font-size:0.78rem;color:#475569;margin-top:1px;"></div>
+        <div id="recapMoisTitre" style="font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.88rem;color:#1e3a5f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;"></div>
+        <div id="recapMoisTotal" style="font-size:0.78rem;color:#475569;margin-top:1px;text-align:center;"></div>
       </div>
       <button onclick="navRecapMois(1)" id="btnRecapMoisNext" style="background:none;border:none;font-size:1.4rem;cursor:pointer;padding:2px 6px;color:#64748b;flex-shrink:0;">›</button>
     </div>
@@ -1796,9 +1796,9 @@ function renderRecapMois(){
   document.getElementById('btnRecapMoisNext').disabled=(y>now.getFullYear()||(y===now.getFullYear()&&m>=now.getMonth()));
 
   // Trouver toutes les semaines qui touchent ce mois
-  const firstDay=new Date(y,m,1);
-  const lastDay=new Date(y,m+1,0);
-  // Lundi de la première semaine
+  const firstDay=new Date(y,m,1,12,0,0);
+  const lastDay=new Date(y,m+1,0,12,0,0);
+  // Lundi de la première semaine ISO
   let monday=new Date(firstDay);
   const dow=(monday.getDay()+6)%7;
   monday.setDate(monday.getDate()-dow);
@@ -1823,7 +1823,7 @@ function renderRecapMois(){
   });
 
   // Mise à jour du bandeau fixe
-  document.getElementById('recapMoisTotal').innerHTML=`${minToHM(rMoisTotal)} réelles &nbsp;·&nbsp; conv. ${minToHM(cMoisTotal)}`;
+  document.getElementById('recapMoisTotal').innerHTML=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rMoisTotal)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cMoisTotal)} Conv.)</span>`;
 
   let html='';
 
