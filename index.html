@@ -2535,8 +2535,9 @@ function pickImportFile(){
     if(!file) return;
     const reader=new FileReader();
     reader.onload=function(ev){
-      document.getElementById('importTextarea').value=ev.target.result;
-      setTimeout(triggerImport, 100);
+      const text=ev.target.result;
+      document.getElementById('importTextarea').value=text;
+      setTimeout(()=>triggerImport(text), 100);
     };
     reader.readAsText(file);
   });
@@ -2544,8 +2545,8 @@ function pickImportFile(){
   input.click();
 }
 
-function triggerImport(){
-  const text=document.getElementById('importTextarea').value.trim();
+function triggerImport(textParam){
+  const text=(textParam||document.getElementById('importTextarea').value||'').trim();
   if(!text){showToast('❌ Collez d\'abord le contenu JSON');return;}
   try{
     const raw=JSON.parse(text);
