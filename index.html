@@ -2064,7 +2064,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
       days.forEach(ds=>{const v=vacsForDate(ds);rSem+=realMins(v);cSem+=convMins(v,getDeduc(ds));});
       const semKey=`${moisIdx}-${semIdx}`;
       const semOpen=openSem===semKey;
-      html+=`<div class="recap-semaine-row" style="background:#f1f5f9;margin-left:8px;" onclick="${toggleSemFn}('${semKey}')">
+      html+=`<div class="recap-semaine-row" style="background:#fce7f3;margin-left:8px;" onclick="${toggleSemFn}('${semKey}')">
         <div style="flex:1;">
           <div class="recap-sem-label" style="font-size:0.78rem;">Semaine ${weekNum}</div>
           <div class="recap-sem-dates">${duAu}</div>
