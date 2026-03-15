@@ -1906,7 +1906,7 @@ function buildDayRow(ds){
     vacsHtml=isWE?'—':'—';
   }
 
-  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>${aMin?` <span style="color:#f97316;font-size:0.72rem;">+${minToHM(aMin)}</span>`:''}`:'';
+  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;">+${minToHM(aMin)}</span>`:''}`:'';
 
   return `<div class="recap-day-row ${cls}">
     <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
@@ -2485,8 +2485,8 @@ function confirmClock(){
   // Check overlap with other vacations
   const others=state.vacations.filter(v=>v.id!==vac.id && v.date===viewDate && v.dep && v.ret);
   
-  // Check if the new time point falls inside an existing vacation
-  const timeInOther=others.some(o=> d >= o.dep && d < o.ret);
+  // Check if the new time point falls strictly inside an existing vacation (touching allowed)
+  const timeInOther=others.some(o=> d > o.dep && d < o.ret);
   if(timeInOther){
     vac[ckTarget.field]=prev;
     showToast('⚠️ Cette heure est dans une vacation existante');
@@ -2500,7 +2500,7 @@ function confirmClock(){
     return;
   }
 
-  // If both dep+ret set, check full overlap
+  // If both dep+ret set, check full overlap (touching allowed)
   if(vac.dep && vac.ret){
     const overlap=others.some(o=> vac.dep < o.ret && vac.ret > o.dep);
     if(overlap){
