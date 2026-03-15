@@ -1906,7 +1906,7 @@ function buildDayRow(ds){
     vacsHtml=isWE?'—':'—';
   }
 
-  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;">+${minToHM(aMin)}</span>`:''}`:'';
+  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;text-align:right;display:block;">+${minToHM(aMin)}</span>`:''}`:'';
 
   return `<div class="recap-day-row ${cls}">
     <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
