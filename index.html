@@ -1075,6 +1075,7 @@ html, body {
   </div>
 </div>
 
+<!-- ===== MODAL AJOUT MANUEL ===== -->
 <!-- ===== MODAL RECAP SEMAINE ===== -->
 <div class="modal-overlay" id="modalRecapSemaine">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
@@ -1361,6 +1362,15 @@ function ajoutManuel(){
   saveState();renderVacations();refreshHeures();
 }
 
+
+function toggleAnnexe(id, checked){
+  if(!canEdit())return;
+  const v=state.vacations.find(x=>x.id===id);
+  if(!v)return;
+  v.annexe=checked||undefined;
+  saveState();renderVacations();refreshHeures();
+}
+
 function deleteVac(id){
   if(!canEdit())return;
   state.vacations=state.vacations.filter(v=>v.id!==id);
@@ -1384,23 +1394,40 @@ function renderVacations(){
     return;
   }
   const vacsComplete=vacsForDate(viewDate);
-  const rMin=realMins(vacsComplete);
-  const cMin=convMins(vacsComplete,getDeduc(viewDate));
+  const normalVacs=vacsComplete.filter(v=>!v.annexe);
+  const rMin=realMins(normalVacs);
+  const cMin=convMins(normalVacs,getDeduc(viewDate));
+  const annexeMin=annexeMins(vacsComplete);
   const totalsHtml=vacsComplete.length?`<div style="text-align:center;margin-top:10px;font-size:0.82rem;">
     <span style="color:#3b82f6;font-weight:600;">${minToHM(rMin)} réelles</span>
     <span style="color:#22c55e;font-weight:600;"> (${minToHM(cMin)} Conv.)</span>
+    ${annexeMin?`<br><span style="color:#f97316;font-weight:600;">+ ${minToHM(annexeMin)} annexe</span>`:''}
   </div>`:'';
-  list.innerHTML=vacs.map((v,i)=>{
+  const headerHtml=canE?`<div style="display:flex;justify-content:flex-end;padding:0 0 4px 0;font-size:0.7rem;color:#f97316;font-weight:600;padding-right:38px;">annexe</div>`:'';
+  list.innerHTML=headerHtml+vacs.map((v,i)=>{
     const dur=durMin(v.dep,v.ret);
     const durTxt=dur!==null?'('+minToHM(dur)+')':'';
     const depCls=v.dep?'':'empty';
     const retCls=v.ret?'':'empty';
-    return`<div class="vacation-line">
-      <span class="vac-label">Vacation ${i+1}</span>
+    // Numérotation indépendante
+    const normalVacs=vacs.filter(x=>!x.annexe);
+    const annexeVacs=vacs.filter(x=>x.annexe);
+    let label;
+    if(v.annexe){
+      const idx=annexeVacs.indexOf(v);
+      label=annexeVacs.length>1?`Annexe ${idx+1}`:'Annexe';
+    } else {
+      const idx=normalVacs.indexOf(v);
+      label=`Vacation ${idx+1}`;
+    }
+    const isAnnexe=!!v.annexe;
+    return`<div class="vacation-line" style="${isAnnexe?'background:#fff7ed;':''}">
+      <span class="vac-label" style="${isAnnexe?'color:#f97316;font-weight:700;':''}">${label}</span>
       <span class="vac-time-slot ${depCls}" onclick="${canE?`openClockFor('${v.id}','dep')`:'void 0'}">${fmt(v.dep)}</span>
       <span class="vac-sep">–</span>
       <span class="vac-time-slot ${retCls}" onclick="${canE?`openClockFor('${v.id}','ret')`:'void 0'}">${fmt(v.ret)}</span>
       <span class="vac-dur">${durTxt}</span>
+      ${canE?`<input type="checkbox" ${isAnnexe?'checked':''} onchange="toggleAnnexe('${v.id}',this.checked)" style="width:16px;height:16px;accent-color:#f97316;cursor:pointer;margin-left:auto;">`:''}
       ${canE?`<button class="vac-del mgmt-del" onclick="deleteVac('${v.id}')">🗑</button>`:''}
     </div>`;
   }).join('')+totalsHtml;
@@ -1678,8 +1705,10 @@ function openRapport(){
   const vacs=vacsForDate(ds);
   const allVacs=getVacsSorted();
   const dd=getDayData(ds);
-  const rMin=realMins(vacs);
-  const cMin=convMins(vacs,ded);
+  const normalVacs2=vacs.filter(v=>!v.annexe);
+  const rMin=realMins(normalVacs2);
+  const cMin=convMins(normalVacs2,ded);
+  const aMin=annexeMins(vacs);
   const pres=getPresence(ds);
 
   let html='';
@@ -1689,11 +1718,22 @@ function openRapport(){
   // Vacations
   if(allVacs.length){
     html+='<div class="rapport-section-title">Vacations</div>';
+    const normalVacs=allVacs.filter(v=>!v.annexe);
+    const annexeVacs=allVacs.filter(v=>v.annexe);
     allVacs.forEach((v,i)=>{
       const dur=durMin(v.dep,v.ret);
       const durTxt=dur!==null?'durée ('+minToHM(dur)+')':'';
-      html+=`<div class="rapport-vac-line">
-        <span class="rv-label">Vacation ${i+1} :</span>
+      const isAnnexe=!!v.annexe;
+      let label;
+      if(isAnnexe){
+        const idx=annexeVacs.indexOf(v);
+        label=annexeVacs.length>1?`Annexe ${idx+1}`:'Annexe';
+      } else {
+        const idx=normalVacs.indexOf(v);
+        label=`Vacation ${idx+1}`;
+      }
+      html+=`<div class="rapport-vac-line" style="${isAnnexe?'background:#fff7ed;':''}">
+        <span class="rv-label" style="${isAnnexe?'color:#f97316;':''}">${label} :</span>
         <span class="rv-times">${fmt(v.dep)} – ${fmt(v.ret)}</span>
         <span class="rv-dur">${durTxt}</span>
       </div>`;
@@ -1704,6 +1744,7 @@ function openRapport(){
     html+=`<div class="rt-real" style="font-weight:400;">Heures réelles : ${minToHM(rMin)}</div>`;
     html+=`<div class="rt-conv">(Conv : ${minToHM(cMin)})</div>`;
     html+='</div>';
+    if(aMin) html+=`<div style="color:#f97316;font-family:'Quicksand',sans-serif;font-size:0.88rem;padding:0 0 8px;text-align:right;">+ ${minToHM(aMin)} de temps annexe</div>`;
     html+='<div class="divider"></div>';
   }
 
@@ -1840,19 +1881,24 @@ function buildDayRow(ds){
   const vacs=vacsForDate(ds);
   const worked=vacs.length>0;
   const ded=getDeduc(ds);
-  const rMin=realMins(vacs);
-  const cMin=convMins(vacs,ded);
+  const normalVacs=vacs.filter(v=>!v.annexe);
+  const rMin=realMins(normalVacs);
+  const cMin=convMins(normalVacs,ded);
+  const aMin=annexeMins(vacs);
   const nomJour=JOURS[dow].substring(0,3);
   const dateLabel=nomJour+' '+d.getDate();
 
   let cls=isWE?'weekend':worked?'worked':'absent';
   let vacsHtml='';
   if(worked){
+    const normalVacs=vacs.filter(v=>!v.annexe);
+    const annexeVacs=vacs.filter(v=>v.annexe);
     const vacsFormatted=vacs.map(v=>{
       const dep=new Date(v.dep);const ret=new Date(v.ret);
-      return `(${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')})`;
+      const times=`(${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')})`;
+      const isAnnexe=!!v.annexe;
+      return isAnnexe?`<span style="color:#f97316;">${times}</span>`:times;
     });
-    // 2 max par ligne
     const lines=[];
     for(let i=0;i<vacsFormatted.length;i+=2) lines.push(vacsFormatted.slice(i,i+2).join(' '));
     vacsHtml=lines.join('<br>');
@@ -1860,7 +1906,7 @@ function buildDayRow(ds){
     vacsHtml=isWE?'—':'—';
   }
 
-  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>`:'';
+  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>${aMin?` <span style="color:#f97316;font-size:0.72rem;">+${minToHM(aMin)}</span>`:''}`:'';
 
   return `<div class="recap-day-row ${cls}">
     <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
@@ -1891,15 +1937,17 @@ function renderRecapSemaine(){
   const todayMonday=mondayOf(todayStr());
   document.getElementById('btnRecapSemNext').disabled=recapSemDate>=todayMonday;
 
-  let rTotal=0,cTotal=0;
+  let rTotal=0,cTotal=0,aTotal=0;
   let html='';
   days.forEach(ds=>{
     const vacs=vacsForDate(ds);
-    rTotal+=realMins(vacs);
-    cTotal+=convMins(vacs,getDeduc(ds));
+    const normal=vacs.filter(v=>!v.annexe);
+    rTotal+=realMins(normal);
+    cTotal+=convMins(normal,getDeduc(ds));
+    aTotal+=annexeMins(vacs);
     html+=buildDayRow(ds);
   });
-  document.getElementById('recapSemTotal').innerHTML=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
+  document.getElementById('recapSemTotal').innerHTML=totalHoursHtml(rTotal,cTotal,aTotal);
   document.getElementById('recapSemaineBody').innerHTML=html;
 }
 
@@ -1944,20 +1992,22 @@ function renderRecapMois(){
     monday.setDate(monday.getDate()+7);
   }
 
-  let rMoisTotal=0,cMoisTotal=0;
+  let rMoisTotal=0,cMoisTotal=0,aMoisTotal=0;
 
   // Calcul des totaux d'abord
   semaines.forEach((mondayDs)=>{
     const days=weekDatesFrom(mondayDs);
     days.forEach(ds=>{
       const vacs=vacsForDate(ds);
-      rMoisTotal+=realMins(vacs);
-      cMoisTotal+=convMins(vacs,getDeduc(ds));
+      const normal=vacs.filter(v=>!v.annexe);
+      rMoisTotal+=realMins(normal);
+      cMoisTotal+=convMins(normal,getDeduc(ds));
+      aMoisTotal+=annexeMins(vacs);
     });
   });
 
   // Mise à jour du bandeau fixe
-  document.getElementById('recapMoisTotal').innerHTML=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rMoisTotal)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cMoisTotal)} Conv.)</span>`;
+  document.getElementById('recapMoisTotal').innerHTML=totalHoursHtml(rMoisTotal,cMoisTotal,aMoisTotal);
 
   let html='';
 
@@ -2010,39 +2060,47 @@ let recapAnneeOpenSem=null;   // clé "moisIdx-semIdx" ouverte
 let recapAnneeScoOpenMois=null;
 let recapAnneeScoOpenSem=null;
 
-function totalHoursHtml(rMin,cMin){
-  return `<span style="color:#3b82f6;font-weight:600;">${minToHM(rMin)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cMin)} Conv.)</span>`;
+function totalHoursHtml(rMin,cMin,aMin){
+  let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rMin)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cMin)} Conv.)</span>`;
+  if(aMin){
+    h+=` <span style="color:#f97316;font-weight:600;">+ ${minToHM(aMin)} (annexe)</span>`;
+  }
+  return h;
 }
 
 // --- Calcul totaux d'un mois ---
+function annexeMins(vacs){return vacs.filter(v=>v.annexe).reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
+
 function calcMoisTotaux(y,m){
   const firstDay=new Date(y,m,1,12,0,0);
   const lastDay=new Date(y,m+1,0,12,0,0);
   let monday=new Date(firstDay);
   const dow=(monday.getDay()+6)%7;
   monday.setDate(monday.getDate()-dow);
-  let rTotal=0,cTotal=0;
+  let rTotal=0,cTotal=0,aTotal=0;
   while(monday<=lastDay){
     const days=weekDatesFrom(dateStr(monday));
     days.forEach(ds=>{
       const vacs=vacsForDate(ds);
-      rTotal+=realMins(vacs);
-      cTotal+=convMins(vacs,getDeduc(ds));
+      const normal=vacs.filter(v=>!v.annexe);
+      rTotal+=realMins(normal);
+      cTotal+=convMins(normal,getDeduc(ds));
+      aTotal+=annexeMins(vacs);
     });
     monday=new Date(monday);monday.setDate(monday.getDate()+7);
   }
-  return{rTotal,cTotal};
+  return{rTotal,cTotal,aTotal};
 }
 
 // --- Rendu d'un mois dans le récap année ---
 function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
-  const {rTotal,cTotal}=calcMoisTotaux(y,m);
+  const {rTotal,cTotal,aTotal}=calcMoisTotaux(y,m);
   const isOpen=openMois===moisIdx;
   let html=`<div class="recap-semaine-row" onclick="${toggleMoisFn}(${moisIdx})">
     <div style="flex:1;">
       <div class="recap-sem-label">${MOIS[m]} ${y}</div>
     </div>
-    <div class="recap-sem-hrs">${minToHM(rTotal)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cTotal)}</span></div>
+    <div class="recap-sem-hrs">${minToHM(rTotal)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">+${minToHM(aTotal)}</span>`:''}</div>
     <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
   </div>`;
 
@@ -2060,8 +2118,8 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
       const days=weekDatesFrom(mondayDs);
       const weekNum=isoWeekNum(new Date(mondayDs+'T12:00:00'));
       const duAu=semaineLabelDuAu(mondayDs);
-      let rSem=0,cSem=0;
-      days.forEach(ds=>{const v=vacsForDate(ds);rSem+=realMins(v);cSem+=convMins(v,getDeduc(ds));});
+      let rSem=0,cSem=0,aSem=0;
+      days.forEach(ds=>{const v=vacsForDate(ds);const n=v.filter(x=>!x.annexe);rSem+=realMins(n);cSem+=convMins(n,getDeduc(ds));aSem+=annexeMins(v);});
       const semKey=`${moisIdx}-${semIdx}`;
       const semOpen=openSem===semKey;
       html+=`<div class="recap-semaine-row" style="background:#fce7f3;margin-left:8px;" onclick="${toggleSemFn}('${semKey}')">
@@ -2069,7 +2127,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
           <div class="recap-sem-label" style="font-size:0.78rem;">Semaine ${weekNum}</div>
           <div class="recap-sem-dates">${duAu}</div>
         </div>
-        <div class="recap-sem-hrs">${minToHM(rSem)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cSem)}</span></div>
+        <div class="recap-sem-hrs">${minToHM(rSem)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cSem)}</span>${aSem?`<br><span style="font-size:0.72rem;color:#f97316;">+${minToHM(aSem)}</span>`:''}</div>
         <span class="recap-sem-chev" style="transform:${semOpen?'rotate(90deg)':''};">▶</span>
       </div>`;
       if(semOpen){
@@ -2111,9 +2169,9 @@ function renderRecapAnnee(){
   document.getElementById('recapAnneeTitre').textContent=`Année civile ${y}`;
   const now=new Date();
   document.getElementById('btnRecapAnneeNext').disabled=y>=now.getFullYear();
-  let rAnn=0,cAnn=0;
-  for(let m=0;m<12;m++){const t=calcMoisTotaux(y,m);rAnn+=t.rTotal;cAnn+=t.cTotal;}
-  document.getElementById('recapAnneeTotal').innerHTML=totalHoursHtml(rAnn,cAnn);
+  let rAnn=0,cAnn=0,aAnn=0;
+  for(let m=0;m<12;m++){const t=calcMoisTotaux(y,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;}
+  document.getElementById('recapAnneeTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn);
   let html='';
   for(let m=0;m<12;m++){
     html+=buildMoisBlock(y,m,m,recapAnneeOpenMois,recapAnneeOpenSem,'toggleRecapAnneeMois','toggleRecapAnneeSem');
@@ -2156,9 +2214,9 @@ function renderRecapAnneeSco(){
     {y:y+1,m:0},{y:y+1,m:1},{y:y+1,m:2},{y:y+1,m:3},
     {y:y+1,m:4},{y:y+1,m:5},{y:y+1,m:6},{y:y+1,m:7}
   ];
-  let rAnn=0,cAnn=0;
-  moisSco.forEach(({y:my,m})=>{const t=calcMoisTotaux(my,m);rAnn+=t.rTotal;cAnn+=t.cTotal;});
-  document.getElementById('recapAnneeScoTotal').innerHTML=totalHoursHtml(rAnn,cAnn);
+  let rAnn=0,cAnn=0,aAnn=0;
+  moisSco.forEach(({y:my,m})=>{const t=calcMoisTotaux(my,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;});
+  document.getElementById('recapAnneeScoTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn);
   let html='';
   moisSco.forEach(({y:my,m},idx)=>{
     html+=buildMoisBlock(my,m,idx,recapAnneeScoOpenMois,recapAnneeScoOpenSem,'toggleRecapAnneeScoMois','toggleRecapAnneeScoSem');
