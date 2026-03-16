@@ -2639,27 +2639,45 @@ function suiviKey(y,m){return`suivi_${y}_${m}`;}
 function parseSuiviH(val){
   if(!val||!val.trim()) return 0;
   val=val.trim().replace(',','.');
+  // Format xhxx ou x:xx
   if(val.includes('h')){
     const parts=val.split('h');
     return (parseInt(parts[0])||0)*60+(parseInt(parts[1])||0);
   }
-  const f=parseFloat(val);
-  if(isNaN(f)) return 0;
-  if(Number.isInteger(f)&&f>20) return f;
-  return Math.round(f*60);
+  if(val.includes(':')){
+    const parts=val.split(':');
+    return (parseInt(parts[0])||0)*60+(parseInt(parts[1])||0);
+  }
+  // Format xx.xx → heures.minutes (56.45 = 56h45)
+  if(val.includes('.')){
+    const parts=val.split('.');
+    return (parseInt(parts[0])||0)*60+(parseInt(parts[1])||0);
+  }
+  // Nombre entier seul → heures
+  return (parseInt(val)||0)*60;
 }
 
 function saveSuivi(){
   if(!state.suivi) state.suivi={};
   const k=suiviKey(suiviDate.y,suiviDate.m);
+  const hC=document.getElementById('suiviHChauffeur');
+  const hF=document.getElementById('suiviFormation');
+  const hR=document.getElementById('suiviRappel');
+  const hA=document.getElementById('suiviAnnexes');
+  if(!hC) return;
   state.suivi[k]={
-    hChauffeur:document.getElementById('suiviHChauffeur').value,
-    formation:document.getElementById('suiviFormation').value,
-    rappel:document.getElementById('suiviRappel').value,
-    annexes:document.getElementById('suiviAnnexes').value,
+    hChauffeur:hC.value,
+    formation:hF.value,
+    rappel:hR.value,
+    annexes:hA.value,
   };
   saveState();
-  renderSuivi();
+  // Mettre à jour uniquement la comparaison sans recréer les inputs
+  const {rTotal,cTotal,aTotal}=calcMoisTotaux(suiviDate.y,suiviDate.m);
+  const entChauffeur=parseSuiviH(hC.value);
+  const entAnnexes=parseSuiviH(hA.value);
+  const compEl=document.getElementById('suiviComparaisonMois');
+  if(compEl) compEl.innerHTML=buildSuiviComparaison(entChauffeur,entAnnexes,cTotal,rTotal,aTotal);
 }
 
 function ecartHtml(val){
@@ -2793,7 +2811,7 @@ function renderSuivi(){
       </div>
       <div style="background:#f8fafc;border-radius:12px;border:1.5px solid #e2e8f0;padding:12px;">
         <div style="font-size:0.82rem;font-weight:700;color:#1e3a5f;margin-bottom:8px;">⚖️ Comparaison</div>
-        <div style="font-size:0.82rem;">${buildSuiviComparaison(entChauffeur,entAnnexes,cTotal,rTotal,aTotal)}</div>
+        <div style="font-size:0.82rem;" id="suiviComparaisonMois">${buildSuiviComparaison(entChauffeur,entAnnexes,cTotal,rTotal,aTotal)}</div>
       </div>`;
   }
 }
