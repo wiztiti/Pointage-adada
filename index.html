@@ -926,8 +926,8 @@ html, body {
     </div>
     <!-- Onglets vue -->
     <div style="display:flex;gap:8px;padding:10px 16px 0;background:#fff;flex-shrink:0;">
-      <button id="btnSuiviAnnee" onclick="setSuiviVue('annee')" style="flex:1;padding:6px;border-radius:10px;border:1.5px solid #fbbf24;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;background:#fef9e7;color:#92400e;">📊 Année scolaire</button>
       <button id="btnSuiviMois" onclick="setSuiviVue('mois')" style="flex:1;padding:6px;border-radius:10px;border:1.5px solid #e2e8f0;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;background:#f8fafc;color:#64748b;">📅 Par mois</button>
+      <button id="btnSuiviAnnee" onclick="setSuiviVue('annee')" style="flex:1;padding:6px;border-radius:10px;border:1.5px solid #fbbf24;font-family:'Quicksand',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;background:#fef9e7;color:#92400e;">📊 Année scolaire</button>
     </div>
     <!-- Corps scrollable -->
     <div class="modal-body" style="overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;" id="suiviBody"></div>
@@ -2538,7 +2538,7 @@ function confirmClock(){
     }
   }
 
-  saveState();closeModal('modalClock');renderVacations();refreshHeures();
+  saveState();closeModal('modalClock');renderVacations();refreshHeures();updateActionBtns();
 }
 
 function showImportSuccess(msg){
@@ -2606,12 +2606,12 @@ function renderAll(){
 // ============================================================
 // SUIVI ENTREPRISE
 // ============================================================
-let suiviVue='annee';
+let suiviVue='mois';
 let suiviScoYear=new Date().getMonth()>=8?new Date().getFullYear():new Date().getFullYear()-1;
 let suiviDate={y:new Date().getFullYear(),m:new Date().getMonth()};
 
 function openSuiviEntreprise(){
-  suiviVue='annee';
+  suiviVue='mois';
   suiviScoYear=new Date().getMonth()>=8?new Date().getFullYear():new Date().getFullYear()-1;
   suiviDate={y:new Date().getFullYear(),m:new Date().getMonth()};
   renderSuivi();
