@@ -859,7 +859,7 @@ html, body {
         <button class="btn-open-modal" style="flex:1;font-size:0.82rem;" onclick="openRecapAnneeSco()">🎒 Année sco</button>
       </div>
       <div style="margin-top:10px;">
-        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;color:#dc2626;" onclick="openSuiviEntreprise()">💼 Suivi entreprise</button>
+        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;color:#dc2626;" onclick="openSuiviEntreprise()">📊 Comparatif heures bulletin</button>
       </div>
       <div class="deduc-row" id="deducRow" style="margin-top:14px;justify-content:flex-start;">
         <input type="checkbox" class="deduc-cb" id="cbDeduc" onchange="saveDeduc()">
@@ -1619,7 +1619,8 @@ function renderGestion(){
         <button class="mgmt-arrow up" onclick="moveEleve(${i},-1)" ${i===0?'disabled':''}></button>
         <button class="mgmt-arrow down" onclick="moveEleve(${i},1)" ${i===state.eleves.length-1?'disabled':''}></button>
       </div>
-      <div class="mgmt-nom">${capitalize(p)}</div>
+      <div class="mgmt-nom" id="nom-${i}">${capitalize(p)}</div>
+      <button onclick="startRenameEleve(${i})" style="background:none;border:none;cursor:pointer;font-size:0.9rem;padding:2px 4px;" title="Renommer">✏️</button>
       <button class="mgmt-del" id="del-${i}" onclick="confirmDel(${i})">🗑</button>`;
     body.appendChild(row);
   });
@@ -1702,6 +1703,43 @@ function moveEleve(i,dir){
   [state.eleves[i],state.eleves[j]]=[state.eleves[j],state.eleves[i]];
   saveState();renderGestion();
 }
+function startRenameEleve(i){
+  const nomDiv=document.getElementById('nom-'+i);
+  const ancienNom=state.eleves[i];
+  nomDiv.innerHTML=`<input id="renameInput-${i}" value="${capitalize(ancienNom)}" 
+    style="border:1.5px solid #3b82f6;border-radius:8px;padding:3px 8px;font-size:0.88rem;font-family:'Quicksand',sans-serif;width:100px;"
+    onkeydown="if(event.key==='Enter')confirmRenameEleve(${i});if(event.key==='Escape')renderGestion();">
+    <button onclick="confirmRenameEleve(${i})" style="background:#3b82f6;color:#fff;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:0.8rem;margin-left:4px;">✓</button>
+    <button onclick="renderGestion()" style="background:none;border:none;cursor:pointer;font-size:0.8rem;color:#94a3b8;">✗</button>`;
+  document.getElementById('renameInput-'+i).focus();
+  document.getElementById('renameInput-'+i).select();
+}
+
+function confirmRenameEleve(i){
+  const input=document.getElementById('renameInput-'+i);
+  if(!input) return;
+  const nouveauNom=input.value.trim().toLowerCase();
+  if(!nouveauNom) return;
+  const ancienNom=state.eleves[i];
+  if(nouveauNom===ancienNom){renderGestion();return;}
+  if(state.eleves.includes(nouveauNom)){showToast('❌ Ce prénom existe déjà');return;}
+
+  // Renommer dans eleves
+  state.eleves[i]=nouveauNom;
+
+  // Renommer dans toutes les présences
+  Object.keys(state.presence||{}).forEach(ds=>{
+    if(state.presence[ds][ancienNom]!==undefined){
+      state.presence[ds][nouveauNom]=state.presence[ds][ancienNom];
+      delete state.presence[ds][ancienNom];
+    }
+  });
+
+  saveState();
+  renderGestion();
+  showToast('✅ Prénom modifié');
+}
+
 function deleteEleve(i){
   state.eleves.splice(i,1);saveState();renderGestion();
 }
