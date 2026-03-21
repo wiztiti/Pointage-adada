@@ -3197,13 +3197,11 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Fond teal sur toute la largeur du tableau
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],SY,W-20,SUB_H,'F');
-  // Colonnes "heure de début" uniquement en bleu clair
-  doc.setFillColor(...LIGHT_BLUE);
-  for(let t=0;t<4;t++) doc.rect(XS[1+t*2],SY,CT,SUB_H,'F');
+  // Sous-header entièrement teal, pas de bleu clair ici
   doc.setFontSize(5.5);
   for(let t=0;t<4;t++){
     const bx=XS[1+t*2];
-    doc.setTextColor(...DARK);
+    doc.setTextColor(255,255,255);
     doc.text('Heure de\ndébut',bx+CT/2,SY+SUB_H/2-0.5,{align:'center'});
     doc.setTextColor(255,255,255);
     doc.text('Heure\nde fin',bx+CT+CT/2,SY+SUB_H/2-0.5,{align:'center'});
