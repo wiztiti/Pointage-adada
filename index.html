@@ -3123,14 +3123,14 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   ];
   infoData.forEach(([label,val],i)=>{
     const y=15+i*7;
-    doc.setFillColor(240,240,240);doc.rect(10,y-4,45,7,'F');
-    doc.rect(10,y-4,45,7,'S');
+    doc.setFillColor(240,240,240);doc.rect(10,y-4,38,7,'F');
+    doc.rect(10,y-4,38,7,'S');
     doc.setFontSize(7);doc.setTextColor(80,80,80);
     doc.text(label,12,y);
-    doc.setFillColor(255,255,255);doc.rect(55,y-4,55,7,'F');
-    doc.rect(55,y-4,55,7,'S');
+    doc.setFillColor(255,255,255);doc.rect(48,y-4,45,7,'F');
+    doc.rect(48,y-4,45,7,'S');
     doc.setFontSize(7);doc.setTextColor(30,30,30);
-    doc.text(val,57,y);
+    doc.text(val,50,y);
   });
 
   // === LOGO + ADIATE ===
