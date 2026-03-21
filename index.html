@@ -3197,15 +3197,15 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Fond teal sur toute la largeur du tableau
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],SY,W-20,SUB_H,'F');
-  // Colonnes "heure de fin" uniquement en bleu clair
+  // Colonnes "heure de début" uniquement en bleu clair
   doc.setFillColor(...LIGHT_BLUE);
-  for(let t=0;t<4;t++) doc.rect(XS[2+t*2],SY,CT,SUB_H,'F');
+  for(let t=0;t<4;t++) doc.rect(XS[1+t*2],SY,CT,SUB_H,'F');
   doc.setFontSize(5.5);
   for(let t=0;t<4;t++){
     const bx=XS[1+t*2];
-    doc.setTextColor(255,255,255);
-    doc.text('Heure de\ndébut',bx+CT/2,SY+SUB_H/2-0.5,{align:'center'});
     doc.setTextColor(...DARK);
+    doc.text('Heure de\ndébut',bx+CT/2,SY+SUB_H/2-0.5,{align:'center'});
+    doc.setTextColor(255,255,255);
     doc.text('Heure\nde fin',bx+CT+CT/2,SY+SUB_H/2-0.5,{align:'center'});
     doc.setDrawColor(255,255,255);doc.setLineWidth(0.2);
     doc.line(bx,SY,bx,SY+SUB_H);
@@ -3241,9 +3241,9 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.setFillColor(...WHITE);
     doc.rect(XS[0],y,W-20,DAY_H,'F');
 
-    // Fond bleu clair UNIQUEMENT sur : heures de fin, lieu arrivée, temps réel, temps conv
+    // Fond bleu clair UNIQUEMENT sur : heures de début, lieu arrivée, temps réel, temps conv
     doc.setFillColor(...LIGHT_BLUE);
-    for(let t=0;t<4;t++) doc.rect(XS[2+t*2],y,CT,DAY_H,'F'); // heures FIN uniquement
+    for(let t=0;t<4;t++) doc.rect(XS[1+t*2],y,CT,DAY_H,'F'); // heures DÉBUT uniquement
     doc.rect(XS[9],y,C_LIEU,DAY_H,'F');  // lieu arrivée
     doc.rect(XS[11],y,C_REEL,DAY_H,'F'); // temps réel
     doc.rect(XS[12],y,C_CONV,DAY_H,'F'); // temps conv
