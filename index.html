@@ -3194,23 +3194,24 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
 
   // Sous-header
   const SY=TY+HDR_H;
-  // Fond teal sur toute la sous-ligne
+  // Fond teal sur toute la largeur du tableau
   doc.setFillColor(...TEAL);
-  doc.rect(XS[1],SY,CT*8,SUB_H,'F');
-  // Colonnes "heure de fin" uniquement en bleu clair (pas "heure de début")
+  doc.rect(XS[0],SY,W-20,SUB_H,'F');
+  // Colonnes "heure de fin" uniquement en bleu clair
   doc.setFillColor(...LIGHT_BLUE);
   for(let t=0;t<4;t++) doc.rect(XS[2+t*2],SY,CT,SUB_H,'F');
   doc.setFontSize(5.5);
   for(let t=0;t<4;t++){
     const bx=XS[1+t*2];
-    doc.setTextColor(...DARK);
+    doc.setTextColor(255,255,255);
     doc.text('Heure de\ndébut',bx+CT/2,SY+SUB_H/2-0.5,{align:'center'});
     doc.setTextColor(...DARK);
     doc.text('Heure\nde fin',bx+CT+CT/2,SY+SUB_H/2-0.5,{align:'center'});
-    doc.setDrawColor(150,150,150);doc.setLineWidth(0.2);
+    doc.setDrawColor(255,255,255);doc.setLineWidth(0.2);
     doc.line(bx,SY,bx,SY+SUB_H);
     doc.line(bx+CT,SY,bx+CT,SY+SUB_H);
   }
+  doc.setDrawColor(255,255,255);
   doc.line(XS[9],SY,XS[9],SY+SUB_H);
   doc.line(XS[XS.length-1],SY,XS[XS.length-1],SY+SUB_H);
 
