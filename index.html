@@ -3122,15 +3122,15 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     ['Nom du client :', s.client||''],
   ];
   infoData.forEach(([label,val],i)=>{
-    const y=15+i*7;
-    doc.setFillColor(255,255,255);doc.rect(10,y-4,28,7,'F');
-    doc.rect(10,y-4,28,7,'S');
-    doc.setFontSize(7);doc.setTextColor(80,80,80);
-    doc.text(label,12,y);
-    doc.setFillColor(255,255,255);doc.rect(38,y-4,50,7,'F');
-    doc.rect(38,y-4,50,7,'S');
-    doc.setFontSize(7);doc.setTextColor(30,30,30);
-    doc.text(val,40,y);
+    const y=13+i*6;
+    doc.setFillColor(255,255,255);doc.rect(10,y-3,22,6,'F');
+    doc.rect(10,y-3,22,6,'S');
+    doc.setFontSize(6.5);doc.setTextColor(80,80,80);
+    doc.text(label,11,y);
+    doc.setFillColor(255,255,255);doc.rect(32,y-3,38,6,'F');
+    doc.rect(32,y-3,38,6,'S');
+    doc.setFontSize(6.5);doc.setTextColor(30,30,30);
+    doc.text(val,32+38/2,y,{align:'center'});
   });
 
   // === LOGO + ADIATE ===
