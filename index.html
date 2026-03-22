@@ -3149,8 +3149,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const TY=48;
   // Header en une seule ligne (pas de sous-ligne séparée)
   // Hauteur header = fixe compact
-  const HDR_H=9;
-  const SUB_H=7;
+  const HDR_H=7;
+  const SUB_H=9;
 
   // Largeurs colonnes
   const C0=38;
@@ -3165,13 +3165,13 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const XS=[xPos];
   COLS.forEach(w=>{xPos+=w;XS.push(xPos);});
 
-  // --- Header ligne 1 ---
+  // --- Header ligne 1 --- (sans la 1ere cellule qui sera fusionnée)
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],TY,W-20,HDR_H,'F');
   doc.setFontSize(6.5);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
 
+  // Groupes header (sans le premier qui est fusionné)
   const groups=[
-    {label:'Date\nLieu de départ\nKm de début',x:XS[0],w:C0},
     {label:'Tranche de travail 1',x:XS[1],w:CT*2},
     {label:'Tranche de travail 2',x:XS[3],w:CT*2},
     {label:'Tranche de travail 3',x:XS[5],w:CT*2},
@@ -3197,6 +3197,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Fond teal sur toute la largeur du tableau
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],SY,W-20,SUB_H,'F');
+
+  // Première cellule fusionnée : couvre HDR_H + SUB_H, texte centré verticalement
+  const TOTAL_HDR=HDR_H+SUB_H;
+  const firstLines=['Date','Lieu de départ','Km de début'];
+  const fcy=TY+(TOTAL_HDR/2)-(firstLines.length*2.8)/2+2;
+  doc.setFontSize(6);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
+  firstLines.forEach((l,li)=>doc.text(l,XS[0]+C0/2,fcy+li*3,{align:'center'}));
+  // Bordure droite de la cellule fusionnée
+  doc.setDrawColor(255,255,255);doc.setLineWidth(0.3);
+  doc.line(XS[1],TY,XS[1],TY+TOTAL_HDR);
   // Sous-header entièrement teal, pas de bleu clair ici
   doc.setFontSize(5.5);
   for(let t=0;t<4;t++){
