@@ -3402,22 +3402,23 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const parts=s.conducteur.trim().split(' ');
     const nom=parts.filter(p=>p===p.toUpperCase()).join(' ')||parts[0]||'';
     const prenom=parts.filter(p=>p!==p.toUpperCase()).join(' ')||'';
-    const sigX=W/2;
-    const sigY=TotalY+DAY_H+4;
-    doc.setTextColor(80,140,230); // bleu encore plus clair
+    const sigY=TotalY+DAY_H+8;
+    // Mot "Signature :" 
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+    doc.text('Signature :',XS[0]+2,sigY);
+    // Signature juste après
+    const sigX=XS[0]+32;
+    doc.setTextColor(80,140,230);
     doc.setFont('helvetica','bolditalic');
     if(prenom&&nom){
       doc.setFontSize(15);
-      doc.text(nom,sigX,sigY,{align:'center'});
+      doc.text(nom,sigX,sigY,{align:'left'});
       doc.setFontSize(13);
-      doc.text(prenom,sigX,sigY+6,{align:'center'});
+      doc.text(prenom,sigX,sigY+6,{align:'left'});
     } else {
       doc.setFontSize(14);
-      doc.text(s.conducteur,sigX,sigY+3,{align:'center'});
+      doc.text(s.conducteur,sigX,sigY+3,{align:'left'});
     }
-    // Mot "Signature :" à gauche de la signature
-    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
-    doc.text('Signature :',sigX-55,sigY+3);
   }
   doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
 
