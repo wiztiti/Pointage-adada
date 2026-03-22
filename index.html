@@ -3151,10 +3151,9 @@ function doImport(mode){
   }
   if(!importPendingData){closeModal('modalImportConfirm');showToast('❌ Données perdues, réessayez');return;}
   if(mode==='replace'){
-    // S'assurer que tous les champs requis existent
     state={
       eleves: importPendingData.eleves||[],
-      vacations: importPendingData.vacations||[],
+      vacations: (importPendingData.vacations||[]).map(v=>({...v,dep:v.dep?new Date(v.dep):null,ret:v.ret?new Date(v.ret):null})),
       presence: importPendingData.presence||{},
       dayData: importPendingData.dayData||{},
       deduc: importPendingData.deduc||{global:false},
@@ -3163,12 +3162,10 @@ function doImport(mode){
       pdfSettings: importPendingData.pdfSettings||{},
     };
   } else {
-    // Fusionner
     const s=importPendingData;
-    // Élèves : ajouter ceux qui n'existent pas
     (s.eleves||[]).forEach(e=>{if(!state.eleves.includes(e))state.eleves.push(e);});
-    // Vacations : ajouter celles dont l'id n'existe pas
-    (s.vacations||[]).forEach(v=>{if(!state.vacations.find(x=>x.id===v.id))state.vacations.push(v);});
+    (s.vacations||[]).map(v=>({...v,dep:v.dep?new Date(v.dep):null,ret:v.ret?new Date(v.ret):null}))
+      .forEach(v=>{if(!state.vacations.find(x=>x.id===v.id))state.vacations.push(v);});
     // Présences : fusionner par date
     Object.entries(s.presence||{}).forEach(([d,p])=>{
       if(!state.presence[d]) state.presence[d]=p;
