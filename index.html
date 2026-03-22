@@ -3337,13 +3337,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const note=peekDayData(ds).note;
     if(note&&note.trim()){
       doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+      // D'abord essayer taille normale
+      doc.setFontSize(6.5);
       let noteLines=doc.splitTextToSize(note.trim(),C_COM-4);
       let fontSize=6.5;
+      // Si plus de 3 lignes, réduire la police et re-splitter
       if(noteLines.length>3){
         fontSize=5;
+        doc.setFontSize(5);
         noteLines=doc.splitTextToSize(note.trim(),C_COM-4);
       }
-      doc.setFontSize(fontSize);
       noteLines=noteLines.slice(0,6);
       const lineH=fontSize*0.45;
       const noteY=y+(DAY_H/2)-(noteLines.length*lineH)/2+lineH*0.7;
