@@ -1135,7 +1135,11 @@ html, body {
           </div>
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom du conducteur</div>
-            <input id="fdrConducteur" type="text" placeholder="Ex: NOM Prénom" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+            <input id="fdrNom" type="text" placeholder="Ex: LEPREUX" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Prénom du conducteur</div>
+            <input id="fdrPrenom" type="text" placeholder="Ex: Frédéric" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel de départ</div>
@@ -3151,7 +3155,8 @@ function openModalFDR(){
   document.getElementById('fdrImmat').value=s.immat||'';
   document.getElementById('fdrLicence').value=s.licence||'';
   document.getElementById('fdrClient').value=s.client||'';
-  document.getElementById('fdrConducteur').value=s.conducteur||'';
+  document.getElementById('fdrNom').value=s.nom||'';
+  document.getElementById('fdrPrenom').value=s.prenom||'';
   document.getElementById('fdrLieu').value=s.lieu||'';
   document.getElementById('feuilleArrivee').value=s.lieuArrivee||s.lieu||'';
   const today=new Date();
@@ -3169,7 +3174,9 @@ function saveFdrSettings(){
     immat:document.getElementById('fdrImmat').value,
     licence:document.getElementById('fdrLicence').value,
     client:document.getElementById('fdrClient').value,
-    conducteur:document.getElementById('fdrConducteur').value,
+    conducteur:document.getElementById('fdrNom').value+' '+document.getElementById('fdrPrenom').value,
+    nom:document.getElementById('fdrNom').value,
+    prenom:document.getElementById('fdrPrenom').value,
     lieu:document.getElementById('fdrLieu').value,
     lieuArrivee:document.getElementById('feuilleArrivee').value,
   };
@@ -3240,7 +3247,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Déclaration conducteur + numéro de semaine
   const wnHeader=isoWeekNum(new Date(mondayOf(mondayDs)+'T12:00:00'));
   doc.setFontSize(9);doc.setTextColor(30,30,30);
-  doc.text('Déclaration individuelle du conducteur : ............'+(s.conducteur||'')+'.................',10,44);
+  const conducteurDisplay=(s.prenom?s.prenom+' ':'')+( s.nom||s.conducteur||'');
+  doc.text('Déclaration individuelle du conducteur : ............'+conducteurDisplay+'.................',10,44);
   doc.setFont('helvetica','bold');
   doc.setFontSize(11);
   doc.text('Semaine '+wnHeader,W/2,44,{align:'center'});
@@ -3476,19 +3484,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Pas de "TOTAL" dans la dernière case
 
   // === SIGNATURE manuscrite ===
-  if(s.conducteur){
-    const parts=s.conducteur.trim().split(' ');
-    const nom=parts.filter(p=>p===p.toUpperCase()).join(' ')||parts[0]||'';
-    const prenom=parts.filter(p=>p!==p.toUpperCase()).join(' ')||'';
-    const ligne1Y=TotalY+DAY_H+7;  // prénom
-    const ligne2Y=TotalY+DAY_H+12;  // nom
-    const midY=(ligne1Y+ligne2Y)/2; // milieu entre les 2
-    const sigX=W/2; // axe central pour prénom et nom
-    // Prénom et nom centrés sur le même axe
+  if(s.nom||s.prenom||s.conducteur){
+    const nom=(s.nom||'').toUpperCase();
+    const prenom=s.prenom||'';
+    const ligne1Y=TotalY+DAY_H+7;
+    const ligne2Y=TotalY+DAY_H+12;
+    const midY=(ligne1Y+ligne2Y)/2;
+    const sigX=W/2;
     doc.setFont('helvetica','bolditalic');doc.setTextColor(80,140,230);
-    doc.setFontSize(10);doc.text(prenom||s.conducteur,sigX,ligne1Y,{align:'center'});
+    doc.setFontSize(10);doc.text(prenom||s.conducteur||'',sigX,ligne1Y,{align:'center'});
     if(nom){doc.setFontSize(11);doc.text(nom,sigX,ligne2Y,{align:'center'});}
-    // "Signature :" à gauche, centré verticalement entre les 2 lignes
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
     doc.text('Signature :',sigX-35,midY+1);
   }
