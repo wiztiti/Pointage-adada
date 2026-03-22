@@ -3189,18 +3189,40 @@ function genererFeuille(mode){
   const s=state.pdfSettings||{};
   const lieuDep=s.lieu||'';
   const lieuArr=document.getElementById('feuilleArrivee').value||'';
-  closeModal('modalFDR');
-  showToast('⏳ Génération en cours...');
+
+  // Vérifier les champs vides
+  const champsVides=[];
+  if(!s.agence) champsVides.push('Agence');
+  if(!s.immat) champsVides.push('Immatriculation');
+  if(!s.licence) champsVides.push('N° de licence');
+  if(!s.client) champsVides.push('Nom du client');
+  if(!s.nom) champsVides.push('Nom du conducteur');
+  if(!s.prenom) champsVides.push('Prénom du conducteur');
+  if(!s.lieu) champsVides.push('Lieu de départ');
+  if(!lieuArr) champsVides.push('Lieu d\'arrivée');
+
   const doGenerate=()=>{
-    const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
-    if(mode==='pdf'){_downloadPDF(result.doc,result.title);showToast('✅ PDF téléchargé !');}
-    if(mode==='jpg') _downloadJPG(result.doc,result.title);
+    closeModal('modalFDR');
+    showToast('⏳ Génération en cours...');
+    const generate=()=>{
+      const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
+      if(mode==='pdf'){_downloadPDF(result.doc,result.title);showToast('✅ PDF téléchargé !');}
+      if(mode==='jpg') _downloadJPG(result.doc,result.title);
+    };
+    if(typeof window.jspdf==='undefined'){
+      const script=document.createElement('script');
+      script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      script.onload=generate;
+      document.head.appendChild(script);
+    } else {
+      generate();
+    }
   };
-  if(typeof window.jspdf==='undefined'){
-    const script=document.createElement('script');
-    script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    script.onload=doGenerate;
-    document.head.appendChild(script);
+
+  if(champsVides.length>0){
+    // Afficher avertissement avec possibilité de continuer
+    const msg=`⚠️ Champs non remplis :\n• ${champsVides.join('\n• ')}\n\nVoulez-vous générer quand même ?`;
+    if(confirm(msg)) doGenerate();
   } else {
     doGenerate();
   }
