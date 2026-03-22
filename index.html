@@ -3400,10 +3400,24 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // === SIGNATURE manuscrite ===
   doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
   doc.text('Signature :',XS[0]+2,TotalY+DAY_H+5);
-  // Nom du conducteur en signature bleue cursive (italique)
+  // Nom du conducteur en signature bleue cursive (italique), centré, 2 lignes
   if(s.conducteur){
-    doc.setFontSize(14);doc.setFont('helvetica','bolditalic');doc.setTextColor(0,70,180);
-    doc.text(s.conducteur,XS[0]+35,TotalY+DAY_H+6);
+    const parts=s.conducteur.trim().split(' ');
+    // Séparer nom (majuscules) et prénom
+    const nom=parts.filter(p=>p===p.toUpperCase()).join(' ')||parts[0]||'';
+    const prenom=parts.filter(p=>p!==p.toUpperCase()).join(' ')||'';
+    const sigX=W/2;
+    const sigY=TotalY+DAY_H+5;
+    doc.setTextColor(30,100,200); // bleu plus clair
+    doc.setFontSize(13);doc.setFont('helvetica','bolditalic');
+    if(prenom&&nom){
+      doc.text(prenom,sigX,sigY,{align:'center'});
+      doc.setFontSize(15);
+      doc.text(nom,sigX,sigY+6,{align:'center'});
+    } else {
+      doc.setFontSize(14);
+      doc.text(s.conducteur,sigX,sigY+3,{align:'center'});
+    }
   }
   doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
 
@@ -3439,21 +3453,21 @@ function _downloadJPG(doc, title){
     const s=document.createElement('script');
     s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
     s.onload=()=>{
-      alert('pdf.js chargé');
+
       window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       resolve();
     };
-    s.onerror=()=>alert('Erreur chargement pdf.js');
+    s.onerror=()=>showToast('❌ Erreur chargement pdf.js');
     document.head.appendChild(s);
   });
 
   loadPdfJs().then(()=>{
-    alert('Début rendu PDF');
+
     const pdfData=doc.output('arraybuffer');
     pdfjsLib.getDocument({data:pdfData}).promise.then(pdf=>{
-      alert('PDF chargé, pages: '+pdf.numPages);
+
       pdf.getPage(1).then(page=>{
-        alert('Page obtenue');
+
         const scale=150/72;
         const viewport=page.getViewport({scale});
         const canvas=document.createElement('canvas');
@@ -3461,7 +3475,7 @@ function _downloadJPG(doc, title){
         canvas.height=viewport.height;
         const ctx=canvas.getContext('2d');
         page.render({canvasContext:ctx,viewport}).promise.then(()=>{
-          alert('Rendu terminé, export JPG');
+
           canvas.toBlob(blob=>{
             const url=URL.createObjectURL(blob);
             const a=document.createElement('a');
@@ -3473,10 +3487,10 @@ function _downloadJPG(doc, title){
             },500);
             showToast('✅ Image générée !');
           },'image/jpeg',0.95);
-        }).catch(e=>alert('Erreur rendu: '+e.message));
-      }).catch(e=>alert('Erreur page: '+e.message));
-    }).catch(e=>alert('Erreur PDF: '+e.message));
-  }).catch(e=>alert('Erreur loadPdfJs: '+e.message));
+        }).catch(e=>showToast('❌ Erreur: '+e.message));
+      }).catch(e=>showToast('❌ Erreur page: '+e.message));
+    }).catch(e=>showToast('❌ Erreur PDF: '+e.message));
+  }).catch(e=>showToast('❌ Erreur: '+e.message));
 }
 
 // Modal choix export
