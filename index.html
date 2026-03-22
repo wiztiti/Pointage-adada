@@ -3459,11 +3459,16 @@ function _downloadJPG(doc, title){
         page.render({canvasContext:ctx,viewport}).promise.then(()=>{
           canvas.toBlob(blob=>{
             const url=URL.createObjectURL(blob);
+            // Essayer téléchargement direct, sinon ouvrir dans nouvel onglet
             const a=document.createElement('a');
-            a.href=url;a.download=title+'.jpg';
+            a.href=url;a.download=title+'.jpg';a.target='_blank';
             document.body.appendChild(a);a.click();
-            setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
-            showToast('✅ Image téléchargée !');
+            setTimeout(()=>{
+              document.body.removeChild(a);
+              // Ouvrir aussi dans nouvel onglet pour Android
+              window.open(url,'_blank');
+            },500);
+            showToast('✅ Image générée — appuyez longuement pour enregistrer !');
           },'image/jpeg',0.95);
         });
       });
