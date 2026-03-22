@@ -799,9 +799,8 @@ html, body {
   <!-- Row 2 : Rapport only (today) -->
   <div id="rapportToday" style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport quotidien</button>
-    <button class="h-btn" onclick="openModalFDR()" style="position:absolute;left:0;font-size:0.75rem;padding:6px 10px;background:linear-gradient(135deg,#38bdf8,#0284c7);color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;">FDR</button>
     <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
-      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:50%;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
+      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:3px;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -810,9 +809,8 @@ html, body {
     <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
     <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
-    <button class="h-btn" onclick="openModalFDR()" style="position:absolute;left:0;font-size:0.75rem;padding:6px 10px;background:linear-gradient(135deg,#38bdf8,#0284c7);color:white;border:none;border-radius:10px;font-weight:700;cursor:pointer;">FDR</button>
     <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
-      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:50%;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
+      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:3px;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -865,6 +863,9 @@ html, body {
       <div style="margin-top:10px;">
         <button class="btn-open-modal" style="width:100%;font-size:0.82rem;color:#dc2626;" onclick="openSuiviEntreprise()">📊 Comparatif heures bulletin</button>
       </div>
+      <div style="margin-top:8px;">
+        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openModalFDR()">📄 Feuille de route hebdo</button>
+      </div>
       <div class="deduc-row" id="deducRow" style="margin-top:14px;justify-content:flex-start;">
         <input type="checkbox" class="deduc-cb" id="cbDeduc" onchange="saveDeduc()">
         <label class="deduc-lbl" for="cbDeduc">Déduction de la ½ heure</label>
@@ -901,6 +902,9 @@ html, body {
       <div style="display:flex;gap:10px;">
         <button class="btn-open-modal" style="flex:1;" onclick="openModalPointage()">📋 Pointage</button>
         <button class="btn-open-modal" style="flex:1;" onclick="openModalGestion()">⚙️ Gestion</button>
+      </div>
+      <div style="margin-top:8px;">
+        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;color:#7c3aed;" onclick="openModalEtatMensuel()">📊 État mensuel des présences</button>
       </div>
     </div>
   </div>
@@ -1125,6 +1129,22 @@ html, body {
   </div>
 </div>
 
+<!-- ===== MODAL ETAT MENSUEL ===== -->
+<div class="modal-overlay" id="modalEtatMensuel">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+    <div class="modal-handle"></div>
+    <div class="modal-head">📊 État mensuel des présences</div>
+    <div class="modal-body" style="padding:30px 20px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+      <div style="font-size:3rem;">🚧</div>
+      <div style="font-size:1.1rem;font-weight:700;color:#7c3aed;">Disponible prochainement</div>
+      <div style="font-size:0.85rem;color:#64748b;line-height:1.6;">Cette fonctionnalité est en cours de développement.<br>Elle permettra de générer l'état mensuel des présences des élèves au format PDF et image JPG.</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalEtatMensuel')">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL FDR ===== -->
 <div class="modal-overlay" id="modalFDR">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
@@ -1132,8 +1152,11 @@ html, body {
     <div class="modal-head">📄 Feuille de route hebdo</div>
     <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:10px;">
       <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
-        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">⚙️ Paramètres fixes</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleFdrParams()">
+          <span>⚙️ Paramètres fixes</span>
+          <span id="fdrParamsChevron">▶</span>
+        </div>
+        <div id="fdrParamsBody" style="display:none;flex-direction:column;gap:8px;margin-top:10px;">
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Agence</div>
             <input id="fdrAgence" type="text" placeholder="Ex: Mon Agence" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
@@ -1178,6 +1201,10 @@ html, body {
           <div style="display:flex;gap:8px;margin-top:4px;">
             <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" onclick="genererFeuille('pdf')">📄 PDF</button>
             <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);flex:1;" onclick="genererFeuille('jpg')">🖼️ JPG</button>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-valider" style="background:linear-gradient(135deg,#34d399,#059669);flex:1;font-size:0.8rem;" onclick="genererFeuille('share-pdf')">📤 Partager PDF</button>
+            <button class="btn-valider" style="background:linear-gradient(135deg,#f97316,#ea580c);flex:1;font-size:0.8rem;" onclick="genererFeuille('share-jpg')">📤 Partager JPG</button>
           </div>
         </div>
       </div>
@@ -1446,6 +1473,23 @@ const OLD_EXAMPLES=['lucas','emma','mathis','chloé','nathan','léa','hugo','man
 if(state.eleves.length===8 && OLD_EXAMPLES.every((e,i)=>state.eleves[i]&&state.eleves[i].toLowerCase()===e)){
   state.eleves=[];saveState();
 }
+
+// Rappel de sauvegarde hebdomadaire
+(function checkBackupReminder(){
+  const lastReminder=localStorage.getItem('lastBackupReminder');
+  const now=Date.now();
+  const oneWeek=7*24*60*60*1000;
+  if(!lastReminder||now-parseInt(lastReminder)>oneWeek){
+    setTimeout(()=>{
+      const toast=document.createElement('div');
+      toast.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 16px;border-radius:14px;font-size:0.82rem;z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);max-width:90vw;text-align:center;';
+      toast.innerHTML='<div>💾 Pensez à exporter vos données !</div><div style="display:flex;gap:8px;"><button onclick="exportData();this.closest(\'div\').parentElement.remove();" style="background:#4ade80;border:none;border-radius:8px;color:#166534;font-weight:700;padding:4px 14px;cursor:pointer;font-size:0.78rem;">Exporter</button><button onclick="this.closest(\'div\').parentElement.remove();" style="background:#475569;border:none;border-radius:8px;color:white;cursor:pointer;font-size:0.78rem;padding:4px 10px;">Plus tard</button></div>';
+      document.body.appendChild(toast);
+      localStorage.setItem('lastBackupReminder',now.toString());
+      setTimeout(()=>{if(toast.parentNode)toast.remove();},10000);
+    },2000);
+  }
+})();
 
 // ============================================================
 // DATE NAV
@@ -3166,6 +3210,18 @@ function openHelp(){
   document.getElementById('modalHelp').classList.add('open');
 }
 
+function toggleFdrParams(){
+  const body=document.getElementById('fdrParamsBody');
+  const chevron=document.getElementById('fdrParamsChevron');
+  const open=body.style.display==='flex';
+  body.style.display=open?'none':'flex';
+  chevron.textContent=open?'▶':'▼';
+}
+
+function openModalEtatMensuel(){
+  document.getElementById('modalEtatMensuel').classList.add('open');
+}
+
 function openModalFDR(){
   const s=state.pdfSettings||{};
   document.getElementById('fdrAgence').value=s.agence||'';
@@ -3180,7 +3236,6 @@ function openModalFDR(){
   const mon=new Date(today);
   mon.setDate(today.getDate()-((today.getDay()+6)%7));
   document.getElementById('feuilleDate').value=dateStr(mon);
-  document.getElementById('feuilleArrivee').value=s.lieu||'';
   document.getElementById('modalFDR').classList.add('open');
 }
 
@@ -3225,6 +3280,8 @@ function genererFeuille(mode){
       const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
       if(mode==='pdf'){_downloadPDF(result.doc,result.title);showToast('✅ PDF téléchargé !');}
       if(mode==='jpg') _downloadJPG(result.doc,result.title);
+      if(mode==='share-pdf') _sharePDF(result.doc,result.title);
+      if(mode==='share-jpg') _shareJPG(result.doc,result.title);
     };
     if(typeof window.jspdf==='undefined'){
       const script=document.createElement('script');
@@ -3617,6 +3674,61 @@ function _downloadJPG(doc, title){
 }
 
 // Modal choix export
+
+function _sharePDF(doc, title){
+  const blob=doc.output('blob');
+  const file=new File([blob], title+'.pdf', {type:'application/pdf'});
+  if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+    navigator.share({files:[file], title:title})
+      .then(()=>showToast('✅ PDF partagé !'))
+      .catch(e=>{ if(e.name!=='AbortError') showToast('❌ Erreur partage'); });
+  } else {
+    // Fallback : téléchargement
+    _downloadPDF(doc, title);
+    showToast('ℹ️ Partage non disponible — PDF téléchargé');
+  }
+}
+
+function _shareJPG(doc, title){
+  const loadPdfJs=()=>new Promise(resolve=>{
+    if(window.pdfjsLib){resolve();return;}
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=()=>{
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve();
+    };
+    s.onerror=()=>showToast('❌ Erreur chargement pdf.js');
+    document.head.appendChild(s);
+  });
+  loadPdfJs().then(()=>{
+    const pdfData=doc.output('arraybuffer');
+    pdfjsLib.getDocument({data:pdfData}).promise.then(pdf=>{
+      pdf.getPage(1).then(page=>{
+        const scale=150/72;
+        const viewport=page.getViewport({scale});
+        const canvas=document.createElement('canvas');
+        canvas.width=viewport.width;canvas.height=viewport.height;
+        const ctx=canvas.getContext('2d');
+        page.render({canvasContext:ctx,viewport}).promise.then(()=>{
+          canvas.toBlob(blob=>{
+            const file=new File([blob], title+'.jpg', {type:'image/jpeg'});
+            if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+              navigator.share({files:[file], title:title})
+                .then(()=>showToast('✅ Image partagée !'))
+                .catch(e=>{ if(e.name!=='AbortError') showToast('❌ Erreur partage'); });
+            } else {
+              // Fallback : ouvrir dans nouvel onglet
+              const url=URL.createObjectURL(blob);
+              window.open(url,'_blank');
+              showToast('ℹ️ Partage non disponible — image ouverte');
+            }
+          },'image/jpeg',0.95);
+        }).catch(e=>showToast('❌ Erreur: '+e.message));
+      }).catch(e=>showToast('❌ Erreur page: '+e.message));
+    }).catch(e=>showToast('❌ Erreur PDF: '+e.message));
+  }).catch(e=>showToast('❌ Erreur: '+e.message));
+}
 
 </script>
 </body>
