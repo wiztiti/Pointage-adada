@@ -3434,30 +3434,41 @@ function _downloadPDF(doc, title){
 }
 
 function _downloadJPG(doc, title){
-  // Convertir le PDF en image via canvas jsPDF
-  const pdfData=doc.output('datauristring');
-  // Charger pdf.js si nécessaire pour le rendu
-  const canvas=document.createElement('canvas');
-  // A4 paysage à 150dpi : 297mm × 210mm → 1754 × 1240px
-  canvas.width=1754;canvas.height=1240;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#ffffff';
-  ctx.fillRect(0,0,canvas.width,canvas.height);
-  // Utiliser jsPDF pour rendre en PNG puis convertir
-  const imgData=doc.output('datauristring');
-  const img=new Image();
-  img.onload=function(){
-    ctx.drawImage(img,0,0,canvas.width,canvas.height);
-    canvas.toBlob(blob=>{
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');
-      a.href=url;a.download=title+'.jpg';
-      document.body.appendChild(a);a.click();
-      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
-      showToast('✅ Image téléchargée !');
-    },'image/jpeg',0.95);
-  };
-  img.src=imgData;
+  const loadPdfJs=()=>new Promise(resolve=>{
+    if(window.pdfjsLib){resolve();return;}
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=()=>{
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      resolve();
+    };
+    document.head.appendChild(s);
+  });
+
+  loadPdfJs().then(()=>{
+    const pdfData=doc.output('arraybuffer');
+    pdfjsLib.getDocument({data:pdfData}).promise.then(pdf=>{
+      pdf.getPage(1).then(page=>{
+        // A4 paysage à 150dpi
+        const scale=150/72;
+        const viewport=page.getViewport({scale});
+        const canvas=document.createElement('canvas');
+        canvas.width=viewport.width;
+        canvas.height=viewport.height;
+        const ctx=canvas.getContext('2d');
+        page.render({canvasContext:ctx,viewport}).promise.then(()=>{
+          canvas.toBlob(blob=>{
+            const url=URL.createObjectURL(blob);
+            const a=document.createElement('a');
+            a.href=url;a.download=title+'.jpg';
+            document.body.appendChild(a);a.click();
+            setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+            showToast('✅ Image téléchargée !');
+          },'image/jpeg',0.95);
+        });
+      });
+    });
+  });
 }
 
 // Modal choix export
