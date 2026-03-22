@@ -3480,10 +3480,9 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.line(XS[12],TY,XS[12],TY+TOTAL_HDR);
   doc.line(XS[13],TY,XS[13],TY+TOTAL_HDR);
   doc.line(XS[14],TY,XS[14],TY+TOTAL_HDR);
-  // Ligne de séparation entre ligne 1 et ligne 2 en teal (invisible sur fond teal)
-  doc.setDrawColor(...TEAL);doc.setLineWidth(0.3);
+  // Ligne horizontale noire entre ligne 1 et ligne 2 (zone tranches seulement)
+  doc.setDrawColor(0,0,0);doc.setLineWidth(0.3);
   doc.line(XS[1],SY,XS[9],SY);
-  doc.setDrawColor(0,0,0);
   // Bordures extérieures haut et bas du header
   doc.line(XS[0],TY,XS[14],TY);
   doc.line(XS[0],TY+TOTAL_HDR,XS[14],TY+TOTAL_HDR);
