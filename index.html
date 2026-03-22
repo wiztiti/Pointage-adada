@@ -3287,7 +3287,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
 
     // Date + lieu départ + km
     doc.setFontSize(6.5);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
-    const dateLabel=JOURS_FR[d.getDay()]+' '+d.getDate()+' '+MOIS_FR[d.getMonth()]+' '+d.getFullYear();
+    const dateLabel=JOURS_FR[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS_FR[d.getMonth()]+' '+d.getFullYear();
     doc.text(dateLabel,XS[0]+C0/2,y+DAY_H*0.28,{align:'center'});
     doc.setFont('helvetica','normal');doc.setFontSize(6);
     doc.text(lieuDep,XS[0]+C0/2,y+DAY_H*0.55,{align:'center'});
