@@ -1072,7 +1072,18 @@ html, body {
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel</div>
             <input id="pdfLieu" type="text" placeholder="Ex: Sainte Marie la mer" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
           </div>
-          <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);width:100%;margin-top:4px;" onclick="openModalFeuille()">📄 Générer la feuille de route</button>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Semaine du (lundi)</div>
+            <input id="feuilleDate" type="date" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu d'arrivée habituel</div>
+            <input id="feuilleArrivee" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" onclick="genererFeuille('pdf')">📄 PDF</button>
+            <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);flex:1;" onclick="genererFeuille('jpg')">🖼️ JPG</button>
+          </div>
         </div>
       </div>
 
@@ -1083,45 +1094,7 @@ html, body {
   </div>
 </div>
 
-<!-- ===== MODAL EXPORT CHOICE ===== -->
-<div class="modal-overlay" id="modalExportChoice">
-  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
-    <div class="modal-handle"></div>
-    <div class="modal-head">📄 Télécharger la feuille</div>
-    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;">
-      <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);" onclick="exportChoice('pdf')">📄 PDF uniquement</button>
-      <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);" onclick="exportChoice('jpg')">🖼️ Image JPG uniquement</button>
-      <button class="btn-valider" style="background:linear-gradient(135deg,#4ade80,#22c55e);" onclick="exportChoice('both')">📄🖼️ Les deux</button>
-      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalExportChoice')">Annuler</button>
-    </div>
-  </div>
-</div>
 
-<!-- ===== MODAL FEUILLE DE ROUTE ===== -->
-<div class="modal-overlay" id="modalFeuille">
-  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
-    <div class="modal-handle"></div>
-    <div class="modal-head">📄 Feuille de route</div>
-    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;">
-      <div>
-        <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Semaine du (lundi)</div>
-        <input id="feuilleDate" type="date" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
-      </div>
-      <div>
-        <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu de départ</div>
-        <input id="feuilleDepart" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
-      </div>
-      <div>
-        <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu d'arrivée</div>
-        <input id="feuilleArrivee" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
-      </div>
-    </div>
-    <div class="modal-footer" style="display:flex;gap:10px;">
-      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalFeuille')">Annuler</button>
-      <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);" onclick="genererFeuille()">Générer le PDF</button>
-    </div>
-  </div>
-</div>
 
 <!-- ===== MODAL CONFIRMATION IMPORT ===== -->
 <div class="modal-overlay" id="modalImportConfirm">
@@ -2944,6 +2917,13 @@ function openSettings(){
   document.getElementById('pdfClient').value=s.client||'';
   document.getElementById('pdfConducteur').value=s.conducteur||'';
   document.getElementById('pdfLieu').value=s.lieu||'';
+  // Pré-remplir la date avec le lundi de la semaine courante
+  const today=new Date();
+  const mon=new Date(today);
+  mon.setDate(today.getDate()-((today.getDay()+6)%7));
+  document.getElementById('feuilleDate').value=dateStr(mon);
+  // Pré-remplir lieu d'arrivée avec lieu habituel
+  document.getElementById('feuilleArrivee').value=s.lieu||'';
   document.getElementById('modalSettings').classList.add('open');
 }
 
@@ -2960,18 +2940,6 @@ function savePdfSettings(){
   saveState();
 }
 
-function openModalFeuille(){
-  const s=state.pdfSettings||{};
-  // Lundi de la semaine courante
-  const today=new Date();
-  const mon=new Date(today);
-  mon.setDate(today.getDate()-((today.getDay()+6)%7));
-  document.getElementById('feuilleDate').value=dateStr(mon);
-  document.getElementById('feuilleDepart').value=s.lieu||'';
-  document.getElementById('feuilleArrivee').value=s.lieu||'';
-  closeModal('modalSettings');
-  setTimeout(()=>document.getElementById('modalFeuille').classList.add('open'),300);
-}
 
 // ---- EXPORT ----
 function exportData(){
@@ -3097,27 +3065,26 @@ function doImport(mode){
 // ============================================================
 // FEUILLE DE ROUTE PDF
 // ============================================================
-function genererFeuille(){
+function genererFeuille(mode){
   const mondayDs=document.getElementById('feuilleDate').value;
   if(!mondayDs){showToast('❌ Choisissez une date');return;}
-  const lieuDep=document.getElementById('feuilleDepart').value||'';
+  const lieuDep=document.getElementById('pdfLieu').value||'';
   const lieuArr=document.getElementById('feuilleArrivee').value||'';
   const s=state.pdfSettings||{};
-  closeModal('modalFeuille');
+  closeModal('modalSettings');
   showToast('⏳ Génération en cours...');
+  const doGenerate=()=>{
+    const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
+    if(mode==='pdf') _downloadPDF(result.doc,result.title);
+    if(mode==='jpg') _downloadJPG(result.doc,result.title);
+  };
   if(typeof window.jspdf==='undefined'){
     const script=document.createElement('script');
     script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    script.onload=()=>{
-      const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
-      _pendingDoc=result.doc;_pendingTitle=result.title;
-      setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
-    };
+    script.onload=doGenerate;
     document.head.appendChild(script);
   } else {
-    const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
-    _pendingDoc=result.doc;_pendingTitle=result.title;
-    setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
+    doGenerate();
   }
 }
 
@@ -3489,22 +3456,7 @@ function _downloadJPG(doc, title){
 }
 
 // Modal choix export
-let _pendingDoc=null, _pendingTitle=null;
 
-
-function exportChoice(mode){
-  closeModal('modalExportChoice');
-  if(!_pendingDoc){showToast('❌ Erreur : document non disponible');return;}
-  const doc=_pendingDoc, title=_pendingTitle;
-  _pendingDoc=null;_pendingTitle=null;
-  if(mode==='pdf'||mode==='both') _downloadPDF(doc,title);
-  if(mode==='jpg'||mode==='both'){
-    setTimeout(()=>_downloadJPG(doc,title),mode==='both'?800:0);
-  }
-  if(mode==='pdf') showToast('✅ PDF téléchargé !');
-  if(mode==='jpg') showToast('⏳ Génération image...');
-  if(mode==='both') showToast('✅ PDF téléchargé, image en cours...');
-}
 </script>
 </body>
 </html>
