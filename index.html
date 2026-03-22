@@ -800,7 +800,8 @@ html, body {
   <div id="rapportToday" style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport quotidien</button>
     <button class="h-btn h-btn-rapport" onclick="openModalFDR()" style="position:absolute;left:0;font-size:0.75rem;padding:6px 10px;">FDR</button>
-    <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;position:absolute;right:0;">
+    <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
+      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:50%;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -810,7 +811,8 @@ html, body {
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
     <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
     <button class="h-btn h-btn-rapport" onclick="openModalFDR()" style="position:absolute;left:0;font-size:0.75rem;padding:6px 10px;">FDR</button>
-    <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;position:absolute;right:0;">
+    <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
+      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:50%;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
@@ -1025,6 +1027,80 @@ html, body {
 <!-- Input file hors modal pour compatibilité mobile -->
 
 
+<!-- ===== MODAL AIDE ===== -->
+<div class="modal-overlay" id="modalHelp">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+    <div class="modal-handle"></div>
+    <div class="modal-head">ℹ️ Guide d'utilisation</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;font-size:0.82rem;color:#334155;line-height:1.5;">
+
+      <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
+        <div style="font-weight:700;color:#166534;margin-bottom:6px;">🗓️ Navigation</div>
+        Les flèches <span style="font-weight:600;">‹ ›</span> dans l'en-tête permettent de naviguer jour par jour.<br><br>
+        Lorsque vous êtes sur le <span style="font-weight:600;">jour actuel</span>, le bouton <span style="font-weight:600;">Rapport quotidien</span> est affiché — il génère un résumé de la journée.<br><br>
+        Lorsque vous consultez un <span style="font-weight:600;">jour passé ou futur</span>, trois boutons apparaissent :<br>
+        &nbsp;• <span style="font-weight:600;">Édition</span> — permet de modifier les vacations du jour consulté (ajouter, supprimer)<br>
+        &nbsp;• <span style="font-weight:600;">Rapport</span> — génère le rapport du jour consulté<br>
+        &nbsp;• <span style="font-weight:600;">Ce jour</span> — revient immédiatement au jour actuel<br><br>
+        Le <span style="font-weight:600;">saint du jour</span> et le <span style="font-weight:600;">numéro de semaine</span> sont affichés sous la date.
+      </div>
+        Enregistrez vos heures en appuyant sur les boutons <span style="font-weight:600;">Départ</span> et <span style="font-weight:600;">Retour</span> en temps réel, ou ajoutez une vacation manuellement en saisissant les heures directement.<br><br>
+        L'app calcule automatiquement vos heures réelles et conventionnelles :<br>
+        &nbsp;• 1 vacation = 2h conv.<br>
+        &nbsp;• 2 vacations = 3h conv.<br>
+        &nbsp;• 3 vacations et plus = 4h30 conv.<br><br>
+        Une vacation peut être marquée <span style="color:#f97316;font-weight:600;">Annexe</span> — elle apparaît en orange et est comptabilisée séparément des heures principales.
+      </div>
+
+      <div style="background:#eff6ff;border-radius:12px;padding:12px 14px;border:1.5px solid #bfdbfe;">
+        <div style="font-weight:700;color:#1e40af;margin-bottom:6px;">📊 Heures</div>
+        Consultez vos totaux par semaine, mois, année ou année scolaire.<br><br>
+        Le bouton <span style="font-weight:600;">Comparatif heures bulletin</span> permet de comparer vos heures calculées avec celles de votre bulletin de salaire.<br><br>
+        La case <span style="font-weight:600;">Déduction ½ heure</span> ajuste les totaux conventionnels.
+      </div>
+
+      <div style="background:#fefce8;border-radius:12px;padding:12px 14px;border:1.5px solid #fde68a;">
+        <div style="font-weight:700;color:#854d0e;margin-bottom:6px;">📝 Notes</div>
+        Saisissez le kilométrage journalier et une note libre.<br><br>
+        Le kilométrage est repris automatiquement dans la feuille de route.<br>
+        La note apparaît dans la colonne Commentaires de la feuille de route.
+      </div>
+
+      <div style="background:#fdf4ff;border-radius:12px;padding:12px 14px;border:1.5px solid #e9d5ff;">
+        <div style="font-weight:700;color:#6b21a8;margin-bottom:6px;">👥 Élèves</div>
+        Gérez la liste de vos élèves et leur pointage quotidien :<br>
+        &nbsp;• Matin aller / retour<br>
+        &nbsp;• Soir aller / retour<br><br>
+        Vous pouvez renommer un élève — toutes ses présences passées sont mises à jour automatiquement.
+      </div>
+
+      <div style="background:#fff7ed;border-radius:12px;padding:12px 14px;border:1.5px solid #fed7aa;">
+        <div style="font-weight:700;color:#9a3412;margin-bottom:6px;">🔔 Rappels</div>
+        Ajoutez des rappels visibles uniquement sur le jour concerné.<br>
+        Pratique pour noter les absences prévues, changements de circuit, etc.
+      </div>
+
+      <div style="background:#f0f9ff;border-radius:12px;padding:12px 14px;border:1.5px solid #bae6fd;">
+        <div style="font-weight:700;color:#0c4a6e;margin-bottom:6px;">📄 Feuille de route (FDR)</div>
+        Accessible via le bouton <span style="font-weight:600;">FDR</span> dans l'en-tête.<br><br>
+        Renseignez une fois les <span style="font-weight:600;">paramètres fixes</span> (agence, immatriculation, licence, client, conducteur, lieu habituel).<br><br>
+        Chaque semaine, choisissez simplement la date et générez en <span style="font-weight:600;">PDF</span> ou en <span style="font-weight:600;">image JPG</span>.<br><br>
+        Les heures, kilométrages et commentaires sont remplis automatiquement depuis vos données.
+      </div>
+
+      <div style="background:#f8fafc;border-radius:12px;padding:12px 14px;border:1.5px solid #e2e8f0;">
+        <div style="font-weight:700;color:#475569;margin-bottom:6px;">⚙️ Paramètres</div>
+        Exportez vos données en JSON pour les sauvegarder en cas de changement d'appareil ou de réinitialisation du navigateur.<br><br>
+        <span style="color:#ef4444;font-weight:600;">Pensez à le faire régulièrement !</span>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalHelp')">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL FDR ===== -->
 <div class="modal-overlay" id="modalFDR">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
@@ -1103,37 +1179,6 @@ html, body {
       <div style="padding:12px 16px;background:#f8fafc;border-radius:12px;border:1.5px solid #e2e8f0;opacity:0.6;">
         <div style="font-size:0.9rem;font-weight:600;color:#64748b;margin-bottom:6px;">📂 Importer des données</div>
         <div style="font-size:0.78rem;color:#94a3b8;font-style:italic;">Fonctionnalité temporairement désactivée.</div>
-      </div>
-
-      <!-- Feuille de route -->
-      <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
-        <div style="font-size:0.9rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">🚌 Feuille de route</div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Agence</div>
-            <input id="pdfAgence" type="text" placeholder="Ex: A.S.O Perpignan" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Immatriculation</div>
-            <input id="pdfImmat" type="text" placeholder="Ex: HB-726-JV" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">N° de licence</div>
-            <input id="pdfLicence" type="text" placeholder="Ex: 2021/11/0003052" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom du client</div>
-            <input id="pdfClient" type="text" placeholder="Ex: CD66" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom du conducteur</div>
-            <input id="pdfConducteur" type="text" placeholder="Ex: LEPREUX Frédéric" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel</div>
-            <input id="pdfLieu" type="text" placeholder="Ex: Sainte Marie la mer" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
-          </div>
-        </div>
       </div>
 
     </div>
@@ -3106,6 +3151,10 @@ function doImport(mode){
 // ============================================================
 // FEUILLE DE ROUTE PDF
 // ============================================================
+function openHelp(){
+  document.getElementById('modalHelp').classList.add('open');
+}
+
 function openModalFDR(){
   const s=state.pdfSettings||{};
   document.getElementById('fdrAgence').value=s.agence||'';
