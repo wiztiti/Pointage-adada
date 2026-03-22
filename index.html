@@ -1108,6 +1108,23 @@ html, body {
   </div>
 </div>
 
+<!-- ===== MODAL AVERTISSEMENT FDR ===== -->
+<div class="modal-overlay" id="modalFDRWarning">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+    <div class="modal-handle"></div>
+    <div class="modal-head">⚠️ Champs incomplets</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;">
+      <div style="font-size:0.85rem;color:#475569;">Les champs suivants ne sont pas remplis :</div>
+      <div id="fdrWarningList" style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:10px 14px;font-size:0.82rem;color:#9a3412;line-height:1.8;"></div>
+      <div style="font-size:0.82rem;color:#64748b;font-style:italic;">Voulez-vous générer quand même ?</div>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);flex:1;" onclick="closeModal('modalFDRWarning')">Annuler</button>
+        <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" id="fdrWarningConfirm">Générer quand même</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL FDR ===== -->
 <div class="modal-overlay" id="modalFDR">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
@@ -3220,9 +3237,13 @@ function genererFeuille(mode){
   };
 
   if(champsVides.length>0){
-    // Afficher avertissement avec possibilité de continuer
-    const msg=`⚠️ Champs non remplis :\n• ${champsVides.join('\n• ')}\n\nVoulez-vous générer quand même ?`;
-    if(confirm(msg)) doGenerate();
+    // Afficher modal avertissement
+    document.getElementById('fdrWarningList').innerHTML=champsVides.map(c=>`• ${c}`).join('<br>');
+    document.getElementById('fdrWarningConfirm').onclick=()=>{
+      closeModal('modalFDRWarning');
+      doGenerate();
+    };
+    document.getElementById('modalFDRWarning').classList.add('open');
   } else {
     doGenerate();
   }
