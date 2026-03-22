@@ -3333,7 +3333,14 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.setTextColor(...DARK);
     if(rMin>0) doc.text(minToHM(rMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
     if(cMin>0) doc.text(minToHM(cMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
-    // Commentaires : vide
+    // Commentaires : note du jour
+    const note=peekDayData(ds).note;
+    if(note&&note.trim()){
+      doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+      const noteLines=doc.splitTextToSize(note.trim(),C_COM-4);
+      const noteY=y+(DAY_H/2)-(noteLines.length*3)/2+2;
+      noteLines.slice(0,3).forEach((l,li)=>doc.text(l,XS[13]+2,noteY+li*3));
+    }
   });
 
   // === LIGNE TOTAL ===
