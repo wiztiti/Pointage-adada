@@ -3170,16 +3170,12 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.rect(XS[0],TY,W-20,HDR_H,'F');
   doc.setFontSize(6.5);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
 
-  // Groupes header (sans le premier et le dernier qui sont fusionnés)
+  // Groupes header ligne 1 : uniquement les 4 tranches (avec bordures noires)
   const groups=[
     {label:'Tranche de travail 1',x:XS[1],w:CT*2},
     {label:'Tranche de travail 2',x:XS[3],w:CT*2},
     {label:'Tranche de travail 3',x:XS[5],w:CT*2},
     {label:'Tranche de travail 4',x:XS[7],w:CT*2},
-    {label:'- Lieu d\'arrivée -\nKM de fin',x:XS[9],w:C_LIEU},
-    {label:'Temps\nannexes',x:XS[10],w:C_ANX},
-    {label:'Temps\nRéel',x:XS[11],w:C_REEL},
-    {label:'Temps\nconv.',x:XS[12],w:C_CONV},
   ];
 
   groups.forEach(g=>{
@@ -3191,32 +3187,51 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   });
   doc.setDrawColor(0,0,0);
   doc.line(XS[XS.length-1],TY,XS[XS.length-1],TY+HDR_H);
+  // Bordure droite de la 4eme tranche
+  doc.line(XS[9],TY,XS[9],TY+HDR_H);
 
   // Sous-header
   const SY=TY+HDR_H;
+  const TOTAL_HDR=HDR_H+SUB_H;
   // Fond teal sur toute la largeur du tableau
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],SY,W-20,SUB_H,'F');
 
-  // Première cellule fusionnée : couvre HDR_H + SUB_H, texte centré verticalement
-  const TOTAL_HDR=HDR_H+SUB_H;
+  // Cellules fusionnées (couvrent les 2 lignes)
+  doc.setFontSize(6);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
+  // 1. Date / Lieu / Km
   const firstLines=['Date','Lieu de départ','Km de début'];
   const fcy=TY+(TOTAL_HDR/2)-(firstLines.length*2.8)/2+2;
-  doc.setFontSize(6);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
   firstLines.forEach((l,li)=>doc.text(l,XS[0]+C0/2,fcy+li*3,{align:'center'}));
-  // Dernière cellule fusionnée : Commentaires
+  // 2. Lieu d'arrivée / KM de fin
+  const lieuLines=['- Lieu d\'arrivée -','KM de fin'];
+  const lcy=TY+(TOTAL_HDR/2)-(lieuLines.length*2.8)/2+2;
+  lieuLines.forEach((l,li)=>doc.text(l,XS[9]+C_LIEU/2,lcy+li*3,{align:'center'}));
+  // 3. Temps annexes
+  doc.text('Temps\nannexes',XS[10]+C_ANX/2,TY+(TOTAL_HDR/2)-1,{align:'center'});
+  // 4. Temps Réel
+  doc.text('Temps\nRéel',XS[11]+C_REEL/2,TY+(TOTAL_HDR/2)-1,{align:'center'});
+  // 5. Temps conv.
+  doc.text('Temps\nconv.',XS[12]+C_CONV/2,TY+(TOTAL_HDR/2)-1,{align:'center'});
+  // 6. Commentaires
   doc.text('Commentaires',XS[13]+C_COM/2,TY+(TOTAL_HDR/2)+1,{align:'center'});
+
   // Bordures noires des cellules fusionnées
   doc.setDrawColor(0,0,0);doc.setLineWidth(0.3);
   doc.line(XS[1],TY,XS[1],TY+TOTAL_HDR);
+  doc.line(XS[9],TY,XS[9],TY+TOTAL_HDR);
+  doc.line(XS[10],TY,XS[10],TY+TOTAL_HDR);
+  doc.line(XS[11],TY,XS[11],TY+TOTAL_HDR);
+  doc.line(XS[12],TY,XS[12],TY+TOTAL_HDR);
   doc.line(XS[13],TY,XS[13],TY+TOTAL_HDR);
-  // Sous-header entièrement teal, pas de bleu clair ici
+  doc.line(XS[14],TY,XS[14],TY+TOTAL_HDR);
+
+  // Sous-header : uniquement les colonnes heures (entre XS[1] et XS[9])
   doc.setFontSize(5.5);
   for(let t=0;t<4;t++){
     const bx=XS[1+t*2];
     doc.setTextColor(255,255,255);
     doc.text('Heure de\ndébut',bx+CT/2,SY+SUB_H/2-0.5,{align:'center'});
-    doc.setTextColor(255,255,255);
     doc.text('Heure\nde fin',bx+CT+CT/2,SY+SUB_H/2-0.5,{align:'center'});
     doc.setDrawColor(0,0,0);doc.setLineWidth(0.2);
     doc.line(bx,SY,bx,SY+SUB_H);
@@ -3224,7 +3239,6 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   }
   doc.setDrawColor(0,0,0);
   doc.line(XS[9],SY,XS[9],SY+SUB_H);
-  doc.line(XS[XS.length-1],SY,XS[XS.length-1],SY+SUB_H);
 
   // === LIGNES JOURS ===
   const JOURS_FR=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
