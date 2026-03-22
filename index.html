@@ -3122,13 +3122,13 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     ['Nom du client :', s.client||''],
   ];
   infoData.forEach(([label,val],i)=>{
-    const y=13+i*6;
-    doc.setFillColor(255,255,255);doc.rect(10,y-3,22,6,'F');
-    doc.rect(10,y-3,22,6,'S');
+    const y=12+i*5;
+    doc.setFillColor(255,255,255);doc.rect(10,y-2.5,22,5,'F');
+    doc.rect(10,y-2.5,22,5,'S');
     doc.setFontSize(6.5);doc.setTextColor(80,80,80);
     doc.text(label,11,y);
-    doc.setFillColor(255,255,255);doc.rect(32,y-3,38,6,'F');
-    doc.rect(32,y-3,38,6,'S');
+    doc.setFillColor(255,255,255);doc.rect(32,y-2.5,38,5,'F');
+    doc.rect(32,y-2.5,38,5,'S');
     doc.setFontSize(6.5);doc.setTextColor(30,30,30);
     doc.text(val,32+38/2,y,{align:'center'});
   });
