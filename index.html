@@ -3482,41 +3482,19 @@ function _downloadJPG(doc, title){
 // Modal choix export
 let _pendingDoc=null, _pendingTitle=null;
 
-function genererFeuille(){
-  const mondayDs=document.getElementById('feuilleDate').value;
-  if(!mondayDs){showToast('❌ Choisissez une date');return;}
-  const lieuDep=document.getElementById('feuilleDepart').value||'';
-  const lieuArr=document.getElementById('feuilleArrivee').value||'';
-  const s=state.pdfSettings||{};
-  closeModal('modalFeuille');
-  showToast('⏳ Génération en cours...');
-  if(typeof window.jspdf==='undefined'){
-    const script=document.createElement('script');
-    script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    script.onload=()=>{
-      const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
-      _pendingDoc=result.doc;_pendingTitle=result.title;
-      setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
-    };
-    document.head.appendChild(script);
-  } else {
-    const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
-    _pendingDoc=result.doc;_pendingTitle=result.title;
-    setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
-  }
-}
 
 function exportChoice(mode){
   closeModal('modalExportChoice');
-  if(!_pendingDoc) return;
-  if(mode==='pdf'||mode==='both') _downloadPDF(_pendingDoc,_pendingTitle);
+  if(!_pendingDoc){showToast('❌ Erreur : document non disponible');return;}
+  const doc=_pendingDoc, title=_pendingTitle;
+  _pendingDoc=null;_pendingTitle=null;
+  if(mode==='pdf'||mode==='both') _downloadPDF(doc,title);
   if(mode==='jpg'||mode==='both'){
-    setTimeout(()=>_downloadJPG(_pendingDoc,_pendingTitle),mode==='both'?800:0);
+    setTimeout(()=>_downloadJPG(doc,title),mode==='both'?800:0);
   }
   if(mode==='pdf') showToast('✅ PDF téléchargé !');
-  if(mode==='jpg') showToast('✅ Image téléchargée !');
-  if(mode==='both') showToast('✅ PDF et image téléchargés !');
-  _pendingDoc=null;_pendingTitle=null;
+  if(mode==='jpg') showToast('⏳ Génération image...');
+  if(mode==='both') showToast('✅ PDF téléchargé, image en cours...');
 }
 </script>
 </body>
