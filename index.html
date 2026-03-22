@@ -3398,26 +3398,26 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Pas de "TOTAL" dans la dernière case
 
   // === SIGNATURE manuscrite ===
-  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
-  doc.text('Signature :',XS[0]+2,TotalY+DAY_H+5);
-  // Nom du conducteur en signature bleue cursive (italique), centré, 2 lignes
   if(s.conducteur){
     const parts=s.conducteur.trim().split(' ');
-    // Séparer nom (majuscules) et prénom
     const nom=parts.filter(p=>p===p.toUpperCase()).join(' ')||parts[0]||'';
     const prenom=parts.filter(p=>p!==p.toUpperCase()).join(' ')||'';
     const sigX=W/2;
-    const sigY=TotalY+DAY_H+5;
-    doc.setTextColor(30,100,200); // bleu plus clair
-    doc.setFontSize(13);doc.setFont('helvetica','bolditalic');
+    const sigY=TotalY+DAY_H+4;
+    doc.setTextColor(80,140,230); // bleu encore plus clair
+    doc.setFont('helvetica','bolditalic');
     if(prenom&&nom){
-      doc.text(prenom,sigX,sigY,{align:'center'});
       doc.setFontSize(15);
-      doc.text(nom,sigX,sigY+6,{align:'center'});
+      doc.text(nom,sigX,sigY,{align:'center'});
+      doc.setFontSize(13);
+      doc.text(prenom,sigX,sigY+6,{align:'center'});
     } else {
       doc.setFontSize(14);
       doc.text(s.conducteur,sigX,sigY+3,{align:'center'});
     }
+    // Mot "Signature :" à gauche de la signature
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+    doc.text('Signature :',sigX-55,sigY+3);
   }
   doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
 
