@@ -3149,8 +3149,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const TY=48;
   // Header en une seule ligne (pas de sous-ligne séparée)
   // Hauteur header = fixe compact
-  const HDR_H=7;
-  const SUB_H=9;
+  const HDR_H=5;
+  const SUB_H=10;
 
   // Largeurs colonnes
   const C0=38;
@@ -3170,7 +3170,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.rect(XS[0],TY,W-20,HDR_H,'F');
   doc.setFontSize(6.5);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
 
-  // Groupes header (sans le premier qui est fusionné)
+  // Groupes header (sans le premier et le dernier qui sont fusionnés)
   const groups=[
     {label:'Tranche de travail 1',x:XS[1],w:CT*2},
     {label:'Tranche de travail 2',x:XS[3],w:CT*2},
@@ -3180,16 +3180,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     {label:'Temps\nannexes',x:XS[10],w:C_ANX},
     {label:'Temps\nRéel',x:XS[11],w:C_REEL},
     {label:'Temps\nconv.',x:XS[12],w:C_CONV},
-    {label:'Commentaires',x:XS[13],w:C_COM},
   ];
 
   groups.forEach(g=>{
     const lines=g.label.split('\n');
     const cy=TY+(HDR_H/2)-(lines.length*2.2)/2+2;
     lines.forEach((l,li)=>doc.text(l,g.x+g.w/2,cy+li*3,{align:'center'}));
-    doc.setDrawColor(255,255,255);doc.setLineWidth(0.3);
+    doc.setDrawColor(0,0,0);doc.setLineWidth(0.3);
     doc.line(g.x,TY,g.x,TY+HDR_H);
   });
+  doc.setDrawColor(0,0,0);
   doc.line(XS[XS.length-1],TY,XS[XS.length-1],TY+HDR_H);
 
   // Sous-header
@@ -3204,9 +3204,12 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const fcy=TY+(TOTAL_HDR/2)-(firstLines.length*2.8)/2+2;
   doc.setFontSize(6);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
   firstLines.forEach((l,li)=>doc.text(l,XS[0]+C0/2,fcy+li*3,{align:'center'}));
-  // Bordure droite de la cellule fusionnée
-  doc.setDrawColor(255,255,255);doc.setLineWidth(0.3);
+  // Dernière cellule fusionnée : Commentaires
+  doc.text('Commentaires',XS[13]+C_COM/2,TY+(TOTAL_HDR/2)+1,{align:'center'});
+  // Bordures noires des cellules fusionnées
+  doc.setDrawColor(0,0,0);doc.setLineWidth(0.3);
   doc.line(XS[1],TY,XS[1],TY+TOTAL_HDR);
+  doc.line(XS[13],TY,XS[13],TY+TOTAL_HDR);
   // Sous-header entièrement teal, pas de bleu clair ici
   doc.setFontSize(5.5);
   for(let t=0;t<4;t++){
@@ -3215,11 +3218,11 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.text('Heure de\ndébut',bx+CT/2,SY+SUB_H/2-0.5,{align:'center'});
     doc.setTextColor(255,255,255);
     doc.text('Heure\nde fin',bx+CT+CT/2,SY+SUB_H/2-0.5,{align:'center'});
-    doc.setDrawColor(255,255,255);doc.setLineWidth(0.2);
+    doc.setDrawColor(0,0,0);doc.setLineWidth(0.2);
     doc.line(bx,SY,bx,SY+SUB_H);
     doc.line(bx+CT,SY,bx+CT,SY+SUB_H);
   }
-  doc.setDrawColor(255,255,255);
+  doc.setDrawColor(0,0,0);
   doc.line(XS[9],SY,XS[9],SY+SUB_H);
   doc.line(XS[XS.length-1],SY,XS[XS.length-1],SY+SUB_H);
 
@@ -3256,8 +3259,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.rect(XS[11],y,C_REEL,DAY_H,'F'); // temps réel
     doc.rect(XS[12],y,C_CONV,DAY_H,'F'); // temps conv
 
-    // Bordures
-    doc.setDrawColor(150,150,150);doc.setLineWidth(0.2);
+    // Bordures noires
+    doc.setDrawColor(0,0,0);doc.setLineWidth(0.2);
     XS.forEach(x=>doc.line(x,y,x,y+DAY_H));
     doc.line(XS[0],y,XS[XS.length-1],y);
 
@@ -3320,7 +3323,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.setFillColor(...LIGHT_BLUE);
   doc.rect(XS[11],TotalY,C_REEL,DAY_H,'F');
   doc.rect(XS[12],TotalY,C_CONV,DAY_H,'F');
-  doc.setDrawColor(150,150,150);doc.setLineWidth(0.2);
+  doc.setDrawColor(0,0,0);doc.setLineWidth(0.2);
   XS.forEach(x=>doc.line(x,TotalY,x,TotalY+DAY_H));
   doc.line(XS[0],TotalY,XS[XS.length-1],TotalY);
   doc.line(XS[0],TotalY+DAY_H,XS[XS.length-1],TotalY+DAY_H);
@@ -3337,7 +3340,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.text('Signature :',80,TotalY+DAY_H+5);
 
   // Contour tableau
-  doc.setDrawColor(100,100,100);doc.setLineWidth(0.5);
+  doc.setDrawColor(0,0,0);doc.setLineWidth(0.5);
   doc.rect(XS[0],TY,W-20,TotalY+DAY_H-TY);
 
   // Titre fichier
