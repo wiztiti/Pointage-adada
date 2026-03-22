@@ -3225,6 +3225,11 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.line(XS[12],TY,XS[12],TY+TOTAL_HDR);
   doc.line(XS[13],TY,XS[13],TY+TOTAL_HDR);
   doc.line(XS[14],TY,XS[14],TY+TOTAL_HDR);
+  // Ligne horizontale noire entre ligne 1 et ligne 2 (zone tranches seulement)
+  doc.line(XS[1],SY,XS[9],SY);
+  // Bordures extérieures haut et bas du header
+  doc.line(XS[0],TY,XS[14],TY);
+  doc.line(XS[0],TY+TOTAL_HDR,XS[14],TY+TOTAL_HDR);
 
   // Sous-header : uniquement les colonnes heures (entre XS[1] et XS[9])
   doc.setFontSize(5.5);
