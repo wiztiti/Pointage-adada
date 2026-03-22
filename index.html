@@ -807,6 +807,7 @@ html, body {
   </div>
   <!-- Row 2 : Rapport only (today) -->
   <div id="rapportToday" style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
+    <button onclick="openCalendarPicker()" style="background:none;border:none;cursor:pointer;padding:4px;position:absolute;left:0;font-size:1.2rem;">📅</button>
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport quotidien</button>
     <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
       <span id="backupWarn1" class="backup-warning" onclick="event.stopPropagation();openSettings()" title="Pensez à sauvegarder !">⚠️</span>
@@ -816,6 +817,7 @@ html, body {
   </div>
   <!-- Row 2 : all 3 buttons (history) -->
   <div id="historyBtns" style="display:none;width:100%;justify-content:center;align-items:center;gap:8px;padding-top:6px;position:relative;">
+    <button onclick="openCalendarPicker()" style="background:none;border:none;cursor:pointer;padding:4px;position:absolute;left:0;font-size:1.2rem;">📅</button>
     <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
     <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
@@ -1121,7 +1123,7 @@ html, body {
       </div>
 
       <div style="text-align:center;padding:10px 0 4px;font-size:0.75rem;color:#94a3b8;border-top:1px solid #e2e8f0;margin-top:4px;">
-        © 2026 Frédéric Lepreux — Tous droits réservés — v2.0
+        © 2026 Frédéric Lepreux — Tous droits réservés — v2.001
       </div>
 
     </div>
@@ -3228,6 +3230,26 @@ function doImport(mode){
 // ============================================================
 // FEUILLE DE ROUTE PDF
 // ============================================================
+function openCalendarPicker(){
+  const old=document.getElementById('calendarPickerInput');
+  if(old) old.remove();
+  const input=document.createElement('input');
+  input.type='date';
+  input.id='calendarPickerInput';
+  input.max=todayStr();
+  input.value=viewDate;
+  input.style.cssText='position:fixed;top:-9999px;left:-9999px;opacity:0;';
+  input.addEventListener('change',function(){
+    if(input.value && input.value<=todayStr()){
+      viewDate=input.value;
+      renderAll();
+    }
+    input.remove();
+  });
+  document.body.appendChild(input);
+  input.showPicker ? input.showPicker() : input.click();
+}
+
 function openHelp(){
   document.getElementById('modalHelp').classList.add('open');
 }
