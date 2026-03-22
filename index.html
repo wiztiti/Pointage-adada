@@ -1658,9 +1658,9 @@ function renderVacations(){
   const cMin=convMins(normalVacs,getDeduc(viewDate));
   const annexeMin=annexeMins(vacsComplete);
   const totalsHtml=vacsComplete.length?`<div style="text-align:center;margin-top:10px;font-size:0.82rem;">
-    <span style="color:#3b82f6;font-weight:600;">${minToHM(rMin)} réelles</span>
-    <span style="color:#22c55e;font-weight:600;"> (${minToHM(cMin)} Conv.)</span>
-    ${annexeMin?`<br><span style="color:#f97316;font-weight:600;">+ ${minToHM(annexeMin)} annexe</span>`:''}
+    <span style="color:#3b82f6;font-weight:600;">${minToHM(rMin+annexeMin)} réelles</span>
+    <span style="color:#22c55e;font-weight:600;"> (${minToHM(cMin+annexeMin)} Conv.)</span>
+    ${annexeMin?`<br><span style="color:#f97316;font-weight:600;">dont ${minToHM(annexeMin)} annexe</span>`:''}
   </div>`:'';
   const headerHtml=canE?`<div style="display:flex;justify-content:flex-end;padding:0 0 4px 0;font-size:0.7rem;color:#f97316;font-weight:600;padding-right:38px;">annexe</div>`:'';
   list.innerHTML=headerHtml+vacs.map((v,i)=>{
@@ -2053,10 +2053,10 @@ function openRapport(){
 
     // Totaux
     html+='<div class="rapport-total">';
-    html+=`<div class="rt-real" style="font-weight:400;">Heures réelles : ${minToHM(rMin)}</div>`;
-    html+=`<div class="rt-conv">(Conv : ${minToHM(cMin)})</div>`;
+    html+=`<div class="rt-real" style="font-weight:400;">Heures réelles : ${minToHM(rMin+aMin)}</div>`;
+    html+=`<div class="rt-conv">(Conv : ${minToHM(cMin+aMin)})</div>`;
     html+='</div>';
-    if(aMin) html+=`<div style="color:#f97316;font-family:'Quicksand',sans-serif;font-size:0.88rem;padding:0 0 8px;text-align:right;">+ ${minToHM(aMin)} de temps annexe</div>`;
+    if(aMin) html+=`<div style="color:#f97316;font-family:'Quicksand',sans-serif;font-size:0.88rem;padding:0 0 8px;text-align:right;">dont ${minToHM(aMin)} annexe</div>`;
     html+='<div class="divider"></div>';
   }
 
@@ -2218,7 +2218,7 @@ function buildDayRow(ds){
     vacsHtml=isWE?'—':'—';
   }
 
-  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;text-align:right;display:block;">+${minToHM(aMin)}</span>`:''}`:'';
+  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin+aMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin+aMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;text-align:right;display:block;">dont ${minToHM(aMin)}</span>`:''}`:'';
 
   return `<div class="recap-day-row ${cls}">
     <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
@@ -2373,9 +2373,11 @@ let recapAnneeScoOpenMois=null;
 let recapAnneeScoOpenSem=null;
 
 function totalHoursHtml(rMin,cMin,aMin){
-  let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rMin)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cMin)} Conv.)</span>`;
+  const rTotal=rMin+aMin;
+  const cTotal=cMin+aMin;
+  let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
   if(aMin){
-    h+=` <span style="color:#f97316;font-weight:600;">+ ${minToHM(aMin)} (annexe)</span>`;
+    h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} annexe</span>`;
   }
   return h;
 }
@@ -2412,7 +2414,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
     <div style="flex:1;">
       <div class="recap-sem-label">${MOIS[m]} ${y}</div>
     </div>
-    <div class="recap-sem-hrs">${minToHM(rTotal)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">+${minToHM(aTotal)}</span>`:''}</div>
+    <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cTotal+aTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
     <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
   </div>`;
 
@@ -2439,7 +2441,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
           <div class="recap-sem-label" style="font-size:0.78rem;">Semaine ${weekNum}</div>
           <div class="recap-sem-dates">${duAu}</div>
         </div>
-        <div class="recap-sem-hrs">${minToHM(rSem)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cSem)}</span>${aSem?`<br><span style="font-size:0.72rem;color:#f97316;">+${minToHM(aSem)}</span>`:''}</div>
+        <div class="recap-sem-hrs">${minToHM(rSem+aSem)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cSem+aSem)}</span>${aSem?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aSem)}</span>`:''}</div>
         <span class="recap-sem-chev" style="transform:${semOpen?'rotate(90deg)':''};">▶</span>
       </div>`;
       if(semOpen){
