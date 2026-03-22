@@ -3140,7 +3140,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.setFont('helvetica','normal');
 
   // Déclaration conducteur + numéro de semaine
-  const wnHeader=isoWeekNum(new Date(mondayDs+'T12:00:00'));
+  const wnHeader=isoWeekNum(new Date(mondayOf(mondayDs)+'T12:00:00'));
   doc.setFontSize(9);doc.setTextColor(30,30,30);
   doc.text('Déclaration individuelle du conducteur : ............'+(s.conducteur||'')+'.................',10,44);
   doc.setFont('helvetica','bold');
@@ -3252,9 +3252,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const JOURS_FR=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
   const MOIS_FR=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
   // Forcer le lundi de la semaine choisie
-  const refDate=new Date(mondayDs+'T12:00:00');
-  const dayOffset=(refDate.getDay()+6)%7;
-  refDate.setDate(refDate.getDate()-dayOffset);
+  const mondayFixed=mondayOf(mondayDs);
+  const refDate=new Date(mondayFixed+'T12:00:00');
   const days=[];
   for(let i=0;i<7;i++){
     const d=new Date(refDate);
@@ -3339,12 +3338,15 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
 
   // === LIGNE TOTAL ===
   const TotalY=DY+7*DAY_H;
-  // Fond blanc comme les autres lignes
+  // Fond blanc
   doc.setFillColor(...WHITE);
   doc.rect(XS[0],TotalY,W-20,DAY_H,'F');
+  // Mêmes colonnes bleu clair que les lignes jours
   doc.setFillColor(...LIGHT_BLUE);
-  doc.rect(XS[11],TotalY,C_REEL,DAY_H,'F');
-  doc.rect(XS[12],TotalY,C_CONV,DAY_H,'F');
+  for(let t=0;t<4;t++) doc.rect(XS[1+t*2],TotalY,CT,DAY_H,'F'); // heures début
+  doc.rect(XS[9],TotalY,C_LIEU,DAY_H,'F');  // lieu arrivée
+  doc.rect(XS[11],TotalY,C_REEL,DAY_H,'F'); // temps réel
+  doc.rect(XS[12],TotalY,C_CONV,DAY_H,'F'); // temps conv
   doc.setDrawColor(0,0,0);doc.setLineWidth(0.2);
   XS.forEach(x=>doc.line(x,TotalY,x,TotalY+DAY_H));
   doc.line(XS[0],TotalY,XS[XS.length-1],TotalY);
