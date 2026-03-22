@@ -1029,10 +1029,10 @@ html, body {
 
 <!-- ===== MODAL AIDE ===== -->
 <div class="modal-overlay" id="modalHelp">
-  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
     <div class="modal-handle"></div>
     <div class="modal-head">ℹ️ Guide d'utilisation</div>
-    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;font-size:0.82rem;color:#334155;line-height:1.5;">
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;font-size:0.82rem;color:#334155;line-height:1.5;overflow-y:auto;flex:1;">
 
       <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
         <div style="font-weight:700;color:#166534;margin-bottom:6px;">🗓️ Navigation</div>
@@ -1044,6 +1044,9 @@ html, body {
         &nbsp;• <span style="font-weight:600;">Ce jour</span> — revient immédiatement au jour actuel<br><br>
         Le <span style="font-weight:600;">saint du jour</span> et le <span style="font-weight:600;">numéro de semaine</span> sont affichés sous la date.
       </div>
+
+      <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
+        <div style="font-weight:700;color:#166534;margin-bottom:6px;">🕐 Vacations</div>
         Enregistrez vos heures en appuyant sur les boutons <span style="font-weight:600;">Départ</span> et <span style="font-weight:600;">Retour</span> en temps réel, ou ajoutez une vacation manuellement en saisissant les heures directement.<br><br>
         L'app calcule automatiquement vos heures réelles et conventionnelles :<br>
         &nbsp;• 1 vacation = 2h conv.<br>
@@ -1112,27 +1115,31 @@ html, body {
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Agence</div>
-            <input id="fdrAgence" type="text" placeholder="Ex: A.S.O Perpignan" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+            <input id="fdrAgence" type="text" placeholder="Ex: Mon Agence" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Immatriculation</div>
-            <input id="fdrImmat" type="text" placeholder="Ex: HB-726-JV" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+            <input id="fdrImmat" type="text" placeholder="Ex: AA-123-BB" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">N° de licence</div>
-            <input id="fdrLicence" type="text" placeholder="Ex: 2021/11/0003052" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+            <input id="fdrLicence" type="text" placeholder="Ex: 2021/11/0000000" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom du client</div>
-            <input id="fdrClient" type="text" placeholder="Ex: CD66" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+            <input id="fdrClient" type="text" placeholder="Ex: Mon Client" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom du conducteur</div>
-            <input id="fdrConducteur" type="text" placeholder="Ex: LEPREUX Frédéric" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+            <input id="fdrConducteur" type="text" placeholder="Ex: NOM Prénom" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
           <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel</div>
-            <input id="fdrLieu" type="text" placeholder="Ex: Sainte Marie la mer" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel de départ</div>
+            <input id="fdrLieu" type="text" placeholder="Ex: Ma ville" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel d'arrivée</div>
+            <input id="feuilleArrivee" type="text" placeholder="Ex: Ma ville" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
         </div>
       </div>
@@ -1142,10 +1149,6 @@ html, body {
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Semaine du (lundi)</div>
             <input id="feuilleDate" type="date" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu d'arrivée</div>
-            <input id="feuilleArrivee" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
           </div>
           <div style="display:flex;gap:8px;margin-top:4px;">
             <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" onclick="genererFeuille('pdf')">📄 PDF</button>
@@ -3003,28 +3006,11 @@ renderAll();
 // SETTINGS — MODE SOMBRE / EXPORT / IMPORT
 // ============================================================
 function openSettings(){
-  const s=state.pdfSettings||{};
-  document.getElementById('pdfAgence').value=s.agence||'';
-  document.getElementById('pdfImmat').value=s.immat||'';
-  document.getElementById('pdfLicence').value=s.licence||'';
-  document.getElementById('pdfClient').value=s.client||'';
-  document.getElementById('pdfConducteur').value=s.conducteur||'';
-  document.getElementById('pdfLieu').value=s.lieu||'';
   document.getElementById('modalSettings').classList.add('open');
 }
 
-function savePdfSettings(){
-  if(!state.pdfSettings) state.pdfSettings={};
-  state.pdfSettings={
-    agence:document.getElementById('pdfAgence').value,
-    immat:document.getElementById('pdfImmat').value,
-    licence:document.getElementById('pdfLicence').value,
-    client:document.getElementById('pdfClient').value,
-    conducteur:document.getElementById('pdfConducteur').value,
-    lieu:document.getElementById('pdfLieu').value,
-  };
-  saveState();
-}
+
+
 
 
 // ---- EXPORT ----
@@ -3163,7 +3149,7 @@ function openModalFDR(){
   document.getElementById('fdrClient').value=s.client||'';
   document.getElementById('fdrConducteur').value=s.conducteur||'';
   document.getElementById('fdrLieu').value=s.lieu||'';
-  // Pré-remplir lundi courant
+  document.getElementById('feuilleArrivee').value=s.lieuArrivee||s.lieu||'';
   const today=new Date();
   const mon=new Date(today);
   mon.setDate(today.getDate()-((today.getDay()+6)%7));
@@ -3181,6 +3167,7 @@ function saveFdrSettings(){
     client:document.getElementById('fdrClient').value,
     conducteur:document.getElementById('fdrConducteur').value,
     lieu:document.getElementById('fdrLieu').value,
+    lieuArrivee:document.getElementById('feuilleArrivee').value,
   };
   saveState();
 }
