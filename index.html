@@ -3439,17 +3439,21 @@ function _downloadJPG(doc, title){
     const s=document.createElement('script');
     s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
     s.onload=()=>{
+      alert('pdf.js chargé');
       window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       resolve();
     };
+    s.onerror=()=>alert('Erreur chargement pdf.js');
     document.head.appendChild(s);
   });
 
   loadPdfJs().then(()=>{
+    alert('Début rendu PDF');
     const pdfData=doc.output('arraybuffer');
     pdfjsLib.getDocument({data:pdfData}).promise.then(pdf=>{
+      alert('PDF chargé, pages: '+pdf.numPages);
       pdf.getPage(1).then(page=>{
-        // A4 paysage à 150dpi
+        alert('Page obtenue');
         const scale=150/72;
         const viewport=page.getViewport({scale});
         const canvas=document.createElement('canvas');
@@ -3457,23 +3461,22 @@ function _downloadJPG(doc, title){
         canvas.height=viewport.height;
         const ctx=canvas.getContext('2d');
         page.render({canvasContext:ctx,viewport}).promise.then(()=>{
+          alert('Rendu terminé, export JPG');
           canvas.toBlob(blob=>{
             const url=URL.createObjectURL(blob);
-            // Essayer téléchargement direct, sinon ouvrir dans nouvel onglet
             const a=document.createElement('a');
             a.href=url;a.download=title+'.jpg';a.target='_blank';
             document.body.appendChild(a);a.click();
             setTimeout(()=>{
               document.body.removeChild(a);
-              // Ouvrir aussi dans nouvel onglet pour Android
               window.open(url,'_blank');
             },500);
-            showToast('✅ Image générée — appuyez longuement pour enregistrer !');
+            showToast('✅ Image générée !');
           },'image/jpeg',0.95);
-        });
-      });
-    });
-  });
+        }).catch(e=>alert('Erreur rendu: '+e.message));
+      }).catch(e=>alert('Erreur page: '+e.message));
+    }).catch(e=>alert('Erreur PDF: '+e.message));
+  }).catch(e=>alert('Erreur loadPdfJs: '+e.message));
 }
 
 // Modal choix export
