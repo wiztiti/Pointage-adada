@@ -3126,11 +3126,11 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.setFillColor(255,255,255);doc.rect(10,y-2.5,22,5,'F');
     doc.rect(10,y-2.5,22,5,'S');
     doc.setFontSize(6.5);doc.setTextColor(80,80,80);
-    doc.text(label,11,y);
+    doc.text(label,11,y+0.8);
     doc.setFillColor(255,255,255);doc.rect(32,y-2.5,38,5,'F');
     doc.rect(32,y-2.5,38,5,'S');
     doc.setFontSize(6.5);doc.setTextColor(30,30,30);
-    doc.text(val,32+38/2,y,{align:'center'});
+    doc.text(val,32+38/2,y+0.8,{align:'center'});
   });
 
   // === LOGO + ADIATE ===
