@@ -3402,15 +3402,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const parts=s.conducteur.trim().split(' ');
     const nom=parts.filter(p=>p===p.toUpperCase()).join(' ')||parts[0]||'';
     const prenom=parts.filter(p=>p!==p.toUpperCase()).join(' ')||'';
-    const centerX=W/2;
-    const sigY=TotalY+DAY_H+5;
-    // "Signature :" centré verticalement par rapport aux 2 lignes
+    const sigX=W/2+15; // axe central commun prénom et nom
+    const lineGap=5;
+    const blockTop=TotalY+DAY_H+3;
+    // "Signature :" centré verticalement entre les 2 lignes
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
-    doc.text('Signature :',centerX-2,sigY+2.5,{align:'right'});
-    // Prénom + Nom centrés verticalement (total ~5mm pour 2 lignes)
+    doc.text('Signature :',sigX-4,blockTop+lineGap/2+1,{align:'right'});
+    // Prénom et Nom centrés sur le même axe horizontal
     doc.setFont('helvetica','bolditalic');doc.setTextColor(80,140,230);
-    doc.setFontSize(10);doc.text(prenom||s.conducteur,centerX+2,sigY);
-    if(nom){doc.setFontSize(11);doc.text(nom,centerX+2,sigY+5);}
+    doc.setFontSize(10);doc.text(prenom||s.conducteur,sigX,blockTop,{align:'center'});
+    if(nom){doc.setFontSize(11);doc.text(nom,sigX,blockTop+lineGap,{align:'center'});}
   }
   doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
 
