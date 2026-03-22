@@ -1099,7 +1099,8 @@ html, body {
       <div style="background:#f8fafc;border-radius:12px;padding:12px 14px;border:1.5px solid #e2e8f0;">
         <div style="font-weight:700;color:#475569;margin-bottom:6px;">⚙️ Paramètres</div>
         Exportez vos données en JSON pour les sauvegarder en cas de changement d'appareil ou de réinitialisation du navigateur.<br><br>
-        <span style="color:#ef4444;font-weight:600;">Pensez à le faire régulièrement !</span>
+        Vous pouvez également <span style="font-weight:600;">importer</span> un fichier JSON précédemment exporté pour restaurer ou fusionner vos données.<br><br>
+        <span style="color:#ef4444;font-weight:600;">Pensez à exporter régulièrement !</span>
       </div>
 
       <div style="text-align:center;padding:10px 0 4px;font-size:0.75rem;color:#94a3b8;border-top:1px solid #e2e8f0;margin-top:4px;">
@@ -1227,10 +1228,11 @@ html, body {
       </div>
 
 
-      <!-- Import désactivé temporairement -->
-      <div style="padding:12px 16px;background:#f8fafc;border-radius:12px;border:1.5px solid #e2e8f0;opacity:0.6;">
-        <div style="font-size:0.9rem;font-weight:600;color:#64748b;margin-bottom:6px;">📂 Importer des données</div>
-        <div style="font-size:0.78rem;color:#94a3b8;font-style:italic;">Fonctionnalité temporairement désactivée.</div>
+      <!-- Import -->
+      <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
+        <div style="font-size:0.9rem;font-weight:600;color:#0c4a6e;margin-bottom:6px;">📂 Importer des données</div>
+        <div style="font-size:0.78rem;color:#475569;margin-bottom:10px;">Restaurer une sauvegarde JSON exportée précédemment.</div>
+        <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);width:100%;" onclick="pickImportFile()">📂 Choisir un fichier JSON</button>
       </div>
 
     </div>
@@ -3119,41 +3121,20 @@ function pickImportFile(){
 }
 
 function triggerImport(textParam){
-  const text=(textParam||document.getElementById('importTextarea').value||'').trim();
-  if(!text){showToast('❌ Collez d\'abord le contenu JSON');return;}
+  const text=(textParam||'').trim();
+  if(!text){showToast('❌ Fichier JSON invalide');return;}
   try{
     const raw=JSON.parse(text);
     const parsed=Array.isArray(raw)?raw[0]:raw;
     if(!parsed.eleves&&!parsed.vacations) throw new Error('Format invalide');
     const nbVacs=(parsed.vacations||[]).length;
     const nbEleves=(parsed.eleves||[]).length;
-    const mode=confirm(
-      'Fichier lu : '+nbEleves+' élève(s), '+nbVacs+' vacation(s).\n\n'+
-      'Cliquez OK pour FUSIONNER (recommandé)\nou Annuler pour abandonner.'
-    );
-    if(!mode) return;
-    // Fusionner
-    const s=parsed;
-    (s.eleves||[]).forEach(e=>{if(!state.eleves.includes(e))state.eleves.push(e);});
-    (s.vacations||[]).forEach(v=>{if(!state.vacations.find(x=>x.id===v.id))state.vacations.push(v);});
-    Object.entries(s.presence||{}).forEach(([d,p])=>{
-      if(!state.presence[d]) state.presence[d]=p;
-      else Object.assign(state.presence[d],p);
-    });
-    Object.entries(s.dayData||{}).forEach(([d,dd])=>{
-      if(!state.dayData[d]) state.dayData[d]=dd;
-    });
-    Object.entries(s.rappels||{}).forEach(([d,r])=>{
-      if(!state.rappels) state.rappels={};
-      if(!state.rappels[d]) state.rappels[d]=r;
-    });
-    saveState();
-    renderAll();
-    document.getElementById('importTextarea').value='';
-    closeModal('modalSettings');
-    setTimeout(()=>showImportSuccess('✅ Données fusionnées avec succès !'),300);
+    importPendingData=parsed;
+    document.getElementById('importConfirmMsg').textContent=
+      'Fichier lu : '+nbEleves+' élève(s), '+nbVacs+' vacation(s).\nChoisissez une option :';
+    document.getElementById('modalImportConfirm').classList.add('open');
   }catch(err){
-    showToast('❌ JSON invalide');
+    showToast('❌ JSON invalide — vérifiez le fichier');
   }
 }
 
