@@ -44,7 +44,11 @@ body.dark {
   --border-light: rgba(255,255,255,0.08);
   --white: #1e293b;
 }
-body.dark .card { background: rgba(30,41,59,0.97); border-color: rgba(255,255,255,0.08); }
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.backup-warning{
+  font-size:1.1rem;cursor:pointer;animation:blink 1.5s infinite;
+  display:none;
+}
 body.dark .modal-sheet { background: #1e293b; }
 body.dark .modal-head { color: #e2e8f0; }
 body.dark .modal-body { color: #e2e8f0; }
@@ -597,6 +601,11 @@ html, body {
   border-color: #6fcf97;
   color: #fff;
 }
+.presence-btn.np {
+  background: linear-gradient(135deg, #fca5a5, #f87171);
+  border-color: #fca5a5;
+  color: #7f1d1d;
+}
 
 /* ===== MODAL GESTION ELEVES ===== */
 .eleve-mgmt-row {
@@ -800,6 +809,7 @@ html, body {
   <div id="rapportToday" style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport quotidien</button>
     <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
+      <span id="backupWarn1" class="backup-warning" onclick="event.stopPropagation();openSettings()" title="Pensez à sauvegarder !">⚠️</span>
       <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:3px;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -810,6 +820,7 @@ html, body {
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
     <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
     <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
+      <span id="backupWarn2" class="backup-warning" onclick="event.stopPropagation();openSettings()" title="Pensez à sauvegarder !">⚠️</span>
       <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:3px;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -1079,12 +1090,16 @@ html, body {
         Gérez la liste de vos élèves et leur pointage quotidien :<br>
         &nbsp;• Matin aller / retour<br>
         &nbsp;• Soir aller / retour<br><br>
+        Pour chaque case, un appui fait cycler entre 3 états :<br>
+        &nbsp;• <span style="color:#059669;font-weight:600;">1 appui</span> → présent (vert)<br>
+        &nbsp;• <span style="color:#dc2626;font-weight:600;">2 appuis</span> → absent non prévenu (rouge)<br>
+        &nbsp;• <span style="color:#64748b;font-weight:600;">3 appuis</span> → reset (vide)<br><br>
         Vous pouvez renommer un élève — toutes ses présences passées sont mises à jour automatiquement.
       </div>
 
       <div style="background:#fff7ed;border-radius:12px;padding:12px 14px;border:1.5px solid #fed7aa;">
         <div style="font-weight:700;color:#9a3412;margin-bottom:6px;">🔔 Rappels</div>
-        Ajoutez des rappels visibles uniquement sur le jour concerné.<br>
+        Ajoutez des rappels qui apparaîtront le jour concerné.<br>
         Pratique pour noter les absences prévues, changements de circuit, etc.
       </div>
 
@@ -1098,13 +1113,15 @@ html, body {
 
       <div style="background:#f8fafc;border-radius:12px;padding:12px 14px;border:1.5px solid #e2e8f0;">
         <div style="font-weight:700;color:#475569;margin-bottom:6px;">⚙️ Paramètres</div>
-        Exportez vos données en JSON pour les sauvegarder en cas de changement d'appareil ou de réinitialisation du navigateur.<br><br>
-        Vous pouvez également <span style="font-weight:600;">importer</span> un fichier JSON précédemment exporté pour restaurer ou fusionner vos données.<br><br>
-        <span style="color:#ef4444;font-weight:600;">Pensez à exporter régulièrement !</span>
+        <span style="font-weight:600;">💾 Exporter</span> — Télécharge un fichier JSON contenant toutes vos données (vacations, élèves, présences, notes, km...). À faire régulièrement et à conserver précieusement.<br><br>
+        <span style="font-weight:600;">📂 Importer</span> — Restaure les données depuis un fichier JSON exporté. Deux options :<br>
+        &nbsp;• <span style="font-weight:600;">Fusionner</span> — ajoute les données du fichier sans écraser ce qui existe déjà (recommandé)<br>
+        &nbsp;• <span style="font-weight:600;">Remplacer</span> — efface tout et repart du fichier importé<br><br>
+        <span style="color:#ef4444;font-weight:600;">⚠️ Pensez à exporter régulièrement — si le navigateur est réinitialisé, si vous avez vidé le cache ou changé d'appareil, les données sont perdues sans sauvegarde !</span>
       </div>
 
       <div style="text-align:center;padding:10px 0 4px;font-size:0.75rem;color:#94a3b8;border-top:1px solid #e2e8f0;margin-top:4px;">
-        © 2026 Frédéric Lepreux — Tous droits réservés
+        © 2026 Frédéric Lepreux — Tous droits réservés — v2.0
       </div>
 
     </div>
@@ -1475,20 +1492,20 @@ if(state.eleves.length===8 && OLD_EXAMPLES.every((e,i)=>state.eleves[i]&&state.e
 
 // Rappel de sauvegarde hebdomadaire
 (function checkBackupReminder(){
-  const lastReminder=localStorage.getItem('lastBackupReminder');
+  const lastExport=localStorage.getItem('lastBackupExport');
   const now=Date.now();
   const oneWeek=7*24*60*60*1000;
-  if(!lastReminder||now-parseInt(lastReminder)>oneWeek){
+  if(!lastExport||now-parseInt(lastExport)>oneWeek){
     setTimeout(()=>{
-      const toast=document.createElement('div');
-      toast.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:white;padding:12px 16px;border-radius:14px;font-size:0.82rem;z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,0.3);max-width:90vw;text-align:center;';
-      toast.innerHTML='<div>💾 Pensez à exporter vos données !</div><div style="display:flex;gap:8px;"><button onclick="exportData();this.closest(\'div\').parentElement.remove();" style="background:#4ade80;border:none;border-radius:8px;color:#166534;font-weight:700;padding:4px 14px;cursor:pointer;font-size:0.78rem;">Exporter</button><button onclick="this.closest(\'div\').parentElement.remove();" style="background:#475569;border:none;border-radius:8px;color:white;cursor:pointer;font-size:0.78rem;padding:4px 10px;">Plus tard</button></div>';
-      document.body.appendChild(toast);
-      localStorage.setItem('lastBackupReminder',now.toString());
-      setTimeout(()=>{if(toast.parentNode)toast.remove();},10000);
-    },2000);
+      document.querySelectorAll('.backup-warning').forEach(el=>el.style.display='inline');
+    },1000);
   }
 })();
+
+function hideBackupWarning(){
+  document.querySelectorAll('.backup-warning').forEach(el=>el.style.display='none');
+  localStorage.setItem('lastBackupExport',Date.now().toString());
+}
 
 // ============================================================
 // DATE NAV
@@ -1768,11 +1785,16 @@ const MOMENTS=['MA','MR','SA','SR'];
 const MOMENT_LABELS=['Matin A','Matin R','Soir A','Soir R'];
 
 function getPresence(ds){if(!state.presence)state.presence={};if(!state.presence[ds])state.presence[ds]={};return state.presence[ds];}
-function isPresent(ds,prenom,moment){const p=getPresence(ds);if(!p[prenom])return false;return!!p[prenom][moment];}
+function getPresenceState(ds,prenom,moment){const p=getPresence(ds);if(!p[prenom])return false;return p[prenom][moment]||false;}
+function isPresent(ds,prenom,moment){return getPresenceState(ds,prenom,moment)===true;}
 function togglePresence(ds,prenom,moment){
   const p=getPresence(ds);
   if(!p[prenom])p[prenom]={};
-  p[prenom][moment]=!p[prenom][moment];
+  const cur=p[prenom][moment];
+  // Cycle : false/undefined → true → 'np' → false
+  if(!cur) p[prenom][moment]=true;
+  else if(cur===true) p[prenom][moment]='np';
+  else p[prenom][moment]=false;
   saveState();
 }
 
@@ -1783,6 +1805,14 @@ function openModalPointage(){
   body.innerHTML='';
   const ds=viewDate;
   const ce=canEdit();
+
+  // Explication
+  const legend=document.createElement('div');
+  legend.style.cssText='font-size:0.75rem;color:#64748b;background:#f8fafc;border-radius:10px;padding:8px 12px;margin-bottom:10px;line-height:1.7;text-align:center;';
+  legend.innerHTML='<span style="display:inline-block;width:12px;height:12px;background:linear-gradient(135deg,#7ec8e3,#6fcf97);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>1 appui = présent &nbsp;&nbsp;'
+    +'<span style="display:inline-block;width:12px;height:12px;background:linear-gradient(135deg,#fca5a5,#f87171);border-radius:3px;vertical-align:middle;margin-right:4px;"></span>2 appuis = absent non prévenu';
+  body.appendChild(legend);
+
   state.eleves.forEach(prenom=>{
     const row=document.createElement('div');
     row.className='eleve-pointage-row';
@@ -1792,12 +1822,14 @@ function openModalPointage(){
     const grid=row.querySelector('#pb_'+prenom);
     MOMENTS.forEach((m,i)=>{
       const btn=document.createElement('button');
-      btn.className='presence-btn'+(isPresent(ds,prenom,m)?' checked':'');
+      const state_=getPresenceState(ds,prenom,m);
+      btn.className='presence-btn'+(state_===true?' checked':state_==='np'?' np':'');
       btn.textContent=MOMENT_LABELS[i];
       btn.onclick=()=>{
         if(!ce)return;
         togglePresence(ds,prenom,m);
-        btn.classList.toggle('checked');
+        const s=getPresenceState(ds,prenom,m);
+        btn.className='presence-btn'+(s===true?' checked':s==='np'?' np':'');
       };
       if(!ce)btn.disabled=true;
       grid.appendChild(btn);
@@ -3091,7 +3123,7 @@ function exportData(){
   const ds=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
   a.href=url;a.download=`pointage-sauvegarde-${ds}.json`;
   a.click();URL.revokeObjectURL(url);
-  showToast('✅ Sauvegarde téléchargée !');
+  hideBackupWarning();
 }
 
 // ---- IMPORT ----
@@ -3268,7 +3300,7 @@ function genererFeuille(mode){
     showToast('⏳ Génération en cours...');
     const generate=()=>{
       const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
-      if(mode==='pdf'){_downloadPDF(result.doc,result.title);showToast('✅ PDF téléchargé !');}
+      if(mode==='pdf'){_downloadPDF(result.doc,result.title)}
       if(mode==='jpg') _downloadJPG(result.doc,result.title);
     };
     if(typeof window.jspdf==='undefined'){
