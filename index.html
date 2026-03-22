@@ -799,6 +799,7 @@ html, body {
   <!-- Row 2 : Rapport only (today) -->
   <div id="rapportToday" style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport quotidien</button>
+    <button class="h-btn h-btn-rapport" onclick="openModalFDR()" style="position:absolute;left:0;font-size:0.75rem;padding:6px 10px;">FDR</button>
     <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;position:absolute;right:0;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -808,6 +809,7 @@ html, body {
     <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
     <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
     <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
+    <button class="h-btn h-btn-rapport" onclick="openModalFDR()" style="position:absolute;left:0;font-size:0.75rem;padding:6px 10px;">FDR</button>
     <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;position:absolute;right:0;">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -1023,6 +1025,65 @@ html, body {
 <!-- Input file hors modal pour compatibilité mobile -->
 
 
+<!-- ===== MODAL FDR ===== -->
+<div class="modal-overlay" id="modalFDR">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+    <div class="modal-handle"></div>
+    <div class="modal-head">📄 Feuille de route hebdo</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:10px;">
+      <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
+        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">⚙️ Paramètres fixes</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Agence</div>
+            <input id="fdrAgence" type="text" placeholder="Ex: A.S.O Perpignan" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Immatriculation</div>
+            <input id="fdrImmat" type="text" placeholder="Ex: HB-726-JV" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">N° de licence</div>
+            <input id="fdrLicence" type="text" placeholder="Ex: 2021/11/0003052" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom du client</div>
+            <input id="fdrClient" type="text" placeholder="Ex: CD66" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom du conducteur</div>
+            <input id="fdrConducteur" type="text" placeholder="Ex: LEPREUX Frédéric" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel</div>
+            <input id="fdrLieu" type="text" placeholder="Ex: Sainte Marie la mer" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
+        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">📅 Génération</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Semaine du (lundi)</div>
+            <input id="feuilleDate" type="date" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu d'arrivée</div>
+            <input id="feuilleArrivee" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" onclick="genererFeuille('pdf')">📄 PDF</button>
+            <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);flex:1;" onclick="genererFeuille('jpg')">🖼️ JPG</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalFDR')">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL SETTINGS ===== -->
 <div class="modal-overlay" id="modalSettings">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
@@ -1071,18 +1132,6 @@ html, body {
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel</div>
             <input id="pdfLieu" type="text" placeholder="Ex: Sainte Marie la mer" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="savePdfSettings()">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Semaine du (lundi)</div>
-            <input id="feuilleDate" type="date" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
-          </div>
-          <div>
-            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu d'arrivée habituel</div>
-            <input id="feuilleArrivee" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
-          </div>
-          <div style="display:flex;gap:8px;margin-top:4px;">
-            <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" onclick="genererFeuille('pdf')">📄 PDF</button>
-            <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);flex:1;" onclick="genererFeuille('jpg')">🖼️ JPG</button>
           </div>
         </div>
       </div>
@@ -2909,7 +2958,6 @@ renderAll();
 // SETTINGS — MODE SOMBRE / EXPORT / IMPORT
 // ============================================================
 function openSettings(){
-  // Charger les paramètres PDF
   const s=state.pdfSettings||{};
   document.getElementById('pdfAgence').value=s.agence||'';
   document.getElementById('pdfImmat').value=s.immat||'';
@@ -2917,13 +2965,6 @@ function openSettings(){
   document.getElementById('pdfClient').value=s.client||'';
   document.getElementById('pdfConducteur').value=s.conducteur||'';
   document.getElementById('pdfLieu').value=s.lieu||'';
-  // Pré-remplir la date avec le lundi de la semaine courante
-  const today=new Date();
-  const mon=new Date(today);
-  mon.setDate(today.getDate()-((today.getDay()+6)%7));
-  document.getElementById('feuilleDate').value=dateStr(mon);
-  // Pré-remplir lieu d'arrivée avec lieu habituel
-  document.getElementById('feuilleArrivee').value=s.lieu||'';
   document.getElementById('modalSettings').classList.add('open');
 }
 
@@ -3065,17 +3106,47 @@ function doImport(mode){
 // ============================================================
 // FEUILLE DE ROUTE PDF
 // ============================================================
+function openModalFDR(){
+  const s=state.pdfSettings||{};
+  document.getElementById('fdrAgence').value=s.agence||'';
+  document.getElementById('fdrImmat').value=s.immat||'';
+  document.getElementById('fdrLicence').value=s.licence||'';
+  document.getElementById('fdrClient').value=s.client||'';
+  document.getElementById('fdrConducteur').value=s.conducteur||'';
+  document.getElementById('fdrLieu').value=s.lieu||'';
+  // Pré-remplir lundi courant
+  const today=new Date();
+  const mon=new Date(today);
+  mon.setDate(today.getDate()-((today.getDay()+6)%7));
+  document.getElementById('feuilleDate').value=dateStr(mon);
+  document.getElementById('feuilleArrivee').value=s.lieu||'';
+  document.getElementById('modalFDR').classList.add('open');
+}
+
+function saveFdrSettings(){
+  if(!state.pdfSettings) state.pdfSettings={};
+  state.pdfSettings={
+    agence:document.getElementById('fdrAgence').value,
+    immat:document.getElementById('fdrImmat').value,
+    licence:document.getElementById('fdrLicence').value,
+    client:document.getElementById('fdrClient').value,
+    conducteur:document.getElementById('fdrConducteur').value,
+    lieu:document.getElementById('fdrLieu').value,
+  };
+  saveState();
+}
+
 function genererFeuille(mode){
   const mondayDs=document.getElementById('feuilleDate').value;
   if(!mondayDs){showToast('❌ Choisissez une date');return;}
-  const lieuDep=document.getElementById('pdfLieu').value||'';
-  const lieuArr=document.getElementById('feuilleArrivee').value||'';
   const s=state.pdfSettings||{};
-  closeModal('modalSettings');
+  const lieuDep=s.lieu||'';
+  const lieuArr=document.getElementById('feuilleArrivee').value||'';
+  closeModal('modalFDR');
   showToast('⏳ Génération en cours...');
   const doGenerate=()=>{
     const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
-    if(mode==='pdf') _downloadPDF(result.doc,result.title);
+    if(mode==='pdf'){_downloadPDF(result.doc,result.title);showToast('✅ PDF téléchargé !');}
     if(mode==='jpg') _downloadJPG(result.doc,result.title);
   };
   if(typeof window.jspdf==='undefined'){
