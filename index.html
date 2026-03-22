@@ -3403,21 +3403,21 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const nom=parts.filter(p=>p===p.toUpperCase()).join(' ')||parts[0]||'';
     const prenom=parts.filter(p=>p!==p.toUpperCase()).join(' ')||'';
     const sigY=TotalY+DAY_H+8;
-    // Mot "Signature :" 
+    const centerX=W/2;
+    // Mot "Signature :" centré
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
-    doc.text('Signature :',XS[0]+2,sigY);
-    // Signature juste après
-    const sigX=XS[0]+32;
+    doc.text('Signature :',centerX,sigY,{align:'center'});
+    // Signature en dessous, centrée
     doc.setTextColor(80,140,230);
     doc.setFont('helvetica','bolditalic');
     if(prenom&&nom){
       doc.setFontSize(15);
-      doc.text(nom,sigX,sigY,{align:'left'});
+      doc.text(nom,centerX,sigY+6,{align:'center'});
       doc.setFontSize(13);
-      doc.text(prenom,sigX,sigY+6,{align:'left'});
+      doc.text(prenom,centerX,sigY+12,{align:'center'});
     } else {
       doc.setFontSize(14);
-      doc.text(s.conducteur,sigX,sigY+3,{align:'left'});
+      doc.text(s.conducteur,centerX,sigY+6,{align:'center'});
     }
   }
   doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
