@@ -3440,14 +3440,8 @@ function _downloadJPG(doc, title){
 
           canvas.toBlob(blob=>{
             const url=URL.createObjectURL(blob);
-            const a=document.createElement('a');
-            a.href=url;a.download=title+'.jpg';a.target='_blank';
-            document.body.appendChild(a);a.click();
-            setTimeout(()=>{
-              document.body.removeChild(a);
-              window.open(url,'_blank');
-            },500);
-            showToast('✅ Image générée !');
+            window.open(url,'_blank');
+            showToast('✅ Image ouverte — appui long pour enregistrer !');
           },'image/jpeg',0.95);
         }).catch(e=>showToast('❌ Erreur: '+e.message));
       }).catch(e=>showToast('❌ Erreur page: '+e.message));
