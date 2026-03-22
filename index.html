@@ -1123,7 +1123,7 @@ html, body {
       </div>
 
       <div style="text-align:center;padding:10px 0 4px;font-size:0.75rem;color:#94a3b8;border-top:1px solid #e2e8f0;margin-top:4px;">
-        © 2026 Frédéric Lepreux — Tous droits réservés — v2.001
+        © 2026 Frédéric Lepreux — Tous droits réservés — v2.0
       </div>
 
     </div>
@@ -3276,9 +3276,10 @@ function openModalFDR(){
   document.getElementById('fdrPrenom').value=s.prenom||'';
   document.getElementById('fdrLieu').value=s.lieu||'';
   document.getElementById('feuilleArrivee').value=s.lieuArrivee||s.lieu||'';
-  const today=new Date();
-  const mon=new Date(today);
-  mon.setDate(today.getDate()-((today.getDay()+6)%7));
+  // Pré-remplir avec le lundi de la semaine consultée
+  const viewedDate=new Date(viewDate+'T12:00:00');
+  const mon=new Date(viewedDate);
+  mon.setDate(viewedDate.getDate()-((viewedDate.getDay()+6)%7));
   document.getElementById('feuilleDate').value=dateStr(mon);
   document.getElementById('modalFDR').classList.add('open');
 }
