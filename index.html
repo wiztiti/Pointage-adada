@@ -3103,20 +3103,25 @@ function pickImportFile(){
   const input=document.createElement('input');
   input.type='file';
   input.id='importFileInput';
-  input.accept='.json';
-  input.style.cssText='position:fixed;top:-9999px;left:-9999px;';
-  input.addEventListener('change',function(){
-    const file=input.files[0];
-    if(!file) return;
+  input.accept='.json,application/json';
+  input.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;';
+  document.body.appendChild(input);
+  input.addEventListener('change',function(e){
+    const file=e.target.files[0];
+    if(!file){showToast('❌ Aucun fichier sélectionné');return;}
+    showToast('⏳ Lecture du fichier...');
     const reader=new FileReader();
     reader.onload=function(ev){
-      const text=ev.target.result;
-      document.getElementById('importTextarea').value=text;
-      setTimeout(()=>triggerImport(text), 100);
+      try{
+        const text=ev.target.result;
+        triggerImport(text);
+      }catch(err){
+        showToast('❌ Erreur lecture fichier');
+      }
     };
-    reader.readAsText(file);
+    reader.onerror=function(){showToast('❌ Erreur lecture fichier');};
+    reader.readAsText(file,'UTF-8');
   });
-  document.body.appendChild(input);
   input.click();
 }
 
