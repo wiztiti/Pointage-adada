@@ -3455,6 +3455,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Recouvrir la 1ère cellule d'un seul rectangle teal pour éviter la ligne blanche
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],TY,C0,TOTAL_HDR,'F');
+  // Recouvrir les 5 dernières cellules fusionnées (lieu arrivée → commentaires)
+  doc.rect(XS[9],TY,W-20-XS[9]+XS[0],TOTAL_HDR,'F');
 
   // Cellules fusionnées (couvrent les 2 lignes)
   doc.setFontSize(6);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
