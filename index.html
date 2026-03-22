@@ -3678,14 +3678,13 @@ function _downloadJPG(doc, title){
 function _sharePDF(doc, title){
   const blob=doc.output('blob');
   const file=new File([blob], title+'.pdf', {type:'application/pdf'});
+  // Essayer Web Share API
   if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
     navigator.share({files:[file], title:title})
       .then(()=>showToast('✅ PDF partagé !'))
-      .catch(e=>{ if(e.name!=='AbortError') showToast('❌ Erreur partage'); });
+      .catch(e=>{ if(e.name!=='AbortError') _showShareModal(blob, title, 'pdf'); });
   } else {
-    // Fallback : téléchargement
-    _downloadPDF(doc, title);
-    showToast('ℹ️ Partage non disponible — PDF téléchargé');
+    _showShareModal(blob, title, 'pdf');
   }
 }
 
@@ -3698,7 +3697,6 @@ function _shareJPG(doc, title){
       window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       resolve();
     };
-    s.onerror=()=>showToast('❌ Erreur chargement pdf.js');
     document.head.appendChild(s);
   });
   loadPdfJs().then(()=>{
@@ -3716,18 +3714,33 @@ function _shareJPG(doc, title){
             if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
               navigator.share({files:[file], title:title})
                 .then(()=>showToast('✅ Image partagée !'))
-                .catch(e=>{ if(e.name!=='AbortError') showToast('❌ Erreur partage'); });
+                .catch(e=>{ if(e.name!=='AbortError') _showShareModal(blob, title, 'jpg'); });
             } else {
-              // Fallback : ouvrir dans nouvel onglet
-              const url=URL.createObjectURL(blob);
-              window.open(url,'_blank');
-              showToast('ℹ️ Partage non disponible — image ouverte');
+              _showShareModal(blob, title, 'jpg');
             }
           },'image/jpeg',0.95);
         }).catch(e=>showToast('❌ Erreur: '+e.message));
-      }).catch(e=>showToast('❌ Erreur page: '+e.message));
-    }).catch(e=>showToast('❌ Erreur PDF: '+e.message));
-  }).catch(e=>showToast('❌ Erreur: '+e.message));
+      });
+    });
+  });
+}
+
+function _showShareModal(blob, title, type){
+  const url=URL.createObjectURL(blob);
+  const ext=type==='pdf'?'PDF':'image JPG';
+  // Créer un mini modal de partage
+  const existing=document.getElementById('sharePopup');
+  if(existing) existing.remove();
+  const div=document.createElement('div');
+  div.id='sharePopup';
+  div.style.cssText='position:fixed;bottom:0;left:0;right:0;background:white;border-radius:24px 24px 0 0;padding:20px;z-index:9999;box-shadow:0 -4px 30px rgba(0,0,0,0.2);display:flex;flex-direction:column;gap:12px;';
+  div.innerHTML=`
+    <div style="font-weight:700;font-size:1rem;color:#1e3a5f;text-align:center;">📤 Partager ${ext}</div>
+    <a href="${url}" download="${title}.${type==='pdf'?'pdf':'jpg'}" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#38bdf8,#0284c7);color:white;border-radius:12px;font-weight:600;text-decoration:none;">⬇️ Télécharger</a>
+    <a href="mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent('Veuillez trouver ci-joint la feuille de route.')}" style="display:block;text-align:center;padding:12px;background:linear-gradient(135deg,#4ade80,#22c55e);color:white;border-radius:12px;font-weight:600;text-decoration:none;">📧 Envoyer par email</a>
+    <button onclick="document.getElementById('sharePopup').remove();" style="padding:10px;background:#f1f5f9;border:none;border-radius:12px;font-size:0.9rem;color:#64748b;cursor:pointer;">Fermer</button>
+  `;
+  document.body.appendChild(div);
 }
 
 </script>
