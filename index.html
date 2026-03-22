@@ -3151,7 +3151,17 @@ function doImport(mode){
   }
   if(!importPendingData){closeModal('modalImportConfirm');showToast('❌ Données perdues, réessayez');return;}
   if(mode==='replace'){
-    state=importPendingData;
+    // S'assurer que tous les champs requis existent
+    state={
+      eleves: importPendingData.eleves||[],
+      vacations: importPendingData.vacations||[],
+      presence: importPendingData.presence||{},
+      dayData: importPendingData.dayData||{},
+      deduc: importPendingData.deduc||{global:false},
+      rappels: importPendingData.rappels||{},
+      suivi: importPendingData.suivi||{},
+      pdfSettings: importPendingData.pdfSettings||{},
+    };
   } else {
     // Fusionner
     const s=importPendingData;
