@@ -3402,8 +3402,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const parts=s.conducteur.trim().split(' ');
     const nom=parts.filter(p=>p===p.toUpperCase()).join(' ')||parts[0]||'';
     const prenom=parts.filter(p=>p!==p.toUpperCase()).join(' ')||'';
-    const ligne1Y=TotalY+DAY_H+4;  // prénom
-    const ligne2Y=TotalY+DAY_H+9;  // nom
+    const ligne1Y=TotalY+DAY_H+7;  // prénom
+    const ligne2Y=TotalY+DAY_H+12;  // nom
     const midY=(ligne1Y+ligne2Y)/2; // milieu entre les 2
     const sigX=W/2; // axe central pour prénom et nom
     // Prénom et nom centrés sur le même axe
