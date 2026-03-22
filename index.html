@@ -1083,6 +1083,20 @@ html, body {
   </div>
 </div>
 
+<!-- ===== MODAL EXPORT CHOICE ===== -->
+<div class="modal-overlay" id="modalExportChoice">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+    <div class="modal-handle"></div>
+    <div class="modal-head">📄 Télécharger la feuille</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:12px;">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);" onclick="exportChoice('pdf')">📄 PDF uniquement</button>
+      <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);" onclick="exportChoice('jpg')">🖼️ Image JPG uniquement</button>
+      <button class="btn-valider" style="background:linear-gradient(135deg,#4ade80,#22c55e);" onclick="exportChoice('both')">📄🖼️ Les deux</button>
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalExportChoice')">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL FEUILLE DE ROUTE ===== -->
 <div class="modal-overlay" id="modalFeuille">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
@@ -3094,10 +3108,16 @@ function genererFeuille(){
   if(typeof window.jspdf==='undefined'){
     const script=document.createElement('script');
     script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-    script.onload=()=>_buildPDF(mondayDs,lieuDep,lieuArr,s);
+    script.onload=()=>{
+      const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
+      _pendingDoc=result.doc;_pendingTitle=result.title;
+      setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
+    };
     document.head.appendChild(script);
   } else {
-    _buildPDF(mondayDs,lieuDep,lieuArr,s);
+    const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
+    _pendingDoc=result.doc;_pendingTitle=result.title;
+    setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
   }
 }
 
@@ -3377,21 +3397,31 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.text(minToHM(totalConv),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
   // Pas de "TOTAL" dans la dernière case
 
-  // === SIGNATURE collée sous la dernière ligne ===
+  // === SIGNATURE manuscrite ===
   doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
-  doc.text('Signature :',80,TotalY+DAY_H+5);
+  doc.text('Signature :',XS[0]+2,TotalY+DAY_H+5);
+  // Nom du conducteur en signature bleue cursive (italique)
+  if(s.conducteur){
+    doc.setFontSize(14);doc.setFont('helvetica','bolditalic');doc.setTextColor(0,70,180);
+    doc.text(s.conducteur,XS[0]+35,TotalY+DAY_H+6);
+  }
+  doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
 
   // Contour tableau
   doc.setDrawColor(0,0,0);doc.setLineWidth(0.5);
   doc.rect(XS[0],TY,W-20,TotalY+DAY_H-TY);
 
   // Titre fichier
-  const d0=new Date(mondayDs+'T12:00:00');
+  const d0=new Date(mondayFixed+'T12:00:00');
   const wn=isoWeekNum(d0);
   const d6=new Date(d0);d6.setDate(d0.getDate()+6);
   const MOIS_FR2=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
   const title='Feuille de route - Semaine '+wn+' du '+d0.getDate()+' au '+d6.getDate()+' '+MOIS_FR2[d6.getMonth()]+' '+d6.getFullYear();
 
+  return {doc, title};
+}
+
+function _downloadPDF(doc, title){
   const pdfBlob=doc.output('blob');
   const pdfUrl=URL.createObjectURL(pdfBlob);
   const a=document.createElement('a');
@@ -3401,7 +3431,73 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   document.body.appendChild(a);
   a.click();
   setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(pdfUrl);},1000);
-  showToast('✅ PDF généré !');
+}
+
+function _downloadJPG(doc, title){
+  // Convertir le PDF en image via canvas jsPDF
+  const pdfData=doc.output('datauristring');
+  // Charger pdf.js si nécessaire pour le rendu
+  const canvas=document.createElement('canvas');
+  // A4 paysage à 150dpi : 297mm × 210mm → 1754 × 1240px
+  canvas.width=1754;canvas.height=1240;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#ffffff';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  // Utiliser jsPDF pour rendre en PNG puis convertir
+  const imgData=doc.output('datauristring');
+  const img=new Image();
+  img.onload=function(){
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    canvas.toBlob(blob=>{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download=title+'.jpg';
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+      showToast('✅ Image téléchargée !');
+    },'image/jpeg',0.95);
+  };
+  img.src=imgData;
+}
+
+// Modal choix export
+let _pendingDoc=null, _pendingTitle=null;
+
+function genererFeuille(){
+  const mondayDs=document.getElementById('feuilleDate').value;
+  if(!mondayDs){showToast('❌ Choisissez une date');return;}
+  const lieuDep=document.getElementById('feuilleDepart').value||'';
+  const lieuArr=document.getElementById('feuilleArrivee').value||'';
+  const s=state.pdfSettings||{};
+  closeModal('modalFeuille');
+  showToast('⏳ Génération en cours...');
+  if(typeof window.jspdf==='undefined'){
+    const script=document.createElement('script');
+    script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    script.onload=()=>{
+      const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
+      _pendingDoc=result.doc;_pendingTitle=result.title;
+      setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
+    };
+    document.head.appendChild(script);
+  } else {
+    const result=_buildPDF(mondayDs,lieuDep,lieuArr,s);
+    _pendingDoc=result.doc;_pendingTitle=result.title;
+    setTimeout(()=>document.getElementById('modalExportChoice').classList.add('open'),300);
+  }
+}
+
+function exportChoice(mode){
+  closeModal('modalExportChoice');
+  if(!_pendingDoc) return;
+  if(mode==='pdf'||mode==='both') _downloadPDF(_pendingDoc,_pendingTitle);
+  if(mode==='jpg'||mode==='both'){
+    setTimeout(()=>_downloadJPG(_pendingDoc,_pendingTitle),mode==='both'?800:0);
+  }
+  if(mode==='pdf') showToast('✅ PDF téléchargé !');
+  if(mode==='jpg') showToast('✅ Image téléchargée !');
+  if(mode==='both') showToast('✅ PDF et image téléchargés !');
+  _pendingDoc=null;_pendingTitle=null;
 }
 </script>
 </body>
