@@ -3237,13 +3237,16 @@ function genererFeuille(mode){
   };
 
   if(champsVides.length>0){
-    // Afficher modal avertissement
-    document.getElementById('fdrWarningList').innerHTML=champsVides.map(c=>`• ${c}`).join('<br>');
-    document.getElementById('fdrWarningConfirm').onclick=()=>{
-      closeModal('modalFDRWarning');
-      doGenerate();
-    };
-    document.getElementById('modalFDRWarning').classList.add('open');
+    // Fermer le modal FDR puis afficher l'avertissement
+    closeModal('modalFDR');
+    setTimeout(()=>{
+      document.getElementById('fdrWarningList').innerHTML=champsVides.map(c=>`• ${c}`).join('<br>');
+      document.getElementById('fdrWarningConfirm').onclick=()=>{
+        closeModal('modalFDRWarning');
+        doGenerate();
+      };
+      document.getElementById('modalFDRWarning').classList.add('open');
+    },300);
   } else {
     doGenerate();
   }
