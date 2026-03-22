@@ -3139,9 +3139,13 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   try{doc.addImage('data:image/png;base64,'+logoB64,'PNG',LOGO_X,8,LOGO_W,LOGO_H);}catch(e){}
   doc.setFont('helvetica','normal');
 
-  // Déclaration conducteur
+  // Déclaration conducteur + numéro de semaine
+  const wnHeader=isoWeekNum(new Date(mondayDs+'T12:00:00'));
   doc.setFontSize(9);doc.setTextColor(30,30,30);
   doc.text('Déclaration individuelle du conducteur : ............'+(s.conducteur||'')+'.................',10,44);
+  doc.setFont('helvetica','bold');
+  doc.text('Semaine '+wnHeader,W-10,44,{align:'right'});
+  doc.setFont('helvetica','normal');
 
   // === TABLEAU ===
   const TY=48;
