@@ -2989,8 +2989,8 @@ function ecartHtml(val){
 
 function ecartMessageHtml(totalVal){
   if(totalVal===0) return `<div style="text-align:center;font-size:0.8rem;color:#3b82f6;font-weight:600;margin-top:8px;padding:6px;background:#eff6ff;border-radius:8px;">✓ Aucun écart sur la période</div>`;
-  if(totalVal<0) return `<div style="text-align:center;font-size:0.8rem;color:#ef4444;font-weight:600;margin-top:8px;padding:6px;background:#fef2f2;border-radius:8px;">Vous devez ${minToHM(Math.abs(totalVal))} sur la période</div>`;
-  return `<div style="text-align:center;font-size:0.8rem;color:#22c55e;font-weight:600;margin-top:8px;padding:6px;background:#f0fdf4;border-radius:8px;">L'entreprise vous doit ${minToHM(totalVal)} sur la période</div>`;
+  if(totalVal<0) return `<div style="text-align:center;font-size:0.8rem;color:#22c55e;font-weight:600;margin-top:8px;padding:6px;background:#f0fdf4;border-radius:8px;">L'entreprise vous doit ${minToHM(Math.abs(totalVal))} sur la période</div>`;
+  return `<div style="text-align:center;font-size:0.8rem;color:#ef4444;font-weight:600;margin-top:8px;padding:6px;background:#fef2f2;border-radius:8px;">Vous devez ${minToHM(totalVal)} sur la période</div>`;
 }
 
 function buildSuiviComparaison(entChauffeur,entAnnexes,appConv,appReel,appAnnexes){
