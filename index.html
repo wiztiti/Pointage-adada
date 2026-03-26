@@ -2011,13 +2011,11 @@ function toggleSubCard(name){
 // RAPPORT MODAL
 // ============================================================
 function openRapportForDate(ds){
-  // Fermer tous les modals récap ouverts
-  ['modalRecapSemaine','modalRecapMois','modalRecapAnnee','modalRecapAnneeSco'].forEach(id=>{
-    const m=document.getElementById(id);
-    if(m) m.classList.remove('open');
-  });
   viewDate=ds;
-  setTimeout(()=>openRapport(),300);
+  openRapport();
+  // Mettre le rapport au dessus des autres modals
+  const rapportModal=document.getElementById('modalRapport');
+  if(rapportModal) rapportModal.style.zIndex='400';
 }
 
 function openRapport(){
@@ -2691,7 +2689,9 @@ function toggleCard(name){
 // MODALS
 // ============================================================
 function closeModal(id){
-  document.getElementById(id).classList.remove('open');
+  const el=document.getElementById(id);
+  el.classList.remove('open');
+  if(id==='modalRapport') el.style.zIndex='';
   if(id==='modalPointage'||id==='modalGestion'){
     document.getElementById('card-elv').classList.remove('open');
   }
