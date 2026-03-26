@@ -2011,8 +2011,13 @@ function toggleSubCard(name){
 // RAPPORT MODAL
 // ============================================================
 function openRapportForDate(ds){
+  // Fermer tous les modals récap ouverts
+  ['modalRecapSemaine','modalRecapMois','modalRecapAnnee','modalRecapAnneeSco'].forEach(id=>{
+    const m=document.getElementById(id);
+    if(m) m.classList.remove('open');
+  });
   viewDate=ds;
-  openRapport();
+  setTimeout(()=>openRapport(),300);
 }
 
 function openRapport(){
