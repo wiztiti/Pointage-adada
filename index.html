@@ -2979,13 +2979,13 @@ function saveSuivi(){
 }
 
 function ecartHtml(val){
-  if(val===0) return `<span style="color:#22c55e;font-weight:600;">✓ 0h00</span>`;
-  // val>0 : bulletin > app → on est sous-payé → rouge avec +
-  // val<0 : bulletin < app → on a plus que le bulletin → vert avec -
-  const color=val>0?'#ef4444':'#22c55e';
-  const icon=val>0?'⚠️':'✓';
-  const sign=val>0?'+':'-';
-  return `<span style="color:${color};font-weight:600;">${sign} ${minToHM(Math.abs(val))} ${icon}</span>`;
+  // val = bulletin - app
+  // val < 0 : app > bulletin → travaillé plus que payé → rouge +
+  // val > 0 : app < bulletin → travaillé moins que payé → vert -
+  // val = 0 : égalité → bleu
+  if(val===0) return `<span style="color:#3b82f6;font-weight:600;">✓ 0h00</span>`;
+  if(val<0) return `<span style="color:#ef4444;font-weight:600;">+ ${minToHM(Math.abs(val))} ⚠️</span>`;
+  return `<span style="color:#22c55e;font-weight:600;">- ${minToHM(val)} ✓</span>`;
 }
 
 function buildSuiviComparaison(entChauffeur,entAnnexes,appConv,appReel,appAnnexes){
