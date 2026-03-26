@@ -722,8 +722,8 @@ html, body {
   gap: 12px;
   padding: 12px 0 4px;
 }
-.rt-real { font-family: 'Quicksand', sans-serif; font-size: 0.9rem; font-weight: 400; color: #ef4444; }
-.rt-conv { font-family: 'Quicksand', sans-serif; font-size: 0.9rem; font-weight: 400; color: #16a34a; }
+.rt-real { font-family: 'Quicksand', sans-serif; font-size: 0.9rem; font-weight: 400; color: #3b82f6; }
+.rt-conv { font-family: 'Quicksand', sans-serif; font-size: 0.9rem; font-weight: 400; color: #8b5cf6; }
 .rapport-km-block { padding: 10px 0; font-size: 0.9rem; color: var(--text-dark); line-height: 1.8; text-align: left; }
 .rapport-note-block { padding: 10px 0; font-size: 0.88rem; color: var(--text-dark); line-height: 1.6; white-space: pre-wrap; }
 .rapport-eleve-entry { padding: 6px 0; border-bottom: 1px solid #f8fafc; }
@@ -1661,7 +1661,7 @@ function renderVacations(){
   const annexeMin=annexeMins(vacsComplete);
   const totalsHtml=vacsComplete.length?`<div style="text-align:center;margin-top:10px;font-size:0.82rem;">
     <span style="color:#3b82f6;font-weight:600;">${minToHM(rMin+annexeMin)} réelles</span>
-    <span style="color:#22c55e;font-weight:600;"> (${minToHM(cMin+annexeMin)} Conv.)</span>
+    <span style="color:#8b5cf6;font-weight:600;"> (${minToHM(cMin+annexeMin)} Conv.)</span>
     ${annexeMin?`<br><span style="color:#f97316;font-weight:600;">dont ${minToHM(annexeMin)} annexe</span>`:''}
   </div>`:'';
   const headerHtml=canE?`<div style="display:flex;justify-content:flex-end;padding:0 0 4px 0;font-size:0.7rem;color:#f97316;font-weight:600;padding-right:38px;">annexe</div>`:'';
@@ -2228,7 +2228,7 @@ function buildDayRow(ds){
     vacsHtml=isWE?'—':'—';
   }
 
-  const hrsHtml=worked?`<span style="color:#16a34a;">${minToHM(rMin+aMin)}</span> <span style="color:#94a3b8;font-size:0.72rem;">(${minToHM(cMin+aMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;text-align:right;display:block;">dont ${minToHM(aMin)}</span>`:''}`:'';
+  const hrsHtml=worked?`<span style="color:#3b82f6;">${minToHM(rMin+aMin)}</span> <span style="color:#8b5cf6;font-size:0.72rem;">(${minToHM(cMin+aMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;text-align:right;display:block;">dont ${minToHM(aMin)}</span>`:''}`:'';
 
   return `<div class="recap-day-row ${cls}" style="cursor:pointer;" onclick="openRapportForDate('${ds}')">
     <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
@@ -2353,7 +2353,7 @@ function renderRecapMois(){
         <div class="recap-sem-label">Semaine ${weekNum}</div>
         <div class="recap-sem-dates">${duAu}</div>
       </div>
-      <div class="recap-sem-hrs">${minToHM(rSem)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cSem)}</span></div>
+      <div class="recap-sem-hrs">${minToHM(rSem)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cSem)}</span></div>
       <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
     </div>`;
 
@@ -2385,7 +2385,7 @@ let recapAnneeScoOpenSem=null;
 function totalHoursHtml(rMin,cMin,aMin){
   const rTotal=rMin+aMin;
   const cTotal=cMin+aMin;
-  let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#22c55e;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
+  let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#8b5cf6;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
   if(aMin){
     h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} annexe</span>`;
   }
@@ -2424,7 +2424,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
     <div style="flex:1;">
       <div class="recap-sem-label">${MOIS[m]} ${y}</div>
     </div>
-    <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cTotal+aTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
+    <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cTotal+aTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
     <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
   </div>`;
 
@@ -2451,7 +2451,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
           <div class="recap-sem-label" style="font-size:0.78rem;">Semaine ${weekNum}</div>
           <div class="recap-sem-dates">${duAu}</div>
         </div>
-        <div class="recap-sem-hrs">${minToHM(rSem+aSem)}<br><span style="font-size:0.72rem;color:#94a3b8;">conv. ${minToHM(cSem+aSem)}</span>${aSem?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aSem)}</span>`:''}</div>
+        <div class="recap-sem-hrs">${minToHM(rSem+aSem)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cSem+aSem)}</span>${aSem?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aSem)}</span>`:''}</div>
         <span class="recap-sem-chev" style="transform:${semOpen?'rotate(90deg)':''};">▶</span>
       </div>`;
       if(semOpen){
@@ -3053,7 +3053,7 @@ function renderSuivi(){
       rowsHtml+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:0.8rem;">
         <span style="color:#475569;font-weight:600;min-width:50px;">${MOIS[m]}</span>
         <span style="color:#92400e;">${minToHM(hC+hA)}</span>
-        <span style="color:#3b82f6;">${minToHM(t.cTotal+t.aTotal)}</span>
+        <span style="color:#8b5cf6;">${minToHM(t.cTotal+t.aTotal)}</span>
         ${ecartHtml((hC+hA)-(t.cTotal+t.aTotal))}
       </div>`;
     });
@@ -3071,7 +3071,7 @@ function renderSuivi(){
         <div style="font-size:0.82rem;font-weight:700;color:#166534;margin-bottom:8px;">📱 Données app (cumul)</div>
         <div style="display:flex;flex-direction:column;gap:4px;font-size:0.82rem;">
           <div style="display:flex;justify-content:space-between;"><span style="color:#475569;">Heures réelles</span><span style="color:#3b82f6;font-weight:600;">${minToHM(appReel)}</span></div>
-          <div style="display:flex;justify-content:space-between;"><span style="color:#475569;">Heures conv.</span><span style="color:#22c55e;font-weight:600;">${minToHM(appConv)}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#475569;">Heures conv.</span><span style="color:#8b5cf6;font-weight:600;">${minToHM(appConv)}</span></div>
           <div style="display:flex;justify-content:space-between;"><span style="color:#f97316;">Heures annexes</span><span style="color:#f97316;font-weight:600;">${minToHM(appAnnexes)}</span></div>
         </div>
       </div>
@@ -3112,7 +3112,7 @@ function renderSuivi(){
         <div style="font-size:0.82rem;font-weight:700;color:#166534;margin-bottom:8px;">📱 Données app</div>
         <div style="display:flex;flex-direction:column;gap:4px;font-size:0.82rem;">
           <div style="display:flex;justify-content:space-between;"><span style="color:#475569;">Heures réelles</span><span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)}</span></div>
-          <div style="display:flex;justify-content:space-between;"><span style="color:#475569;">Heures conv.</span><span style="color:#22c55e;font-weight:600;">${minToHM(cTotal)}</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#475569;">Heures conv.</span><span style="color:#8b5cf6;font-weight:600;">${minToHM(cTotal)}</span></div>
           <div style="display:flex;justify-content:space-between;"><span style="color:#f97316;">Heures annexes</span><span style="color:#f97316;font-weight:600;">${minToHM(aTotal)}</span></div>
         </div>
       </div>
