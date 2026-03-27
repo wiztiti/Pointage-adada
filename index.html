@@ -1951,7 +1951,7 @@ function renderGestion(){
         <button class="mgmt-arrow up" onclick="moveEleve(${i},-1)" ${i===0?'disabled':''}></button>
         <button class="mgmt-arrow down" onclick="moveEleve(${i},1)" ${i===state.eleves.length-1?'disabled':''}></button>
       </div>
-      <div class="mgmt-nom" id="nom-${i}" style="flex:1;">${capitalize(p)}${hasInfo?'<span style="font-size:0.65rem;color:#94a3b8;margin-left:4px;">📍</span>':''}</div>
+      <div class="mgmt-nom" id="nom-${i}" style="flex:1;">${capitalize(p)}</div>
       <button onclick="openAdresseEleve('${p}')" style="background:none;border:none;cursor:pointer;font-size:0.9rem;padding:2px 6px;" title="Modifier">✏️</button>
       <button class="mgmt-del" id="del-${i}" onclick="confirmDel(${i})">🗑</button>`;
     body.appendChild(row);
@@ -3544,60 +3544,63 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.text(s.circuit||'',CBX+CBW/2,CBY+17,{align:'center'});
 
   // ---- TABLEAU ----
-  const TAB_Y=BY+BH+8;
+  const TAB_Y=BY+BH+28; // descendu de ~20mm supplémentaires
   // Colonnes : NOM | ADRESSE | Matin/ApM | Aller/Retour | 31 jours
   const C_NOM=22;
   const C_ADR=26;
-  const C_MAT=8;   // Matin / Après Midi
-  const C_AR=8;    // Aller / Retour
+  const C_MAT=8;
+  const C_AR=8;
   const C_REST=W-C_NOM-C_ADR-C_MAT-C_AR;
   const C_J=C_REST/31;
   const ROW_H=3.0;
-  const HDR1_H=5;  // ligne jours numéros
-  const HDR2_H=4;  // ligne NOM Prénom / Adresse
+  const HDR1_H=9;  // plus haut pour texte vertical
+  const HDR2_H=4;
   const ELEVE_H=ROW_H*4;
 
   const JOURS_FR=['dim','lun','mar','mer','jeu','ven','sam'];
 
-  // Dessiner fond weekend BLANC (pas de couleur du tout)
-  // Header ligne 1 : jours numéros + abréviations
+  // Header ligne 1 : jours - bordure extérieure seulement
   doc.setLineWidth(0.3);doc.setDrawColor(...BK);
   doc.rect(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,C_REST,HDR1_H,'S');
 
-  // Numéros et abréviations des jours
+  // Numéros horizontaux + abréviations verticales
   for(let j=1;j<=31;j++){
     const x=ML+C_NOM+C_ADR+C_MAT+C_AR+(j-1)*C_J;
     const d=new Date(annee,mois,j);
     const valid=j<=nbJours;
     if(valid){
+      // Numéro horizontal en haut
       doc.setFontSize(5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-      doc.text(String(j),x+C_J/2,TAB_Y+2.5,{align:'center'});
-      doc.setFont('helvetica','normal');doc.setFontSize(4.2);
-      doc.text(JOURS_FR[d.getDay()],x+C_J/2,TAB_Y+4.3,{align:'center'});
+      doc.text(String(j),x+C_J/2,TAB_Y+2.8,{align:'center'});
+      // Abréviation verticale (rotation 90°)
+      doc.setFont('helvetica','normal');doc.setFontSize(4);
+      doc.text(JOURS_FR[d.getDay()],x+C_J/2,TAB_Y+HDR1_H-1,{align:'center',angle:90});
     }
     doc.setLineWidth(0.15);
     doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
   }
-  // Bordure après colonne 31
   doc.setLineWidth(0.3);
   doc.line(ML+W,TAB_Y,ML+W,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
-  // Header ligne 2 : ELEVES / NOM Prénom / Adresse
+  // Header ligne 2 : ELEVES / NOM Prénom / Adresse — bordure bas seulement pour NOM et ADR
   const H2Y=TAB_Y+HDR1_H;
   doc.setLineWidth(0.3);
-  doc.rect(ML,H2Y,C_NOM+C_ADR+C_MAT+C_AR,HDR2_H,'S');
+  // Bordure complète pour MAT+AR
+  doc.rect(ML+C_NOM+C_ADR,H2Y,C_MAT+C_AR,HDR2_H,'S');
+  // Bordure bas seulement pour NOM et ADR
+  doc.line(ML,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H);
+
   doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+1.5,{align:'center'});
   doc.text('NOM Prénom',ML+C_NOM/2,H2Y+3.2,{align:'center'});
   doc.text('Adresse',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
-  // Séparation verticale NOM | ADR
+
+  // Séparations verticales
   doc.line(ML+C_NOM,H2Y,ML+C_NOM,H2Y+HDR2_H+eleves.length*ELEVE_H);
-  // Séparation ADR | MAT
   doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+C_NOM+C_ADR,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
-  // Séparation MAT | AR
   doc.line(ML+C_NOM+C_ADR+C_MAT,TAB_Y,ML+C_NOM+C_ADR+C_MAT,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
-  // Ligne horizontale entre HDR1 et HDR2
+  // Ligne entre HDR1 et HDR2
   doc.line(ML,H2Y,ML+W,H2Y);
 
   // ---- LIGNES ELEVES ----
@@ -3609,17 +3612,15 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const baseY=H2Y+HDR2_H+ei*ELEVE_H;
     const a=state.adresses&&state.adresses[prenom]?state.adresses[prenom]:{};
 
-    // Bordure élève
-    doc.setDrawColor(...BK);doc.setLineWidth(0.3);
-    doc.rect(ML,baseY,C_NOM+C_ADR+C_MAT+C_AR,ELEVE_H,'S');
+    // Bordure bas seulement pour NOM et ADR (pas de bordure latérale/haut)
+    doc.setDrawColor(...BK);doc.setLineWidth(0.5);
+    // La bordure épaisse du bas sera dessinée après les 4 lignes
 
-    // NOM en gras centré ligne 1, Prénom normal centré ligne 2
+    // NOM centré verticalement
     doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-    const nomAff=a.nom||(capitalize(prenom).toUpperCase());
     const prenomAff=a.prenom||capitalize(prenom);
-    // Si pas de nom séparé, afficher juste le prénom centré
     if(a.nom){
-      doc.text(nomAff,ML+C_NOM/2,baseY+ELEVE_H/2-1,{align:'center'});
+      doc.text(a.nom,ML+C_NOM/2,baseY+ELEVE_H/2-1,{align:'center'});
       doc.setFont('helvetica','normal');
       doc.text(prenomAff,ML+C_NOM/2,baseY+ELEVE_H/2+3,{align:'center'});
     } else {
@@ -3627,19 +3628,39 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       doc.text(prenomAff,ML+C_NOM/2,baseY+ELEVE_H/2+1,{align:'center'});
     }
 
-    // Adresse centrée, ville en gras
+    // Adresse centrée verticalement
     doc.setFontSize(5.2);doc.setFont('helvetica','normal');
-    let ay=baseY+2.5;
+    const adrLines=[];
+    if(a.adr1) adrLines.push({t:a.adr1,bold:false});
+    if(a.adr2) adrLines.push({t:a.adr2,bold:false});
+    if(a.ville) adrLines.push({t:a.ville,bold:true});
+    const lineH=2.8;
+    const totalH=adrLines.length*lineH;
+    let ay=baseY+(ELEVE_H-totalH)/2+2.5;
     const adrX=ML+C_NOM+C_ADR/2;
-    if(a.adr1){doc.text(a.adr1,adrX,ay,{align:'center'});ay+=2.8;}
-    if(a.adr2){doc.text(a.adr2,adrX,ay,{align:'center'});ay+=2.8;}
-    if(a.ville){doc.setFont('helvetica','bold');doc.text(a.ville,adrX,ay,{align:'center'});}
+    adrLines.forEach(l=>{
+      doc.setFont('helvetica',l.bold?'bold':'normal');
+      doc.text(l.t,adrX,ay,{align:'center'});
+      ay+=lineH;
+    });
 
     // 4 lignes Matin/ApM + Aller/Retour + présences
     MOMENTS_KEY.forEach((m,mi)=>{
       const ry=baseY+mi*ROW_H;
 
-      // Label Matin / Après Midi (fusionné sur 2 lignes)
+      // Ligne au dessus du 1er Aller de chaque section Matin/ApM
+      doc.setDrawColor(...BK);
+      if(mi===0){
+        // Ligne au dessus du premier Aller
+        doc.setLineWidth(0.3);
+        doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
+      }
+      if(mi===2){
+        doc.setLineWidth(0.3);
+        doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
+      }
+
+      // Label Matin / Après Midi
       if(mi===0||mi===2){
         doc.setFontSize(5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
         doc.text(MAT_LBL[mi],ML+C_NOM+C_ADR+C_MAT/2,ry+ROW_H+0.5,{align:'center'});
@@ -3649,11 +3670,14 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       doc.setFontSize(4.5);doc.setFont('helvetica','normal');
       doc.text(AR_LBL[mi],ML+C_NOM+C_ADR+C_MAT+C_AR/2,ry+ROW_H/2+1,{align:'center'});
 
-      // Ligne horizontale fine entre lignes Aller/Retour
-      doc.setDrawColor(...BK);doc.setLineWidth(0.1);
-      if(mi>0) doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
+      // Ligne horizontale fine entre Retour/Aller
+      doc.setLineWidth(0.1);
+      if(mi===1) doc.line(ML+C_NOM+C_ADR,ry+ROW_H,ML+W,ry+ROW_H);
 
-      // Présences
+      // Ligne fine entre Aller et Retour (mi=1 et mi=3)
+      if(mi>0&&mi!==2) doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
+
+      // Présences centrées
       for(let j=1;j<=31;j++){
         const x=ML+C_NOM+C_ADR+C_MAT+C_AR+(j-1)*C_J;
         const valid=j<=nbJours;
@@ -3661,18 +3685,18 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
           const ds=String(annee)+'-'+String(mois+1).padStart(2,'0')+'-'+String(j).padStart(2,'0');
           const pres=getPresenceState(ds,prenom,m);
           if(pres===true){
-            doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-            doc.text('X',x+C_J/2,ry+ROW_H/2+1.2,{align:'center'});
+            doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
+            doc.text('X',x+C_J/2,ry+ROW_H/2+1,{align:'center'});
           } else if(pres==='np'){
             doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-            doc.text('X',x+C_J/2,ry+ROW_H/2+1.2,{align:'center'});
-            doc.setLineWidth(0.25);doc.circle(x+C_J/2,ry+ROW_H/2+0.3,1.1,'S');
+            doc.text('X',x+C_J/2,ry+ROW_H/2+1,{align:'center'});
+            doc.setLineWidth(0.25);doc.circle(x+C_J/2,ry+ROW_H/2+0.2,1.0,'S');
           }
         }
       }
     });
 
-    // Bordure épaisse entre élèves
+    // Bordure épaisse entre élèves (bas)
     doc.setDrawColor(...BK);doc.setLineWidth(0.5);
     doc.line(ML,baseY+ELEVE_H,ML+W,baseY+ELEVE_H);
   });
