@@ -3552,9 +3552,9 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const C_ADR=26;
   const C_MAT=10;
   const C_AR=8;
-  const C_REST=W-C_NOM-C_ADR-C_MAT-C_AR;
-  const C_J=4; // largeur fixe par jour
-  // Note: on utilisera C_J fixe, pas C_REST/31
+  const C_J=4;
+  const C_REST=C_J*31;
+  const TAB_W=C_NOM+C_ADR+C_MAT+C_AR+C_REST; // largeur réelle du tableau
   const ROW_H=3.0;
   const HDR1_H=9;  // plus haut pour texte vertical
   const HDR2_H=4;
@@ -3587,7 +3587,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
   }
   doc.setLineWidth(0.3);
-  doc.line(ML+W,TAB_Y,ML+W,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
+  doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
   // Header ligne 2 : ELEVES / NOM Prénom / Adresse — aucune bordure sur NOM et ADR
   const H2Y=TAB_Y+HDR1_H;
@@ -3610,7 +3610,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.line(ML+C_NOM+C_ADR+C_MAT,TAB_Y,ML+C_NOM+C_ADR+C_MAT,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
   // Ligne entre HDR1 et HDR2
-  doc.line(ML,H2Y,ML+W,H2Y);
+  doc.line(ML,H2Y,ML+TAB_W,H2Y);
 
   // ---- LIGNES ELEVES ----
   const MOMENTS_KEY=['MA','MR','SA','SR'];
@@ -3661,11 +3661,11 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       if(mi===0){
         // Ligne au dessus du premier Aller
         doc.setLineWidth(0.3);
-        doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
+        doc.line(ML+C_NOM+C_ADR,ry,ML+TAB_W,ry);
       }
       if(mi===2){
         doc.setLineWidth(0.3);
-        doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
+        doc.line(ML+C_NOM+C_ADR,ry,ML+TAB_W,ry);
       }
 
       // Label Matin (fusionné lignes 0+1) / Après Midi (fusionné lignes 2+3) — horizontal
@@ -3689,10 +3689,10 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
       // Ligne horizontale fine entre Retour/Aller
       doc.setLineWidth(0.1);
-      if(mi===1) doc.line(ML+C_NOM+C_ADR,ry+ROW_H,ML+W,ry+ROW_H);
+      if(mi===1) doc.line(ML+C_NOM+C_ADR,ry+ROW_H,ML+TAB_W,ry+ROW_H);
 
       // Ligne fine entre Aller et Retour (mi=1 et mi=3)
-      if(mi>0&&mi!==2) doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
+      if(mi>0&&mi!==2) doc.line(ML+C_NOM+C_ADR,ry,ML+TAB_W,ry);
 
       // Présences centrées
       for(let j=1;j<=31;j++){
@@ -3715,7 +3715,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
     // Bordure épaisse entre élèves (bas)
     doc.setDrawColor(...BK);doc.setLineWidth(0.5);
-    doc.line(ML,baseY+ELEVE_H,ML+W,baseY+ELEVE_H);
+    doc.line(ML,baseY+ELEVE_H,ML+TAB_W,baseY+ELEVE_H);
   });
 
   // Bordure extérieure tableau — seulement sur la partie jours (droite)
@@ -3723,13 +3723,13 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const tabH=HDR1_H+HDR2_H+eleves.length*ELEVE_H;
   doc.setDrawColor(...BK);doc.setLineWidth(0.5);
   // Haut du tableau (seulement sur la partie jours)
-  doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+W,TAB_Y);
+  doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+TAB_W,TAB_Y);
   // Bas du tableau complet
-  doc.line(ML,TAB_Y+tabH,ML+W,TAB_Y+tabH);
+  doc.line(ML,TAB_Y+tabH,ML+TAB_W,TAB_Y+tabH);
   // Côté gauche (seulement à partir de H2Y pour NOM/ADR)
   doc.line(ML,H2Y,ML,TAB_Y+tabH);
   // Côté droit complet
-  doc.line(ML+W,TAB_Y,ML+W,TAB_Y+tabH);
+  doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+tabH);
 
   // ---- PIED ----
   const footY=TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H+3;
