@@ -3556,7 +3556,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const C_J=C_REST/31;
   const TAB_W=W; // tableau pleine largeur
   const ROW_H=3.0;
-  const HDR1_H=9;  // plus haut pour texte vertical
+  const HDR1_H=12;  // plus haut
   const HDR2_H=4;
   const ELEVE_H=ROW_H*4;
 
@@ -3574,7 +3574,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     if(valid){
       doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(...BK);
       // X entre cx (trop gauche) et cx+C_J/2 (trop droite) → cx+C_J/4
-      doc.text(JOURS_FR[d.getDay()],cx+C_J/4,TAB_Y+(HDR1_H-3)/2+1,{align:'center',angle:90});
+      doc.text(JOURS_FR[d.getDay()],cx+C_J/4+0.5,TAB_Y+(HDR1_H-3)/2+1,{align:'center',angle:90});
       // Numéro centré en bas
       doc.setFontSize(5.5);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+HDR1_H-1.2,{align:'center'});
