@@ -3510,7 +3510,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   // ---- BLOC CONDUCTEUR (aligné sur colonne Adresse) ----
   // BX calculé après les constantes du tableau — on anticipe C_NOM=26
-  const C_NOM_PRE=22;
+  const C_NOM_PRE=46;
   const BX=ML+C_NOM_PRE,BY=MT+TitleH+2,BW=56,BH=28;
   doc.setLineWidth(0.4);doc.rect(BX,BY,BW,BH,'S');
   doc.setFontSize(7.5);
@@ -3548,13 +3548,13 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // ---- TABLEAU ----
   const TAB_Y=BY+BH+8; // rapproché des blocs
   // Colonnes : NOM | ADRESSE | Matin/ApM | Aller/Retour | 31 jours
-  const C_NOM=22;
-  const C_ADR=26;
+  const C_NOM=46;
+  const C_ADR=68;
   const C_MAT=10;
   const C_AR=8;
-  const C_J=4;
+  const C_J=5;
   const C_REST=C_J*31;
-  const TAB_W=C_NOM+C_ADR+C_MAT+C_AR+C_REST; // largeur réelle du tableau
+  const TAB_W=C_NOM+C_ADR+C_MAT+C_AR+C_REST; // = 287mm = largeur totale
   const ROW_H=3.0;
   const HDR1_H=9;  // plus haut pour texte vertical
   const HDR2_H=4;
