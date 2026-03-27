@@ -3446,16 +3446,27 @@ function genererEtatMensuel(mode){
   const s=state.pdfSettings||{};
   closeModal('modalEtatMensuel');
   showToast('⏳ Génération en cours...');
-  setTimeout(()=>{
+
+  const generate=()=>{
+    const {jsPDF}=window.jspdf;
     try{
-      _buildEtatMensuelPDF(mois,annee,s,mode);
+      _buildEtatMensuelPDF(jsPDF,mois,annee,s,mode);
     }catch(e){
       showToast('❌ Erreur: '+e.message);
     }
-  },100);
+  };
+
+  if(typeof window.jspdf==='undefined'){
+    const script=document.createElement('script');
+    script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    script.onload=generate;
+    document.head.appendChild(script);
+  } else {
+    generate();
+  }
 }
 
-function _buildEtatMensuelPDF(mois,annee,s,mode){
+function _buildEtatMensuelPDF(jsPDF,mois,annee,s,mode){
   const MOIS_FR=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   const JOURS_COURT=['Di','Lu','Ma','Me','Je','Ve','Sa'];
   const TEAL=[0,99,114];
