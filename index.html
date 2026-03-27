@@ -1098,6 +1098,7 @@ html, body {
         &nbsp;• <span style="color:#059669;font-weight:600;">1 appui</span> → présent (vert)<br>
         &nbsp;• <span style="color:#dc2626;font-weight:600;">2 appuis</span> → absent non prévenu (rouge)<br>
         &nbsp;• <span style="color:#64748b;font-weight:600;">3 appuis</span> → reset (vide)<br><br>
+        Dans la section <span style="font-weight:600;">Gestion</span>, appuyez sur 📍 à côté d'un élève pour renseigner son adresse. Elle sera utilisée dans l'état mensuel des présences.<br><br>
         Vous pouvez renommer un élève — toutes ses présences passées sont mises à jour automatiquement.
       </div>
 
@@ -1113,6 +1114,14 @@ html, body {
         Renseignez une fois les <span style="font-weight:600;">paramètres fixes</span> (agence, immatriculation, licence, client, nom, prénom, lieu de départ et d'arrivée).<br><br>
         Chaque semaine, choisissez simplement la date et générez en <span style="font-weight:600;">PDF</span> ou en <span style="font-weight:600;">image JPG</span>.<br><br>
         Les heures, kilométrages et commentaires sont remplis automatiquement depuis vos données.
+      </div>
+
+      <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
+        <div style="font-weight:700;color:#166534;margin-bottom:6px;">📊 État mensuel des présences</div>
+        Accessible depuis la carte <span style="font-weight:600;">Élèves</span> via le bouton "État mensuel".<br><br>
+        Renseignez les adresses des élèves via le bouton 📍 dans la Gestion. Ces adresses apparaîtront sur le document officiel.<br><br>
+        Choisissez le mois et l'année, puis générez en <span style="font-weight:600;">PDF</span> ou en <span style="font-weight:600;">image JPG</span>.<br><br>
+        Les données de pointage (présent, absent non prévenu) sont reprises automatiquement. Maximum 8 élèves par feuille — une deuxième page est générée automatiquement si nécessaire.
       </div>
 
       <div style="background:#f8fafc;border-radius:12px;padding:12px 14px;border:1.5px solid #e2e8f0;">
@@ -1152,15 +1161,77 @@ html, body {
   </div>
 </div>
 
-<!-- ===== MODAL ETAT MENSUEL ===== -->
+<!-- ===== MODAL ADRESSE ELEVE ===== -->
+<div class="modal-overlay" id="modalAdresseEleve">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
+    <div class="modal-handle"></div>
+    <div class="modal-head" id="adresseEleveHead">📍 Adresse de l'élève</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:10px;">
+      <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom complet</div>
+        <input id="adresseEleveNom" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;"></div>
+      <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Adresse ligne 1</div>
+        <input id="adresseEleve1" type="text" placeholder="N° et nom de rue" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;"></div>
+      <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Adresse ligne 2</div>
+        <input id="adresseEleve2" type="text" placeholder="Complément (optionnel)" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;"></div>
+      <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Ville</div>
+        <input id="adresseEleveVille" type="text" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;"></div>
+    </div>
+    <div class="modal-footer" style="display:flex;gap:10px;">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalAdresseEleve')">Annuler</button>
+      <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);" onclick="saveAdresseEleve()">Enregistrer</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="modalEtatMensuel">
   <div class="modal-sheet" style="border-radius:24px 24px 0 0;">
     <div class="modal-handle"></div>
     <div class="modal-head">📊 État mensuel des présences</div>
-    <div class="modal-body" style="padding:30px 20px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
-      <div style="font-size:3rem;">🚧</div>
-      <div style="font-size:1.1rem;font-weight:700;color:#7c3aed;">Disponible prochainement</div>
-      <div style="font-size:0.85rem;color:#64748b;line-height:1.6;">Cette fonctionnalité est en cours de développement.<br>Elle permettra de générer l'état mensuel des présences des élèves au format PDF et image JPG.</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:10px;">
+      <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
+        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:0;display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleEtatParams()">
+          <span>⚙️ Paramètres fixes</span>
+          <span id="etatParamsChevron">▶</span>
+        </div>
+        <div id="etatParamsBody" style="display:none;flex-direction:column;gap:8px;margin-top:10px;">
+          <div style="font-size:0.72rem;color:#64748b;font-style:italic;">Les paramètres sont partagés avec la feuille de route.</div>
+          <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Nom</div>
+            <input id="etatNom" type="text" placeholder="Ex: NOM" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveEtatSettings()"></div>
+          <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Prénom</div>
+            <input id="etatPrenom" type="text" placeholder="Ex: Prénom" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveEtatSettings()"></div>
+          <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Immatriculation</div>
+            <input id="etatImmat" type="text" placeholder="Ex: AA-123-BB" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveEtatSettings()"></div>
+          <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Carte carburant N°</div>
+            <input id="etatCarte" type="text" placeholder="Ex: 0000000" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveEtatSettings()"></div>
+          <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">N° de licence</div>
+            <input id="etatLicence" type="text" placeholder="Ex: 2021/11/0000000" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveEtatSettings()"></div>
+          <div><div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Numéro de circuit</div>
+            <input id="etatCircuit" type="text" placeholder="Ex: 123" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveEtatSettings()"></div>
+        </div>
+      </div>
+      <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
+        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">📅 Génération</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:8px;">
+            <div style="flex:1;">
+              <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Mois</div>
+              <select id="etatMois" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
+                <option value="0">Janvier</option><option value="1">Février</option><option value="2">Mars</option>
+                <option value="3">Avril</option><option value="4">Mai</option><option value="5">Juin</option>
+                <option value="6">Juillet</option><option value="7">Août</option><option value="8">Septembre</option>
+                <option value="9">Octobre</option><option value="10">Novembre</option><option value="11">Décembre</option>
+              </select>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Année</div>
+              <input id="etatAnnee" type="number" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px;">
+            <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" onclick="genererEtatMensuel('pdf')">📄 PDF</button>
+            <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);flex:1;" onclick="genererEtatMensuel('jpg')">🖼️ JPG</button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalEtatMensuel')">Fermer</button>
@@ -1211,6 +1282,14 @@ html, body {
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Lieu habituel d'arrivée</div>
             <input id="feuilleArrivee" type="text" placeholder="Ex: Ma ville" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Numéro de circuit</div>
+            <input id="fdrCircuit" type="text" placeholder="Ex: 123" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
+          </div>
+          <div>
+            <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Carte carburant N°</div>
+            <input id="fdrCarte" type="text" placeholder="Ex: 0000000" style="width:100%;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;box-sizing:border-box;" oninput="saveFdrSettings()">
           </div>
         </div>
       </div>
@@ -1476,7 +1555,7 @@ function loadState(){
     d.vacations=(d.vacations||[]).map(v=>({...v,dep:v.dep?new Date(v.dep):null,ret:v.ret?new Date(v.ret):null}));
     return d;
   }}catch(e){}
-  return{eleves:[],vacations:[],presence:{},dayData:{},deduc:{},rappels:{}};
+  return{eleves:[],vacations:[],presence:{},dayData:{},deduc:{},rappels:{},adresses:{}};
 }
 function saveState(){
   const s={...state,
@@ -1862,12 +1941,14 @@ function renderGestion(){
   // Active eleves
   state.eleves.forEach((p,i)=>{
     const row=document.createElement('div');row.className='eleve-mgmt-row';
+    const hasAddr=state.adresses&&state.adresses[p]&&(state.adresses[p].adr1||state.adresses[p].ville);
     row.innerHTML=`
       <div class="mgmt-order">
         <button class="mgmt-arrow up" onclick="moveEleve(${i},-1)" ${i===0?'disabled':''}></button>
         <button class="mgmt-arrow down" onclick="moveEleve(${i},1)" ${i===state.eleves.length-1?'disabled':''}></button>
       </div>
       <div class="mgmt-nom" id="nom-${i}">${capitalize(p)}</div>
+      <button onclick="openAdresseEleve('${p}')" style="background:none;border:none;cursor:pointer;font-size:0.9rem;padding:2px 4px;" title="Adresse">${hasAddr?'📍':'📍'}</button>
       <button onclick="startRenameEleve(${i})" style="background:none;border:none;cursor:pointer;font-size:0.9rem;padding:2px 4px;" title="Renommer">✏️</button>
       <button class="mgmt-del" id="del-${i}" onclick="confirmDel(${i})">🗑</button>`;
     body.appendChild(row);
@@ -3217,6 +3298,7 @@ function doImport(mode){
       rappels: importPendingData.rappels||{},
       suivi: importPendingData.suivi||{},
       pdfSettings: importPendingData.pdfSettings||{},
+      adresses: importPendingData.adresses||{},
     };
   } else {
     const s=importPendingData;
@@ -3285,8 +3367,324 @@ function toggleFdrParams(){
   chevron.textContent=open?'▶':'▼';
 }
 
+// ============================================================
+// ADRESSES ELEVES
+// ============================================================
+let adresseEleveCurrent=null;
+function openAdresseEleve(prenom){
+  adresseEleveCurrent=prenom;
+  if(!state.adresses) state.adresses={};
+  const a=state.adresses[prenom]||{};
+  document.getElementById('adresseEleveHead').textContent='📍 '+capitalize(prenom);
+  document.getElementById('adresseEleveNom').value=a.nom||capitalize(prenom);
+  document.getElementById('adresseEleve1').value=a.adr1||'';
+  document.getElementById('adresseEleve2').value=a.adr2||'';
+  document.getElementById('adresseEleveVille').value=a.ville||'';
+  document.getElementById('modalAdresseEleve').classList.add('open');
+}
+function saveAdresseEleve(){
+  if(!adresseEleveCurrent) return;
+  if(!state.adresses) state.adresses={};
+  state.adresses[adresseEleveCurrent]={
+    nom: document.getElementById('adresseEleveNom').value,
+    adr1: document.getElementById('adresseEleve1').value,
+    adr2: document.getElementById('adresseEleve2').value,
+    ville: document.getElementById('adresseEleveVille').value,
+  };
+  saveState();
+  closeModal('modalAdresseEleve');
+  renderGestion();
+  showToast('✅ Adresse enregistrée');
+}
+
+// ============================================================
+// ETAT MENSUEL DES PRESENCES
+// ============================================================
 function openModalEtatMensuel(){
+  const s=state.pdfSettings||{};
+  // Pré-remplir depuis pdfSettings
+  document.getElementById('etatNom').value=s.nom||'';
+  document.getElementById('etatPrenom').value=s.prenom||'';
+  document.getElementById('etatImmat').value=s.immat||'';
+  document.getElementById('etatCarte').value=s.carte||'';
+  document.getElementById('etatLicence').value=s.licence||'';
+  document.getElementById('etatCircuit').value=s.circuit||'';
+  // Mois courant par défaut
+  const now=new Date();
+  document.getElementById('etatMois').value=now.getMonth();
+  document.getElementById('etatAnnee').value=now.getFullYear();
   document.getElementById('modalEtatMensuel').classList.add('open');
+}
+
+function saveEtatSettings(){
+  if(!state.pdfSettings) state.pdfSettings={};
+  state.pdfSettings.nom=document.getElementById('etatNom').value;
+  state.pdfSettings.prenom=document.getElementById('etatPrenom').value;
+  state.pdfSettings.immat=document.getElementById('etatImmat').value;
+  state.pdfSettings.carte=document.getElementById('etatCarte').value;
+  state.pdfSettings.licence=document.getElementById('etatLicence').value;
+  state.pdfSettings.circuit=document.getElementById('etatCircuit').value;
+  // Sync avec FDR
+  const nomEl=document.getElementById('fdrNom');
+  const prenomEl=document.getElementById('fdrPrenom');
+  if(nomEl) nomEl.value=state.pdfSettings.nom;
+  if(prenomEl) prenomEl.value=state.pdfSettings.prenom;
+  saveState();
+}
+
+function toggleEtatParams(){
+  const body=document.getElementById('etatParamsBody');
+  const chevron=document.getElementById('etatParamsChevron');
+  const open=body.style.display==='flex';
+  body.style.display=open?'none':'flex';
+  chevron.textContent=open?'▶':'▼';
+}
+
+function genererEtatMensuel(mode){
+  const mois=parseInt(document.getElementById('etatMois').value);
+  const annee=parseInt(document.getElementById('etatAnnee').value);
+  const s=state.pdfSettings||{};
+  closeModal('modalEtatMensuel');
+  showToast('⏳ Génération en cours...');
+  setTimeout(()=>{
+    try{
+      _buildEtatMensuelPDF(mois,annee,s,mode);
+    }catch(e){
+      showToast('❌ Erreur: '+e.message);
+    }
+  },100);
+}
+
+function _buildEtatMensuelPDF(mois,annee,s,mode){
+  const MOIS_FR=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const JOURS_COURT=['Di','Lu','Ma','Me','Je','Ve','Sa'];
+  const TEAL=[0,99,114];
+  const LIGHT_BLUE=[207,226,243];
+  const WEEKEND_BG=[220,235,250]; // teinte pastel bleutée
+  const DARK=[30,30,30];
+
+  // Nombre de jours dans le mois
+  const nbJours=new Date(annee,mois+1,0).getDate();
+  const eleves=state.eleves.slice(0,8); // max 8 par page
+  const elevesPage2=state.eleves.length>8?state.eleves.slice(8,16):[];
+
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,JOURS_COURT,TEAL,LIGHT_BLUE,WEEKEND_BG,DARK);
+  if(elevesPage2.length>0){
+    doc.addPage();
+    _buildEtatPage(doc,mois,annee,s,elevesPage2,nbJours,MOIS_FR,JOURS_COURT,TEAL,LIGHT_BLUE,WEEKEND_BG,DARK);
+  }
+
+  const titre=`etat-presences-${MOIS_FR[mois].toLowerCase()}-${annee}`;
+  if(mode==='pdf'){
+    _downloadPDF(doc,titre);
+  } else {
+    _downloadJPG(doc,titre);
+  }
+}
+
+function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,JOURS_COURT,TEAL,LIGHT_BLUE,WEEKEND_BG,DARK){
+  const PW=210, PH=297;
+  const ML=8, MR=8, MT=8;
+  const W=PW-ML-MR;
+
+  // ---- TITRE ----
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(...TEAL);
+  doc.text('ETAT DE PRESENCE',PW/2,MT+6,{align:'center'});
+
+  // ---- BLOC INFO (lignes 3-8) ----
+  const IY=MT+10;
+  const IH=6; // hauteur ligne info
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+
+  const labels=[
+    ['Conducteur :',''],
+    ['Nom',s.nom||''],
+    ['Prénom',s.prenom||''],
+    ['Immatriculation',s.immat||''],
+    ['Carte carburant N°',s.carte||''],
+    ['Licence N°',s.licence||''],
+  ];
+  labels.forEach((row,i)=>{
+    doc.setFont('helvetica','bold');doc.text(row[0],ML,IY+i*IH+4);
+    doc.setFont('helvetica','normal');doc.text(row[1],ML+35,IY+i*IH+4);
+  });
+
+  // Mois/Année au centre
+  doc.setFont('helvetica','bold');doc.setFontSize(8);
+  doc.text('Mois :',PW/2-15,IY+IH+4);
+  doc.setFont('helvetica','normal');doc.text(MOIS_FR[mois],PW/2-2,IY+IH+4);
+  doc.setFont('helvetica','bold');doc.text('Année :',PW/2-15,IY+IH*3+4);
+  doc.setFont('helvetica','normal');doc.text(String(annee),PW/2-2,IY+IH*3+4);
+
+  // Numéro circuit à droite
+  doc.setFont('helvetica','bold');doc.setFontSize(7);
+  doc.text('Numéro Circuit :',PW-MR-40,IY+IH+4);
+  doc.setFont('helvetica','normal');doc.text(s.circuit||'',PW-MR-40,IY+IH*2+4);
+
+  // Logo ADIATE (si disponible dans pdfSettings)
+  // (logo déjà en base64 dans _buildPDF, réutilisation)
+
+  // ---- TABLEAU ----
+  const TY=IY+labels.length*IH+6;
+  // Colonnes : col0 = Nom+Adresse, col1 = libellé (Matin/Aller etc), puis 31 colonnes jours
+  const C_NOM=28;
+  const C_LBL=14;
+  const C_JOUR=(W-C_NOM-C_LBL)/31;
+  const ROW_H=4.2;
+  const HDR_H=7;
+  const ELEVE_H=ROW_H*4; // 4 lignes par élève
+
+  // Header dates
+  doc.setFillColor(...TEAL);
+  doc.rect(ML,TY,W,HDR_H,'F');
+  doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  doc.text('ÉLÈVES',ML+C_NOM/2,TY+HDR_H/2+1.5,{align:'center'});
+
+  for(let j=1;j<=31;j++){
+    const x=ML+C_NOM+C_LBL+(j-1)*C_JOUR;
+    const d=new Date(annee,mois,j);
+    const isWE=d.getDay()===0||d.getDay()===6;
+    const valid=j<=nbJours;
+
+    // Fond weekend
+    if(isWE&&valid){
+      doc.setFillColor(...WEEKEND_BG);
+      doc.rect(x,TY,C_JOUR,HDR_H,'F');
+    }
+    if(valid){
+      doc.setTextColor(255,255,255);
+      doc.setFont('helvetica','bold');doc.setFontSize(5);
+      doc.text(String(j),x+C_JOUR/2,TY+3,{align:'center'});
+      doc.setFont('helvetica','normal');doc.setFontSize(4.5);
+      doc.text(JOURS_COURT[d.getDay()],x+C_JOUR/2,TY+6,{align:'center'});
+    }
+    // Bordure verticale
+    doc.setDrawColor(...TEAL);doc.setLineWidth(0.2);
+    doc.line(x,TY,x,TY+HDR_H);
+  }
+
+  // Sous-header "NOM Prénom / Adresse" + numéros
+  const SHY=TY+HDR_H;
+  doc.setFillColor(...LIGHT_BLUE);
+  doc.rect(ML,SHY,C_NOM+C_LBL,ROW_H,'F');
+  doc.setFontSize(5);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
+  doc.text('NOM Prénom',ML+1,SHY+ROW_H/2+1);
+  doc.text('Adresse',ML+C_NOM/2+2,SHY+ROW_H/2+1);
+
+  for(let j=1;j<=31;j++){
+    const x=ML+C_NOM+C_LBL+(j-1)*C_JOUR;
+    const d=new Date(annee,mois,j);
+    const isWE=d.getDay()===0||d.getDay()===6;
+    const valid=j<=nbJours;
+    if(isWE&&valid){
+      doc.setFillColor(...WEEKEND_BG);
+      doc.rect(x,SHY,C_JOUR,ROW_H,'F');
+    } else if(valid){
+      doc.setFillColor(...LIGHT_BLUE);
+      doc.rect(x,SHY,C_JOUR,ROW_H,'F');
+    }
+    if(valid){
+      doc.setFontSize(5);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
+      doc.text(String(j),x+C_JOUR/2,SHY+ROW_H/2+1,{align:'center'});
+    }
+    doc.setDrawColor(180,200,220);doc.setLineWidth(0.15);
+    doc.line(x,SHY,x,SHY+ROW_H);
+  }
+
+  // Bordure header
+  doc.setDrawColor(...DARK);doc.setLineWidth(0.3);
+  doc.rect(ML,TY,W,HDR_H+ROW_H,'S');
+
+  // ---- LIGNES ELEVES ----
+  const MOMENTS_LBL=['Matin\nAller','Matin\nRetour','Ap.Midi\nAller','Ap.Midi\nRetour'];
+  const MOMENTS_KEY=['MA','MR','SA','SR'];
+
+  eleves.forEach((prenom,ei)=>{
+    const baseY=SHY+ROW_H+ei*ELEVE_H;
+    const a=state.adresses&&state.adresses[prenom]?state.adresses[prenom]:{};
+
+    // Fond alterné
+    if(ei%2===1){
+      doc.setFillColor(248,250,252);
+      doc.rect(ML,baseY,C_NOM+C_LBL,ELEVE_H,'F');
+    }
+
+    // Nom + adresse sur la 1ère ligne (cellule fusionnée 4 lignes)
+    doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
+    doc.text(capitalize(prenom),ML+1,baseY+5);
+    if(a.nom&&a.nom!==capitalize(prenom)){
+      doc.setFontSize(4.5);doc.setFont('helvetica','normal');
+      doc.text(a.nom,ML+1,baseY+8.5);
+    }
+    doc.setFontSize(4.5);doc.setFont('helvetica','normal');
+    if(a.adr1) doc.text(a.adr1,ML+1,baseY+11.5);
+    if(a.adr2) doc.text(a.adr2,ML+1,baseY+14.5);
+    if(a.ville) doc.text(a.ville,ML+1,baseY+ELEVE_H-1);
+
+    // 4 sous-lignes
+    MOMENTS_KEY.forEach((m,mi)=>{
+      const ry=baseY+mi*ROW_H;
+      // Label moment
+      doc.setFillColor(...LIGHT_BLUE);
+      doc.rect(ML+C_NOM,ry,C_LBL,ROW_H,'F');
+      doc.setFontSize(4);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+      const lbl=MOMENTS_LBL[mi].split('\n');
+      lbl.forEach((l,li)=>doc.text(l,ML+C_NOM+C_LBL/2,ry+ROW_H*0.35+li*2.2,{align:'center'}));
+
+      // Cases jours
+      for(let j=1;j<=31;j++){
+        const x=ML+C_NOM+C_LBL+(j-1)*C_JOUR;
+        const d=new Date(annee,mois,j);
+        const isWE=d.getDay()===0||d.getDay()===6;
+        const valid=j<=nbJours;
+
+        if(!valid){
+          doc.setFillColor(240,240,240);
+          doc.rect(x,ry,C_JOUR,ROW_H,'F');
+        } else if(isWE){
+          doc.setFillColor(...WEEKEND_BG);
+          doc.rect(x,ry,C_JOUR,ROW_H,'F');
+        }
+
+        // Données présence
+        if(valid){
+          const ds=`${annee}-${String(mois+1).padStart(2,'0')}-${String(j).padStart(2,'0')}`;
+          const pres=getPresenceState(ds,prenom,m);
+          if(pres===true){
+            doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(0,100,50);
+            doc.text('X',x+C_JOUR/2,ry+ROW_H/2+1.2,{align:'center'});
+          } else if(pres==='np'){
+            doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(180,0,0);
+            doc.text('⊗',x+C_JOUR/2,ry+ROW_H/2+1.2,{align:'center'});
+          }
+        }
+
+        // Bordures
+        doc.setDrawColor(180,200,220);doc.setLineWidth(0.1);
+        doc.line(x,ry,x,ry+ROW_H);
+      }
+      // Bordure bas de ligne
+      doc.setDrawColor(200,215,230);doc.setLineWidth(0.15);
+      doc.line(ML,ry+ROW_H,ML+W,ry+ROW_H);
+    });
+
+    // Bordure élève
+    doc.setDrawColor(...DARK);doc.setLineWidth(0.3);
+    doc.rect(ML,baseY,W,ELEVE_H,'S');
+  });
+
+  // ---- PIED ----
+  const footY=SHY+ROW_H+eleves.length*ELEVE_H+4;
+  doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+  doc.text('Indiquer « X » si l\'élève est présent',ML,footY+3);
+  doc.text('Visa conducteur :',ML+60,footY+3);
+  doc.setFontSize(5.5);doc.setTextColor(100,100,100);
+  doc.text('A retourner impérativement le dernier jour du mois à : qdelvallee@adiate.fr',ML,footY+7);
+
+  // Bordure tableau extérieure
+  doc.setDrawColor(...DARK);doc.setLineWidth(0.4);
+  doc.rect(ML,TY,W,HDR_H+ROW_H+eleves.length*ELEVE_H,'S');
 }
 
 function openModalFDR(){
@@ -3299,6 +3697,8 @@ function openModalFDR(){
   document.getElementById('fdrPrenom').value=s.prenom||'';
   document.getElementById('fdrLieu').value=s.lieu||'';
   document.getElementById('feuilleArrivee').value=s.lieuArrivee||s.lieu||'';
+  document.getElementById('fdrCircuit').value=s.circuit||'';
+  document.getElementById('fdrCarte').value=s.carte||'';
   // Pré-remplir avec le lundi de la semaine consultée
   const viewedDate=new Date(viewDate+'T12:00:00');
   const mon=new Date(viewedDate);
@@ -3319,6 +3719,8 @@ function saveFdrSettings(){
     prenom:document.getElementById('fdrPrenom').value,
     lieu:document.getElementById('fdrLieu').value,
     lieuArrivee:document.getElementById('feuilleArrivee').value,
+    circuit:document.getElementById('fdrCircuit').value,
+    carte:document.getElementById('fdrCarte').value,
   };
   saveState();
 }
@@ -3596,12 +3998,12 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
 
     let kmDeb=null;
     if(!isWeekend&&(!isFuture||isFirstWorkdayAfterLastWorked)){
-      const dTmp=new Date(d);
-      for(let k=1;k<=365;k++){
-        dTmp.setDate(dTmp.getDate()-1);
-        const kv=peekDayData(dateStr(dTmp)).km;
-        if(kv){kmDeb=kv;break;}
-      }
+      // Trouver le jour ouvré précédent direct
+      const dPrev=new Date(d);
+      dPrev.setDate(d.getDate()-1);
+      while((dPrev.getDay()+6)%7>=5) dPrev.setDate(dPrev.getDate()-1);
+      const kmPrev=peekDayData(dateStr(dPrev)).km;
+      if(kmPrev) kmDeb=kmPrev;
     }
     if(kmDeb){doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(kmDeb,XS[0]+C0/2,y+DAY_H*0.82,{align:'center'});doc.setFont('helvetica','normal');}
 
