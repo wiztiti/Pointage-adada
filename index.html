@@ -3572,11 +3572,10 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const d=new Date(annee,mois,j);
     const valid=j<=nbJours;
     if(valid){
-      doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(...BK);
-      // X entre cx (trop gauche) et cx+C_J/2 (trop droite) → cx+C_J/4
+      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...BK);
       doc.text(JOURS_FR[d.getDay()],cx+C_J/4+0.5,TAB_Y+(HDR1_H-3)/2+1,{align:'center',angle:90});
       // Numéro centré en bas
-      doc.setFontSize(5.5);doc.setFont('helvetica','bold');
+      doc.setFontSize(7);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+HDR1_H-1.2,{align:'center'});
     }
     // Ligne verticale séparatrice
