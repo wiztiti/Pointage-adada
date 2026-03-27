@@ -3509,7 +3509,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   try{doc.addImage(logoB64,'PNG',PW-MR-42,MT,42,24);}catch(e){}
 
   // ---- BLOC CONDUCTEUR (gauche) ----
-  const BX=ML,BY=MT+TitleH+2,BW=70,BH=28;
+  const BX=ML,BY=MT+TitleH+2,BW=56,BH=28;
   doc.setLineWidth(0.4);doc.rect(BX,BY,BW,BH,'S');
   doc.setFontSize(7.5);
   const cLines=[
@@ -3544,12 +3544,12 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.text(s.circuit||'',CBX+CBW/2,CBY+17,{align:'center'});
 
   // ---- TABLEAU ----
-  const TAB_Y=BY+BH+28; // descendu de ~20mm supplémentaires
+  const TAB_Y=BY+BH+8; // rapproché des blocs
   // Colonnes : NOM | ADRESSE | Matin/ApM | Aller/Retour | 31 jours
-  const C_NOM=22;
-  const C_ADR=26;
-  const C_MAT=8;
-  const C_AR=8;
+  const C_NOM=26;
+  const C_ADR=30;
+  const C_MAT=7;
+  const C_AR=7;
   const C_REST=W-C_NOM-C_ADR-C_MAT-C_AR;
   const C_J=C_REST/31;
   const ROW_H=3.0;
@@ -3569,12 +3569,12 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const d=new Date(annee,mois,j);
     const valid=j<=nbJours;
     if(valid){
-      // Numéro horizontal en haut
-      doc.setFontSize(5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-      doc.text(String(j),x+C_J/2,TAB_Y+2.8,{align:'center'});
-      // Abréviation verticale (rotation 90°)
-      doc.setFont('helvetica','normal');doc.setFontSize(4);
-      doc.text(JOURS_FR[d.getDay()],x+C_J/2,TAB_Y+HDR1_H-1,{align:'center',angle:90});
+      // Abréviation du jour verticale en haut
+      doc.setFont('helvetica','normal');doc.setFontSize(5);doc.setTextColor(...BK);
+      doc.text(JOURS_FR[d.getDay()],x+C_J/2,TAB_Y+HDR1_H*0.45,{align:'center',angle:90});
+      // Numéro horizontal en bas
+      doc.setFontSize(5);doc.setFont('helvetica','bold');
+      doc.text(String(j),x+C_J/2,TAB_Y+HDR1_H-1.5,{align:'center'});
     }
     doc.setLineWidth(0.15);
     doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
@@ -3585,10 +3585,12 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Header ligne 2 : ELEVES / NOM Prénom / Adresse — bordure bas seulement pour NOM et ADR
   const H2Y=TAB_Y+HDR1_H;
   doc.setLineWidth(0.3);
-  // Bordure complète pour MAT+AR
+  // Bordure complète pour MAT+AR seulement
   doc.rect(ML+C_NOM+C_ADR,H2Y,C_MAT+C_AR,HDR2_H,'S');
-  // Bordure bas seulement pour NOM et ADR
+  // Pas de bordure sur NOM/ADR header - juste la ligne du bas
   doc.line(ML,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H);
+  // Pas de bordure haut sur la cellule vide au dessus
+  // (rien à faire - on ne dessine pas de rect)
 
   doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+1.5,{align:'center'});
@@ -3612,9 +3614,11 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const baseY=H2Y+HDR2_H+ei*ELEVE_H;
     const a=state.adresses&&state.adresses[prenom]?state.adresses[prenom]:{};
 
-    // Bordure bas seulement pour NOM et ADR (pas de bordure latérale/haut)
-    doc.setDrawColor(...BK);doc.setLineWidth(0.5);
-    // La bordure épaisse du bas sera dessinée après les 4 lignes
+    // Pas de bordure sur NOM et ADR (seulement bas géré par bordure épaisse)
+    // Bordure pour MAT+AR seulement
+    doc.setDrawColor(...BK);doc.setLineWidth(0.3);
+    doc.rect(ML+C_NOM+C_ADR,baseY,C_MAT+C_AR,ELEVE_H,'F');
+    doc.rect(ML+C_NOM+C_ADR,baseY,C_MAT+C_AR,ELEVE_H,'S');
 
     // NOM centré verticalement
     doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
