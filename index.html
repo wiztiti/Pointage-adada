@@ -3508,8 +3508,10 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // ---- LOGO ADIATE ----
   try{doc.addImage(logoB64,'PNG',PW-MR-42,MT,42,24);}catch(e){}
 
-  // ---- BLOC CONDUCTEUR (gauche) ----
-  const BX=ML,BY=MT+TitleH+2,BW=56,BH=28;
+  // ---- BLOC CONDUCTEUR (aligné sur colonne Adresse) ----
+  // BX calculé après les constantes du tableau — on anticipe C_NOM=26
+  const C_NOM_PRE=24;
+  const BX=ML+C_NOM_PRE,BY=MT+TitleH+2,BW=56,BH=28;
   doc.setLineWidth(0.4);doc.rect(BX,BY,BW,BH,'S');
   doc.setFontSize(7.5);
   const cLines=[
@@ -3546,11 +3548,11 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // ---- TABLEAU ----
   const TAB_Y=BY+BH+8; // rapproché des blocs
   // Colonnes : NOM | ADRESSE | Matin/ApM | Aller/Retour | 31 jours
-  const C_NOM=26;
-  const C_ADR=30;
+  const C_NOM=24;
+  const C_ADR=28;
   const C_MAT=7;
   const C_AR=7;
-  const C_REST=W-C_NOM-C_ADR-C_MAT-C_AR;
+  const C_REST=W-C_NOM-C_ADR-C_MAT-C_AR; // 221mm / 31 = ~5mm par jour
   const C_J=C_REST/31;
   const ROW_H=3.0;
   const HDR1_H=9;  // plus haut pour texte vertical
@@ -3559,46 +3561,48 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   const JOURS_FR=['dim','lun','mar','mer','jeu','ven','sam'];
 
-  // Header ligne 1 : jours - bordure extérieure seulement
+  // Header ligne 1 : jours
   doc.setLineWidth(0.3);doc.setDrawColor(...BK);
   doc.rect(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,C_REST,HDR1_H,'S');
 
-  // Numéros horizontaux + abréviations verticales
   for(let j=1;j<=31;j++){
     const x=ML+C_NOM+C_ADR+C_MAT+C_AR+(j-1)*C_J;
+    const cx=x+C_J/2; // centre de la colonne
     const d=new Date(annee,mois,j);
     const valid=j<=nbJours;
     if(valid){
-      // Abréviation du jour verticale en haut
-      doc.setFont('helvetica','normal');doc.setFontSize(5);doc.setTextColor(...BK);
-      doc.text(JOURS_FR[d.getDay()],x+C_J/2,TAB_Y+HDR1_H*0.45,{align:'center',angle:90});
-      // Numéro horizontal en bas
+      // Abréviation verticale centrée en haut de la cellule
+      doc.setFont('helvetica','normal');doc.setFontSize(4.5);doc.setTextColor(...BK);
+      // angle:90 tourne autour du point donné — on place le point au centre X, milieu haut
+      doc.text(JOURS_FR[d.getDay()],cx,TAB_Y+HDR1_H*0.5,{align:'center',angle:90});
+      // Numéro horizontal centré en bas
       doc.setFontSize(5);doc.setFont('helvetica','bold');
-      doc.text(String(j),x+C_J/2,TAB_Y+HDR1_H-1.5,{align:'center'});
+      doc.text(String(j),cx,TAB_Y+HDR1_H-1.2,{align:'center'});
     }
-    doc.setLineWidth(0.15);
+    // Ligne verticale séparatrice
+    doc.setLineWidth(0.15);doc.setDrawColor(...BK);
     doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
   }
   doc.setLineWidth(0.3);
   doc.line(ML+W,TAB_Y,ML+W,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
-  // Header ligne 2 : ELEVES / NOM Prénom / Adresse — bordure bas seulement pour NOM et ADR
+  // Header ligne 2 : ELEVES / NOM Prénom / Adresse — aucune bordure sur NOM et ADR
   const H2Y=TAB_Y+HDR1_H;
   doc.setLineWidth(0.3);
   // Bordure complète pour MAT+AR seulement
   doc.rect(ML+C_NOM+C_ADR,H2Y,C_MAT+C_AR,HDR2_H,'S');
-  // Pas de bordure sur NOM/ADR header - juste la ligne du bas
+  // Ligne du bas uniquement pour NOM+ADR
   doc.line(ML,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H);
-  // Pas de bordure haut sur la cellule vide au dessus
-  // (rien à faire - on ne dessine pas de rect)
+  // Pas de bordure haut (cellule vide au dessus) — rien à dessiner
 
   doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+1.5,{align:'center'});
   doc.text('NOM Prénom',ML+C_NOM/2,H2Y+3.2,{align:'center'});
   doc.text('Adresse',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
 
-  // Séparations verticales
+  // Séparations verticales — seulement à partir de H2Y pour NOM|ADR
   doc.line(ML+C_NOM,H2Y,ML+C_NOM,H2Y+HDR2_H+eleves.length*ELEVE_H);
+  // ADR|MAT et MAT|AR sur toute la hauteur du tableau
   doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+C_NOM+C_ADR,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
   doc.line(ML+C_NOM+C_ADR+C_MAT,TAB_Y,ML+C_NOM+C_ADR+C_MAT,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
@@ -3615,10 +3619,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const a=state.adresses&&state.adresses[prenom]?state.adresses[prenom]:{};
 
     // Pas de bordure sur NOM et ADR (seulement bas géré par bordure épaisse)
-    // Bordure pour MAT+AR seulement
     doc.setDrawColor(...BK);doc.setLineWidth(0.3);
-    doc.rect(ML+C_NOM+C_ADR,baseY,C_MAT+C_AR,ELEVE_H,'F');
-    doc.rect(ML+C_NOM+C_ADR,baseY,C_MAT+C_AR,ELEVE_H,'S');
 
     // NOM centré verticalement
     doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
@@ -3664,14 +3665,24 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
         doc.line(ML+C_NOM+C_ADR,ry,ML+W,ry);
       }
 
-      // Label Matin / Après Midi
-      if(mi===0||mi===2){
+      // Label Matin (fusionné lignes 0+1) / Après Midi (fusionné lignes 2+3)
+      if(mi===0){
         doc.setFontSize(5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
-        doc.text(MAT_LBL[mi],ML+C_NOM+C_ADR+C_MAT/2,ry+ROW_H+0.5,{align:'center'});
+        doc.text('Matin',ML+C_NOM+C_ADR+C_MAT/2,baseY+ROW_H,{align:'center'});
+        // Bordure cellule Matin (2 lignes fusionnées)
+        doc.setLineWidth(0.2);
+        doc.rect(ML+C_NOM+C_ADR,baseY,C_MAT,ROW_H*2,'S');
+      }
+      if(mi===2){
+        doc.setFontSize(5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+        doc.text('Après Midi',ML+C_NOM+C_ADR+C_MAT/2,baseY+ROW_H*3,{align:'center'});
+        // Bordure cellule Après Midi (2 lignes fusionnées)
+        doc.setLineWidth(0.2);
+        doc.rect(ML+C_NOM+C_ADR,baseY+ROW_H*2,C_MAT,ROW_H*2,'S');
       }
 
-      // Label Aller/Retour
-      doc.setFontSize(4.5);doc.setFont('helvetica','normal');
+      // Label Aller/Retour centré verticalement
+      doc.setFontSize(4.5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
       doc.text(AR_LBL[mi],ML+C_NOM+C_ADR+C_MAT+C_AR/2,ry+ROW_H/2+1,{align:'center'});
 
       // Ligne horizontale fine entre Retour/Aller
