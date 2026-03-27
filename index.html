@@ -3572,12 +3572,11 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const d=new Date(annee,mois,j);
     const valid=j<=nbJours;
     if(valid){
-      doc.setFont('helvetica','normal');doc.setFontSize(4.5);doc.setTextColor(...BK);
-      // Avec angle:90, le texte pivote vers la gauche — compenser avec +C_J/2 sur X
-      // Y = centre vertical de la zone haute
-      doc.text(JOURS_FR[d.getDay()],cx+C_J/2,TAB_Y+(HDR1_H-3)/2+1,{align:'center',angle:90});
+      doc.setFont('helvetica','normal');doc.setFontSize(5.5);doc.setTextColor(...BK);
+      // X entre cx (trop gauche) et cx+C_J/2 (trop droite) → cx+C_J/4
+      doc.text(JOURS_FR[d.getDay()],cx+C_J/4,TAB_Y+(HDR1_H-3)/2+1,{align:'center',angle:90});
       // Numéro centré en bas
-      doc.setFontSize(5);doc.setFont('helvetica','bold');
+      doc.setFontSize(5.5);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+HDR1_H-1.2,{align:'center'});
     }
     // Ligne verticale séparatrice
