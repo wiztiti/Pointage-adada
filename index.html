@@ -3572,10 +3572,10 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const d=new Date(annee,mois,j);
     const valid=j<=nbJours;
     if(valid){
-      doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(...BK);
+      doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(...BK);
       doc.text(JOURS_FR[d.getDay()],cx+C_J/4+0.5,TAB_Y+(HDR1_H-3)/2+1,{align:'center',angle:90});
       // Numéro centré en bas
-      doc.setFontSize(7);doc.setFont('helvetica','bold');
+      doc.setFontSize(8);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+HDR1_H-1.2,{align:'center'});
     }
     // Ligne verticale séparatrice
@@ -3590,23 +3590,20 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.setLineWidth(0.3);
   // Bordure complète pour MAT+AR seulement
   doc.rect(ML+C_NOM+C_ADR,H2Y,C_MAT+C_AR,HDR2_H,'S');
-  // Ligne du bas uniquement pour NOM+ADR
-  doc.line(ML,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H);
-  // Pas de bordure haut (cellule vide au dessus) — rien à dessiner
+  // Pas de bordure sur NOM/ADR
 
   doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+1.5,{align:'center'});
   doc.text('NOM Prénom',ML+C_NOM/2,H2Y+3.2,{align:'center'});
   doc.text('Adresse',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
 
-  // Séparations verticales — seulement à partir de H2Y pour NOM|ADR
-  doc.line(ML+C_NOM,H2Y,ML+C_NOM,H2Y+HDR2_H+eleves.length*ELEVE_H);
+  // Séparation NOM|ADR — supprimée (pas de bordure)
   // ADR|MAT et MAT|AR sur toute la hauteur du tableau
   doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+C_NOM+C_ADR,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
   doc.line(ML+C_NOM+C_ADR+C_MAT,TAB_Y,ML+C_NOM+C_ADR+C_MAT,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
-  // Ligne entre HDR1 et HDR2
-  doc.line(ML,H2Y,ML+TAB_W,H2Y);
+  // Ligne entre HDR1 et HDR2 — seulement à partir de ADR|MAT
+  doc.line(ML+C_NOM+C_ADR,H2Y,ML+TAB_W,H2Y);
 
   // ---- LIGNES ELEVES ----
   const MOMENTS_KEY=['MA','MR','SA','SR'];
@@ -3703,9 +3700,9 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       }
     });
 
-    // Bordure épaisse entre élèves (bas)
+    // Bordure épaisse bas — seulement à partir de C_NOM+C_ADR
     doc.setDrawColor(...BK);doc.setLineWidth(0.5);
-    doc.line(ML,baseY+ELEVE_H,ML+TAB_W,baseY+ELEVE_H);
+    doc.line(ML+C_NOM+C_ADR,baseY+ELEVE_H,ML+TAB_W,baseY+ELEVE_H);
   });
 
   // Bordure extérieure tableau — seulement sur la partie jours (droite)
@@ -3717,7 +3714,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Bas du tableau complet
   doc.line(ML,TAB_Y+tabH,ML+TAB_W,TAB_Y+tabH);
   // Côté gauche (seulement à partir de H2Y pour NOM/ADR)
-  doc.line(ML,H2Y,ML,TAB_Y+tabH);
+  // Pas de bordure gauche sur NOM/ADR
   // Côté droit complet
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+tabH);
 
