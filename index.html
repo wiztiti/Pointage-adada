@@ -3743,26 +3743,26 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const footY=TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H+2;
   const sigH=PH-footY-3;
 
-  // Texte "Indiquer X" à gauche — même ligne que email
+  // Texte "Indiquer X" à gauche
   doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
   doc.text("Indiquer \u00ab X \u00bb si l'\u00e9l\u00e8ve est pr\u00e9sent",ML,footY+4);
 
-  // Email retour — même niveau
-  doc.setFontSize(5.5);
-  doc.text('A retourner imp\u00e9rativement le dernier jour du mois \u00e0 : qdelvallee@adiate.fr',ML+90,footY+4);
-
   // Encadrement Visa conducteur
-  const visaX=ML+80;
-  const visaW=70;
+  const visaW=50;
+  const visaX=ML+70;
   doc.setLineWidth(0.4);doc.setDrawColor(...BK);
   doc.rect(visaX,footY,visaW,sigH,'S');
   // Titre
   doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('Visa conducteur :',visaX+2,footY+4);
-  // Nom et prénom du conducteur
-  doc.setFontSize(7);doc.setFont('helvetica','bold');
-  const nomConducteur=((s.nom||'').toUpperCase()+' '+(s.prenom||'')).trim();
-  doc.text(nomConducteur,visaX+visaW/2,footY+sigH/2+2,{align:'center'});
+  // Nom et prénom en bleu italique légèrement de biais (style manuscrit)
+  const nomConducteur=((s.prenom||'')+' '+(s.nom||'').toUpperCase()).trim();
+  doc.setFontSize(8);doc.setFont('courier','bolditalic');doc.setTextColor(0,80,160);
+  doc.text(nomConducteur,visaX+visaW/2,footY+sigH/2+2,{align:'center',angle:5});
+
+  // Email retour — après le cadre visa
+  doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+  doc.text('A retourner imp\u00e9rativement le dernier jour du mois \u00e0 : qdelvallee@adiate.fr',visaX+visaW+3,footY+4);
 }
 
 
