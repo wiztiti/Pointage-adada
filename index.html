@@ -3597,13 +3597,23 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.text('NOM Prénom',ML+C_NOM/2,H2Y+3.2,{align:'center'});
   doc.text('Adresse',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
 
-  // Séparation NOM|ADR — supprimée (pas de bordure)
+  // Séparation NOM|ADR sur les données seulement (pas le header)
+  doc.line(ML+C_NOM,H2Y+HDR2_H,ML+C_NOM,H2Y+HDR2_H+eleves.length*ELEVE_H);
   // ADR|MAT et MAT|AR sur toute la hauteur du tableau
   doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+C_NOM+C_ADR,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
   doc.line(ML+C_NOM+C_ADR+C_MAT,TAB_Y,ML+C_NOM+C_ADR+C_MAT,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
 
-  // Ligne entre HDR1 et HDR2 — seulement à partir de ADR|MAT
+  // Ligne entre HDR1 et HDR2 — seulement à partir de ADR|MAT (pas sur NOM/ADR header)
   doc.line(ML+C_NOM+C_ADR,H2Y,ML+TAB_W,H2Y);
+  // Bordure gauche tableau à partir de H2Y (données)
+  doc.setLineWidth(0.3);
+  doc.line(ML,H2Y+HDR2_H,ML,H2Y+HDR2_H+eleves.length*ELEVE_H);
+
+  // Bordure haute des données NOM/ADR
+  doc.setLineWidth(0.3);
+  doc.line(ML,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H);
+  // Bordure droite NOM/ADR sur toute la hauteur des données
+  doc.line(ML+C_NOM+C_ADR,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H+eleves.length*ELEVE_H);
 
   // ---- LIGNES ELEVES ----
   const MOMENTS_KEY=['MA','MR','SA','SR'];
@@ -3614,8 +3624,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     const baseY=H2Y+HDR2_H+ei*ELEVE_H;
     const a=state.adresses&&state.adresses[prenom]?state.adresses[prenom]:{};
 
-    // Pas de bordure sur NOM et ADR (seulement bas géré par bordure épaisse)
-    doc.setDrawColor(...BK);doc.setLineWidth(0.3);
+    // Pas de bordures sur NOM et ADR
 
     // NOM centré verticalement
     doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
@@ -3700,22 +3709,25 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       }
     });
 
-    // Bordure épaisse bas — seulement à partir de C_NOM+C_ADR
+    // Bordure épaisse bas — sur toute la largeur
     doc.setDrawColor(...BK);doc.setLineWidth(0.5);
-    doc.line(ML+C_NOM+C_ADR,baseY+ELEVE_H,ML+TAB_W,baseY+ELEVE_H);
+    doc.line(ML,baseY+ELEVE_H,ML+TAB_W,baseY+ELEVE_H);
+    // Bordures haut NOM/ADR pour chaque élève sauf le premier (déjà dessiné)
+    if(ei>0){
+      doc.setLineWidth(0.3);
+      doc.line(ML,baseY,ML+C_NOM+C_ADR,baseY);
+    }
   });
 
-  // Bordure extérieure tableau — seulement sur la partie jours (droite)
-  // Pas de bordure sur NOM/ADR
   const tabH=HDR1_H+HDR2_H+eleves.length*ELEVE_H;
   doc.setDrawColor(...BK);doc.setLineWidth(0.5);
-  // Haut du tableau (seulement sur la partie jours)
+  // Bordure gauche — seulement sur les données (pas le header NOM/ADR)
+  doc.line(ML,H2Y+HDR2_H,ML,TAB_Y+tabH);
+  // Haut — seulement sur la partie jours+MAT+AR
   doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+TAB_W,TAB_Y);
-  // Bas du tableau complet
+  // Bas complet
   doc.line(ML,TAB_Y+tabH,ML+TAB_W,TAB_Y+tabH);
-  // Côté gauche (seulement à partir de H2Y pour NOM/ADR)
-  // Pas de bordure gauche sur NOM/ADR
-  // Côté droit complet
+  // Droite complète
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+tabH);
 
   // ---- PIED ----
