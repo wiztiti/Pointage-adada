@@ -3498,14 +3498,14 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // De la colonne Matin (75mm) jusqu'au 23ème jour
   // C_NOM_PRE=35, C_NOM=35, C_ADR=35 => Matin start = ML+35+35+35 = 110... 
   // On utilise les valeurs hardcodées: Matin = 75mm, 23ème jour ≈ 234mm
-  const TitleX=75,TitleH=8,TitleW=159;
+  const TitleX=75,TitleH=5,TitleW=159;
   const TitleY=MT;
   doc.setFillColor(...TITLE_BG);
   doc.rect(TitleX,TitleY,TitleW,TitleH,'F');
   doc.setDrawColor(...BK);doc.setLineWidth(0.4);
   doc.rect(TitleX,TitleY,TitleW,TitleH,'S');
   doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-  doc.text('ETAT DE PRESENCE',TitleX+TitleW/2,TitleY+5.8,{align:'center'});
+  doc.text('ETAT DE PRESENCE',TitleX+TitleW/2,TitleY+3.8,{align:'center'});
 
   // ---- LOGO ADIATE ----
   try{doc.addImage(logoB64,'PNG',PW-MR-42,MT,42,24);}catch(e){}
@@ -3513,7 +3513,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // ---- BLOC CONDUCTEUR (aligné sur colonne Adresse) ----
   // BX calculé après les constantes du tableau — on anticipe C_NOM=26
   const C_NOM_PRE=35;
-  const BX=ML+C_NOM_PRE,BY=MT+TitleH+2,BW=66,BH=26;
+  const BX=ML+C_NOM_PRE,BY=MT+TitleH+6,BW=66,BH=26;
   doc.setLineWidth(0.4);doc.rect(BX,BY,BW,BH,'S');
   doc.setFontSize(7.5);
   const cLines=[
