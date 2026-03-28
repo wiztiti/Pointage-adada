@@ -3561,6 +3561,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const ELEVE_H=ROW_H*4;
 
   const JOURS_FR=['dim','lun','mar','mer','jeu','ven','sam'];
+  const H2Y=TAB_Y+HDR1_H; // défini ici pour usage dans la boucle
 
   // Header ligne 1 : jours — bordures sans le haut à gauche de MAT+AR
   doc.setLineWidth(0.3);doc.setDrawColor(...BK);
@@ -3595,7 +3596,6 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H); // bordure droite complète
 
   // Header ligne 2 : ELEVES / NOM Prénom / Adresse — aucune bordure sur NOM et ADR
-  const H2Y=TAB_Y+HDR1_H;
   // Pas de bordure sur MAT+AR dans le header — cellules vides sans bordure
 
   doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
