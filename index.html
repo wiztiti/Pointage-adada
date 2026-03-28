@@ -3562,7 +3562,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   const JOURS_FR=['dim','lun','mar','mer','jeu','ven','sam'];
 
-  // Header ligne 1 : jours
+  // Header ligne 1 : jours — seulement la zone des jours, pas MAT/AR
   doc.setLineWidth(0.3);doc.setDrawColor(...BK);
   doc.rect(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,C_REST,HDR1_H,'S');
 
@@ -3587,10 +3587,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   // Header ligne 2 : ELEVES / NOM Prénom / Adresse — aucune bordure sur NOM et ADR
   const H2Y=TAB_Y+HDR1_H;
-  doc.setLineWidth(0.3);
-  // Bordure complète pour MAT+AR seulement
-  doc.rect(ML+C_NOM+C_ADR,H2Y,C_MAT+C_AR,HDR2_H,'S');
-  // Pas de bordure sur NOM/ADR
+  // Pas de bordure sur MAT+AR dans le header — cellules vides sans bordure
 
   doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+1.5,{align:'center'});
@@ -3599,15 +3596,13 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   // Séparation NOM|ADR sur les données seulement (pas le header)
   doc.line(ML+C_NOM,H2Y+HDR2_H,ML+C_NOM,H2Y+HDR2_H+eleves.length*ELEVE_H);
-  // ADR|MAT et MAT|AR sur toute la hauteur du tableau
-  doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+C_NOM+C_ADR,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
-  doc.line(ML+C_NOM+C_ADR+C_MAT,TAB_Y,ML+C_NOM+C_ADR+C_MAT,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
+  // ADR|MAT seulement à partir des données
+  doc.line(ML+C_NOM+C_ADR,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H+eleves.length*ELEVE_H);
+  // MAT|AR seulement à partir des données
+  doc.line(ML+C_NOM+C_ADR+C_MAT,H2Y+HDR2_H,ML+C_NOM+C_ADR+C_MAT,H2Y+HDR2_H+eleves.length*ELEVE_H);
 
-  // Ligne entre HDR1 et HDR2 — seulement à partir de ADR|MAT (pas sur NOM/ADR header)
-  doc.line(ML+C_NOM+C_ADR,H2Y,ML+TAB_W,H2Y);
-  // Bordure gauche tableau à partir de H2Y (données)
-  doc.setLineWidth(0.3);
-  doc.line(ML,H2Y+HDR2_H,ML,H2Y+HDR2_H+eleves.length*ELEVE_H);
+  // Pas de ligne horizontale entre HDR1 et HDR2 sur MAT/AR
+  // Bordure gauche tableau à partir des données seulement
 
   // Bordure haute des données NOM/ADR
   doc.setLineWidth(0.3);
