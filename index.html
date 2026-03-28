@@ -3361,6 +3361,31 @@ function openHelp(){
   document.getElementById('modalHelp').classList.add('open');
 }
 
+function openModalFDR(){
+  loadFdrSettings();
+  const today=new Date();
+  const mon=new Date(today);
+  mon.setDate(today.getDate()-((today.getDay()+6)%7));
+  document.getElementById('feuilleDate').value=dateStr(mon);
+  document.getElementById('modalFDR').classList.add('open');
+}
+
+function loadFdrSettings(){
+  const s=state.pdfSettings||{};
+  const nomEl=document.getElementById('fdrNom');
+  const prenomEl=document.getElementById('fdrPrenom');
+  if(document.getElementById('fdrAgence')) document.getElementById('fdrAgence').value=s.agence||'';
+  if(document.getElementById('fdrImmat')) document.getElementById('fdrImmat').value=s.immat||'';
+  if(document.getElementById('fdrLicence')) document.getElementById('fdrLicence').value=s.licence||'';
+  if(document.getElementById('fdrClient')) document.getElementById('fdrClient').value=s.client||'';
+  if(nomEl) nomEl.value=s.nom||'';
+  if(prenomEl) prenomEl.value=s.prenom||'';
+  if(document.getElementById('fdrLieu')) document.getElementById('fdrLieu').value=s.lieu||'';
+  if(document.getElementById('feuilleArrivee')) document.getElementById('feuilleArrivee').value=s.lieuArrivee||s.lieu||'';
+  if(document.getElementById('fdrCircuit')) document.getElementById('fdrCircuit').value=s.circuit||'';
+  if(document.getElementById('fdrCarte')) document.getElementById('fdrCarte').value=s.carte||'';
+}
+
 function toggleFdrParams(){
   const body=document.getElementById('fdrParamsBody');
   const chevron=document.getElementById('fdrParamsChevron');
@@ -3588,8 +3613,8 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       doc.setFontSize(8);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+HDR1_H-1.2,{align:'center'});
     }
-    // Ligne verticale séparatrice — commence à TAB_Y pour toutes sauf la 1ère
-    doc.setLineWidth(0.15);doc.setDrawColor(...BK);
+    // Ligne verticale séparatrice
+    doc.setLineWidth(j===1?0.3:0.15);doc.setDrawColor(...BK);
     doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H); // bordure gauche de chaque jour (fusionné)
     doc.line(x,H2Y+HDR2_H,x,H2Y+HDR2_H+eleves.length*ELEVE_H); // dans zone données
   }
