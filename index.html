@@ -3562,9 +3562,17 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   const JOURS_FR=['dim','lun','mar','mer','jeu','ven','sam'];
 
-  // Header ligne 1 : jours — seulement la zone des jours, pas MAT/AR
+  // Header ligne 1 : jours — bordures sans le haut à gauche de MAT+AR
   doc.setLineWidth(0.3);doc.setDrawColor(...BK);
-  doc.rect(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,C_REST,HDR1_H,'S');
+  // Seulement les 3 côtés : gauche, bas, droite — pas le haut complet
+  // Ligne gauche du bloc jours
+  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y+HDR1_H);
+  // Ligne bas
+  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y+HDR1_H,ML+TAB_W,TAB_Y+HDR1_H);
+  // Ligne droite
+  doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H);
+  // Ligne haut seulement sur la zone jours (pas sur MAT/AR)
+  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,ML+TAB_W,TAB_Y);
 
   for(let j=1;j<=31;j++){
     const x=ML+C_NOM+C_ADR+C_MAT+C_AR+(j-1)*C_J;
@@ -3658,7 +3666,10 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
       // Labels Matin/Après-midi — fusionnés, dessinés une seule fois
       if(mi===0){
-        // Cellule Matin fusionnée (lignes 0+1) : juste bordure droite + séparateur entre MAT et AR
+        // Ligne au dessus du 1er Matin — de MAT jusqu'au dernier jour
+        doc.setDrawColor(...BK);doc.setLineWidth(0.3);
+        doc.line(ML+C_NOM+C_ADR,baseY,ML+TAB_W,baseY);
+        // Label Matin centré
         doc.setFontSize(5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
         doc.text('Matin',ML+C_NOM+C_ADR+C_MAT/2,baseY+ROW_H,{align:'center'});
         // Ligne séparatrice droite de MAT
