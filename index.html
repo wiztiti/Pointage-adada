@@ -3527,6 +3527,11 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   cLines.forEach((row,i)=>{
     const ly=BY+3.5+i*4.2;
     doc.setFont('helvetica','bold');doc.text(row.label,BX+2,ly);
+    // Souligner "Conducteur :" (première ligne)
+    if(i===0){
+      const tw=doc.getTextWidth(row.label);
+      doc.setLineWidth(0.2);doc.line(BX+2,ly+0.5,BX+2+tw,ly+0.5);
+    }
     if(row.val!==null){doc.setFont('helvetica','normal');doc.text(row.val,BX+30,ly);}
   });
 
@@ -3569,12 +3574,12 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.setLineWidth(0.3);doc.setDrawColor(...BK);
   // Seulement les 3 côtés : gauche, bas, droite — pas le haut complet
   // Ligne gauche du bloc jours
-  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y+HDR1_H);
-  // Ligne bas
+  // Pas de bordure haut/gauche sur MAT+AR
+  // Ligne bas du bloc jours
   doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y+HDR1_H,ML+TAB_W,TAB_Y+HDR1_H);
   // Ligne droite
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H);
-  // Ligne haut seulement sur la zone jours (pas sur MAT/AR)
+  // Ligne haut zone jours uniquement (à partir du 1er jour)
   doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,ML+TAB_W,TAB_Y);
 
   for(let j=1;j<=31;j++){
@@ -3758,7 +3763,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Nom et prénom en bleu italique légèrement de biais (style manuscrit)
   const nomConducteur=((s.prenom||'')+' '+(s.nom||'').toUpperCase()).trim();
   doc.setFontSize(8);doc.setFont('courier','bolditalic');doc.setTextColor(0,80,160);
-  doc.text(nomConducteur,visaX+visaW/2,footY+sigH/2+2,{align:'center',angle:5});
+  doc.text(nomConducteur,visaX+visaW/2,footY+sigH/2+2,{align:'center',angle:1});
 
   // Email retour — après le cadre visa
   doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
