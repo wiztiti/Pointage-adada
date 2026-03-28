@@ -3573,7 +3573,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Header ligne 1 : jours — bordures sans le haut à gauche de MAT+AR
   doc.setLineWidth(0.3);doc.setDrawColor(...BK);
   doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,ML+TAB_W,TAB_Y);
-  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y+HDR1_H,ML+TAB_W,TAB_Y+HDR1_H);
+  // Pas de ligne entre HDR1 et HDR2 sur les jours — fusionnés
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H);
 
   for(let j=1;j<=31;j++){
@@ -3590,7 +3590,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     }
     // Ligne verticale séparatrice — commence à TAB_Y pour toutes sauf la 1ère
     doc.setLineWidth(0.15);doc.setDrawColor(...BK);
-    if(j>1) doc.line(x,TAB_Y,x,TAB_Y+HDR1_H); // dans zone jours seulement
+    doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H); // bordure gauche de chaque jour (fusionné)
     doc.line(x,H2Y+HDR2_H,x,H2Y+HDR2_H+eleves.length*ELEVE_H); // dans zone données
   }
   doc.setLineWidth(0.3);
