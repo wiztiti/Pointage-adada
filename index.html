@@ -3741,23 +3741,28 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   // ---- PIED ----
   const footY=TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H+2;
-  const sigH=PH-footY-3; // hauteur disponible pour le pied
+  const sigH=PH-footY-3;
 
-  // Texte "Indiquer X" à gauche
+  // Texte "Indiquer X" à gauche — même ligne que email
   doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
   doc.text("Indiquer \u00ab X \u00bb si l'\u00e9l\u00e8ve est pr\u00e9sent",ML,footY+4);
 
-  // Email retour
+  // Email retour — même niveau
   doc.setFontSize(5.5);
-  doc.text('A retourner imp\u00e9rativement le dernier jour du mois \u00e0 : qdelvallee@adiate.fr',ML,footY+sigH-1);
+  doc.text('A retourner imp\u00e9rativement le dernier jour du mois \u00e0 : qdelvallee@adiate.fr',ML+90,footY+4);
 
-  // Encadrement Visa conducteur (comme feuille de route)
+  // Encadrement Visa conducteur
   const visaX=ML+80;
-  const visaW=60;
+  const visaW=70;
   doc.setLineWidth(0.4);doc.setDrawColor(...BK);
   doc.rect(visaX,footY,visaW,sigH,'S');
-  doc.setFontSize(6);doc.setFont('helvetica','bold');
+  // Titre
+  doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('Visa conducteur :',visaX+2,footY+4);
+  // Nom et prénom du conducteur
+  doc.setFontSize(7);doc.setFont('helvetica','bold');
+  const nomConducteur=((s.nom||'').toUpperCase()+' '+(s.prenom||'')).trim();
+  doc.text(nomConducteur,visaX+visaW/2,footY+sigH/2+2,{align:'center'});
 }
 
 
