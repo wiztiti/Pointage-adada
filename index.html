@@ -3611,7 +3611,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       // Jour vertical — centré horizontalement dans la cellule
       // Avec angle:90, cx+offset compense le décalage vers la gauche
       doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...BK);
-      doc.text(JOURS_FR[d.getDay()],cx+C_J/4+0.5,TAB_Y+cellH*0.45,{align:'center',angle:90});
+      doc.text(JOURS_FR[d.getDay()],cx+1.8,TAB_Y+cellH*0.45,{align:'center',angle:90});
       // Numéro en bas de la cellule
       doc.setFontSize(10);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+cellH-1.5,{align:'center'});
