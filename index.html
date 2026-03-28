@@ -3511,7 +3511,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // ---- BLOC CONDUCTEUR (aligné sur colonne Adresse) ----
   // BX calculé après les constantes du tableau — on anticipe C_NOM=26
   const C_NOM_PRE=35;
-  const BX=ML+C_NOM_PRE,BY=MT+TitleH+2,BW=66,BH=28;
+  const BX=ML+C_NOM_PRE,BY=MT+TitleH+2,BW=66,BH=26;
   doc.setLineWidth(0.4);doc.rect(BX,BY,BW,BH,'S');
   doc.setFontSize(7.5);
   const cLines=[
@@ -3529,13 +3529,13 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   });
 
   // ---- BLOC MOIS/ANNEE (centre) ----
-  const MBX=PW/2-20,MBY=BY+2,MBW=40,MBH=20;
+  const MBX=75,MBY=BY+2,MBW=159,MBH=16;
   doc.setLineWidth(0.4);doc.rect(MBX,MBY,MBW,MBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
-  doc.text('Mois :',MBX+4,MBY+6);
+  doc.text('Mois :',MBX+4,MBY+5);
   doc.setFont('helvetica','normal');doc.text(MOIS_FR[mois],MBX+18,MBY+6);
-  doc.setFont('helvetica','bold');doc.text('Année :',MBX+4,MBY+14);
-  doc.setFont('helvetica','normal');doc.text(String(annee),MBX+18,MBY+14);
+  doc.setFont('helvetica','bold');doc.text('Année :',MBX+4,MBY+11);
+  doc.setFont('helvetica','normal');doc.text(String(annee),MBX+18,MBY+11);
 
   // ---- BLOC CIRCUIT (droite) ----
   const CBX=PW-MR-100,CBY=BY+2,CBW=46,CBH=20;
