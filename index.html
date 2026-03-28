@@ -3571,11 +3571,9 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const H2Y=TAB_Y+HDR1_H; // défini ici pour usage dans la boucle
 
   // Header ligne 1 : jours — bordures sans le haut à gauche de MAT+AR
-  // Ligne haut du bloc jours — commence au bord gauche du 1er jour
-  doc.line(JOURS_START,TAB_Y,ML+TAB_W,TAB_Y);
-  // Ligne bas du bloc jours
-  doc.line(JOURS_START,TAB_Y+HDR1_H,ML+TAB_W,TAB_Y+HDR1_H);
-  // Ligne droite
+  doc.setLineWidth(0.3);doc.setDrawColor(...BK);
+  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,ML+TAB_W,TAB_Y);
+  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y+HDR1_H,ML+TAB_W,TAB_Y+HDR1_H);
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H);
 
   for(let j=1;j<=31;j++){
