@@ -3546,7 +3546,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.text(s.circuit||'',CBX+CBW/2,CBY+17,{align:'center'});
 
   // ---- TABLEAU ----
-  const TAB_Y=BY+BH+8; // rapproché des blocs
+  const TAB_Y=83; // tableau en bas de page
   // Colonnes : NOM | ADRESSE | Matin/ApM | Aller/Retour | 31 jours
   const C_NOM=35;
   const C_ADR=35;
@@ -3588,10 +3588,11 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     }
     // Ligne verticale séparatrice
     doc.setLineWidth(0.15);doc.setDrawColor(...BK);
-    doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
+    doc.line(x,TAB_Y,x,TAB_Y+HDR1_H); // dans zone jours seulement
+    doc.line(x,H2Y+HDR2_H,x,H2Y+HDR2_H+eleves.length*ELEVE_H); // dans zone données
   }
   doc.setLineWidth(0.3);
-  doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H);
+  doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H); // bordure droite complète
 
   // Header ligne 2 : ELEVES / NOM Prénom / Adresse — aucune bordure sur NOM et ADR
   const H2Y=TAB_Y+HDR1_H;
