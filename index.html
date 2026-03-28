@@ -3546,7 +3546,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.text(s.circuit||'',CBX+CBW/2,CBY+17,{align:'center'});
 
   // ---- TABLEAU ----
-  const TAB_Y=83; // tableau en bas de page
+  const TAB_Y=63; // 2cm sous les blocs supérieurs
   // Colonnes : NOM | ADRESSE | Matin/ApM | Aller/Retour | 31 jours
   const C_NOM=35;
   const C_ADR=35;
@@ -3555,7 +3555,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const C_REST=W-C_NOM-C_ADR-C_MAT-C_AR;
   const C_J=C_REST/31;
   const TAB_W=W; // tableau pleine largeur
-  const ROW_H=3.0;
+  const ROW_H=3.72;
   const HDR1_H=12;  // plus haut
   const HDR2_H=4;
   const ELEVE_H=ROW_H*4;
