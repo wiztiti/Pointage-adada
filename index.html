@@ -3508,7 +3508,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.text('ETAT DE PRESENCE',TitleX+TitleW/2,TitleY+3.8,{align:'center'});
 
   // ---- LOGO ADIATE ----
-  try{doc.addImage(logoB64,'PNG',PW-MR-42,MT,42,24);}catch(e){}
+  try{doc.addImage(logoB64,'PNG',PW-MR-32,MT,32,18);}catch(e){}
 
   // ---- BLOC CONDUCTEUR (aligné sur colonne Adresse) ----
   // BX calculé après les constantes du tableau — on anticipe C_NOM=26
@@ -3740,12 +3740,25 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+tabH);
 
   // ---- PIED ----
-  const footY=TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H+3;
+  const footY=TAB_Y+HDR1_H+HDR2_H+eleves.length*ELEVE_H+2;
+  const PH=210;
+  const sigH=PH-footY-3; // hauteur disponible pour le pied
+
+  // Texte "Indiquer X" à gauche
   doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
-  doc.text("Indiquer \u00ab X \u00bb si l'\u00e9l\u00e8ve est pr\u00e9sent",ML,footY+3);
-  doc.text('Visa conducteur :',ML+80,footY+3);
+  doc.text("Indiquer \u00ab X \u00bb si l'\u00e9l\u00e8ve est pr\u00e9sent",ML,footY+4);
+
+  // Email retour
   doc.setFontSize(5.5);
-  doc.text('A retourner imp\u00e9rativement le dernier jour du mois \u00e0 : qdelvallee@adiate.fr',ML+130,footY+3);
+  doc.text('A retourner imp\u00e9rativement le dernier jour du mois \u00e0 : qdelvallee@adiate.fr',ML,footY+sigH-1);
+
+  // Encadrement Visa conducteur (comme feuille de route)
+  const visaX=ML+80;
+  const visaW=60;
+  doc.setLineWidth(0.4);doc.setDrawColor(...BK);
+  doc.rect(visaX,footY,visaW,sigH,'S');
+  doc.setFontSize(6);doc.setFont('helvetica','bold');
+  doc.text('Visa conducteur :',visaX+2,footY+4);
 }
 
 
