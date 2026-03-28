@@ -3394,6 +3394,70 @@ function toggleFdrParams(){
   chevron.textContent=open?'▶':'▼';
 }
 
+function saveFdrSettings(){
+  if(!state.pdfSettings) state.pdfSettings={};
+  state.pdfSettings={
+    agence:document.getElementById('fdrAgence').value,
+    immat:document.getElementById('fdrImmat').value,
+    licence:document.getElementById('fdrLicence').value,
+    client:document.getElementById('fdrClient').value,
+    conducteur:(document.getElementById('fdrNom').value+' '+document.getElementById('fdrPrenom').value).trim(),
+    nom:document.getElementById('fdrNom').value,
+    prenom:document.getElementById('fdrPrenom').value,
+    lieu:document.getElementById('fdrLieu').value,
+    lieuArrivee:document.getElementById('feuilleArrivee').value,
+    circuit:document.getElementById('fdrCircuit')?document.getElementById('fdrCircuit').value:'',
+    carte:document.getElementById('fdrCarte')?document.getElementById('fdrCarte').value:'',
+  };
+  saveState();
+}
+
+function genererFeuille(mode){
+  const mondayDs=document.getElementById('feuilleDate').value;
+  if(!mondayDs){showToast('❌ Choisissez une date');return;}
+  saveFdrSettings();
+  const s=state.pdfSettings||{};
+  const lieuArr=document.getElementById('feuilleArrivee').value||'';
+
+  const champsVides=[];
+  if(!s.agence) champsVides.push('Agence');
+  if(!s.immat) champsVides.push('Immatriculation');
+  if(!s.licence) champsVides.push('Licence');
+  if(!s.client) champsVides.push('Client');
+  if(!s.nom) champsVides.push('Nom conducteur');
+  if(!s.prenom) champsVides.push('Prénom conducteur');
+  if(!s.lieu) champsVides.push('Lieu départ');
+  if(!lieuArr) champsVides.push('Lieu arrivée');
+
+  const doGenerate=()=>{
+    closeModal('modalFDR');
+    showToast('⏳ Génération en cours...');
+    setTimeout(()=>{
+      try{
+        if(window.jspdf&&window.jspdf.jsPDF){
+          _buildAndDownloadFDR(mode,mondayDs,s,lieuArr);
+        } else {
+          const script=document.createElement('script');
+          script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+          script.onload=()=>_buildAndDownloadFDR(mode,mondayDs,s,lieuArr);
+          document.head.appendChild(script);
+        }
+      }catch(e){showToast('❌ Erreur génération PDF');}
+    },100);
+  };
+
+  if(champsVides.length>0){
+    document.getElementById('fdrWarningList').textContent='Champs manquants : '+champsVides.join(', ');
+    document.getElementById('modalFDRWarning').classList.add('open');
+    document.getElementById('fdrWarningConfirm').onclick=()=>{
+      closeModal('modalFDRWarning');
+      doGenerate();
+    };
+  } else {
+    doGenerate();
+  }
+}
+
 // ============================================================
 // ADRESSES ELEVES
 // ============================================================
@@ -3493,6 +3557,124 @@ function genererEtatMensuel(mode){
   } else {
     generate();
   }
+}
+
+function _buildAndDownloadFDR(mode,mondayDs,s,lieuArr){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const TEAL=[0,99,114];
+  const LIGHT_BLUE=[207,226,243];
+  const BK=[0,0,0];
+  const ML=8,MT=8,PW=297,PH=210;
+  const W=PW-ML*2;
+
+  const monday=new Date(mondayDs);
+  const startOfYear=new Date(monday.getFullYear(),0,1);
+  const weekNum=Math.ceil(((monday-startOfYear)/86400000+startOfYear.getDay()+1)/7);
+
+  // ---- EN-TETE ----
+  doc.setFillColor(...TEAL);
+  doc.rect(ML,MT,W,8,'F');
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  doc.text('Agence : '+(s.agence||''),ML+2,MT+5);
+  doc.text('Immat : '+(s.immat||''),ML+60,MT+5);
+  doc.text('Licence : '+(s.licence||''),ML+120,MT+5);
+  doc.text('Client : '+(s.client||''),ML+180,MT+5);
+
+  // Logo ADIATE (récupéré depuis _buildEtatPage)
+  const logoEl=document.querySelector('img[src*="adiate"],img[alt*="adiate"]');
+  if(logoEl) try{doc.addImage(logoEl,'PNG',PW-ML-28,MT,28,16);}catch(e){}
+
+  // "Semaine XX"
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(...TEAL);
+  doc.text('Semaine '+weekNum,PW/2,MT+17,{align:'center'});
+
+  // Déclaration conducteur
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+  const nomCond=((s.prenom||'')+' '+(s.nom||'').toUpperCase()).trim();
+  doc.text('Déclaration conducteur : '+nomCond,ML,MT+23);
+  if(s.circuit) doc.text('Circuit N° : '+s.circuit,ML+100,MT+23);
+  if(s.carte) doc.text('Carte carburant : '+s.carte,ML+180,MT+23);
+
+  // ---- TABLEAU ----
+  const TAB_Y=MT+27;
+  const JOURS_NMS=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  const COL_DATE=22,COL_DEP=28,COL_ARR=28,COL_KM_D=18,COL_KM_F=18,COL_REAL=18,COL_CONV=18,COL_ANNX=18;
+  const COL_COMM=W-COL_DATE-COL_DEP-COL_ARR-COL_KM_D-COL_KM_F-COL_REAL-COL_CONV-COL_ANNX;
+  const COLS=[COL_DATE,COL_DEP,COL_ARR,COL_KM_D,COL_KM_F,COL_REAL,COL_CONV,COL_ANNX,COL_COMM];
+  const HEADERS=['Jour','Lieu départ','Lieu arrivée','Km début','Km fin','T. réel','T. conv.','T. annexe','Commentaires'];
+  const ROW_H=14;
+
+  // Header
+  doc.setFillColor(...LIGHT_BLUE);
+  doc.rect(ML,TAB_Y,W,7,'F');
+  doc.setDrawColor(...BK);doc.setLineWidth(0.3);
+  doc.rect(ML,TAB_Y,W,7,'S');
+  let cx=ML;
+  doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
+  HEADERS.forEach((h,i)=>{
+    doc.text(h,cx+COLS[i]/2,TAB_Y+4.5,{align:'center'});
+    if(i>0){doc.setLineWidth(0.2);doc.line(cx,TAB_Y,cx,TAB_Y+7);}
+    cx+=COLS[i];
+  });
+
+  // Lignes
+  let totReal=0,totConv=0,totAnnx=0;
+  for(let d=0;d<7;d++){
+    const dayDate=new Date(monday);
+    dayDate.setDate(monday.getDate()+d);
+    const ds=dateStr(dayDate);
+    const ry=TAB_Y+7+d*ROW_H;
+    const vacs=(state.vacations||[]).filter(v=>{
+      const vd=new Date(v.dep||v.ret);
+      return vd.toISOString().slice(0,10)===ds;
+    });
+    if(d>=5){doc.setFillColor(240,240,240);doc.rect(ML,ry,W,ROW_H,'F');}
+    doc.setDrawColor(...BK);doc.setLineWidth(0.2);
+    doc.rect(ML,ry,W,ROW_H,'S');
+
+    const realM=realMins(vacs);
+    const convM=convMins(vacs,state.deduc);
+    const annxM=annexeMins(vacs);
+    totReal+=realM;totConv+=convM;totAnnx+=annxM;
+    const kmD=state.dayData&&state.dayData[ds]?state.dayData[ds].km:'';
+    const note=state.dayData&&state.dayData[ds]?state.dayData[ds].note:'';
+
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+    let rx=ML;
+    const dayLabel=JOURS_NMS[d]+' '+dayDate.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    const vals=[dayLabel,s.lieu||'',lieuArr||'',kmD||'','',
+      realM>0?fmtH(realM):'',convM>0?fmtH(convM):'',annxM>0?fmtH(annxM):'',note||''];
+    vals.forEach((v,i)=>{
+      if(i>0){doc.setLineWidth(0.15);doc.line(rx,ry,rx,ry+ROW_H);}
+      if(v) doc.text(String(v),rx+COLS[i]/2,ry+ROW_H/2+1.5,{align:'center'});
+      rx+=COLS[i];
+    });
+  }
+
+  // Totaux
+  const totY=TAB_Y+7+7*ROW_H;
+  doc.setFillColor(...TEAL);
+  doc.rect(ML,totY,W,8,'F');
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+  doc.text('TOTAUX',ML+COL_DATE/2,totY+5,{align:'center'});
+  let tx=ML+COL_DATE+COL_DEP+COL_ARR+COL_KM_D+COL_KM_F;
+  doc.text(fmtH(totReal),tx+COL_REAL/2,totY+5,{align:'center'});tx+=COL_REAL;
+  doc.text(fmtH(totConv),tx+COL_CONV/2,totY+5,{align:'center'});tx+=COL_CONV;
+  doc.text(fmtH(totAnnx),tx+COL_ANNX/2,totY+5,{align:'center'});
+  doc.setDrawColor(...BK);doc.setLineWidth(0.3);doc.rect(ML,totY,W,8,'S');
+
+  // Signature conducteur
+  const sigY=totY+12;
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+  doc.text('Signature conducteur :',ML,sigY);
+  doc.setLineWidth(0.3);doc.rect(ML+40,sigY-4,60,12,'S');
+  doc.setFontSize(8);doc.setFont('courier','bolditalic');doc.setTextColor(0,80,160);
+  doc.text(nomCond,ML+70,sigY+4,{align:'center',angle:1});
+
+  const title='feuille-de-route-semaine-'+weekNum+'-'+monday.getFullYear();
+  if(mode==='pdf'){_downloadPDF(doc,title);showToast('✅ PDF téléchargé !');}
+  else {_downloadJPG(doc,title);}
 }
 
 function _buildEtatMensuelPDF(jsPDF,mois,annee,s,mode){
@@ -3611,7 +3793,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       // Jour vertical — centré horizontalement dans la cellule
       // Avec angle:90, cx+offset compense le décalage vers la gauche
       doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...BK);
-      doc.text(JOURS_FR[d.getDay()],cx+1.8,TAB_Y+cellH*0.45,{align:'center',angle:90});
+      doc.text(JOURS_FR[d.getDay()],cx+2.5,TAB_Y+cellH*0.45,{align:'center',angle:90});
       // Numéro en bas de la cellule
       doc.setFontSize(10);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+cellH-1.5,{align:'center'});
@@ -3660,7 +3842,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     // Pas de bordures sur NOM et ADR
 
     // NOM centré verticalement
-    doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
+    doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
     const prenomAff=a.prenom||capitalize(prenom);
     if(a.nom){
       doc.text(a.nom,ML+C_NOM/2,baseY+ELEVE_H/2-1,{align:'center'});
@@ -3672,7 +3854,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
     }
 
     // Adresse centrée verticalement
-    doc.setFontSize(5.2);doc.setFont('helvetica','normal');
+    doc.setFontSize(7);doc.setFont('helvetica','normal');
     const adrLines=[];
     if(a.adr1) adrLines.push({t:a.adr1,bold:false});
     if(a.adr2) adrLines.push({t:a.adr2,bold:false});
@@ -3734,12 +3916,12 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
           const ds=String(annee)+'-'+String(mois+1).padStart(2,'0')+'-'+String(j).padStart(2,'0');
           const pres=getPresenceState(ds,prenom,m);
           if(pres===true){
-            doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-            doc.text('X',x+C_J/2,ry+ROW_H/2+1,{align:'center'});
+            doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
+            doc.text('X',x+C_J/2,ry+ROW_H/2+1.5,{align:'center'});
           } else if(pres==='np'){
-            doc.setFontSize(6);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-            doc.text('X',x+C_J/2,ry+ROW_H/2+1,{align:'center'});
-            doc.setLineWidth(0.25);doc.circle(x+C_J/2,ry+ROW_H/2+0.2,1.0,'S');
+            doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
+            doc.text('X',x+C_J/2,ry+ROW_H/2+1.5,{align:'center'});
+            doc.setLineWidth(0.25);doc.circle(x+C_J/2,ry+ROW_H/2+0.3,1.4,'S');
           }
         }
       }
