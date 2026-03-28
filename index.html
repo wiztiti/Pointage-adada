@@ -3571,12 +3571,12 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const H2Y=TAB_Y+HDR1_H; // défini ici pour usage dans la boucle
 
   // Header ligne 1 : jours — bordures sans le haut à gauche de MAT+AR
-  doc.setLineWidth(0.3);doc.setDrawColor(...BK);
-  // Ligne bas du bloc jours (entre HDR1 et HDR2) — seulement sur la zone jours
-  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y+HDR1_H,ML+TAB_W,TAB_Y+HDR1_H);
+  // Ligne haut du bloc jours — commence au bord gauche du 1er jour
+  doc.line(JOURS_START,TAB_Y,ML+TAB_W,TAB_Y);
+  // Ligne bas du bloc jours
+  doc.line(JOURS_START,TAB_Y+HDR1_H,ML+TAB_W,TAB_Y+HDR1_H);
   // Ligne droite
   doc.line(ML+TAB_W,TAB_Y,ML+TAB_W,TAB_Y+HDR1_H);
-  // Pas de ligne haut — supprimée car elle crée une bordure sur MAT/AR
 
   for(let j=1;j<=31;j++){
     const x=ML+C_NOM+C_ADR+C_MAT+C_AR+(j-1)*C_J;
@@ -3590,9 +3590,9 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       doc.setFontSize(8);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+HDR1_H-1.2,{align:'center'});
     }
-    // Ligne verticale séparatrice
+    // Ligne verticale séparatrice — commence à TAB_Y pour toutes sauf la 1ère
     doc.setLineWidth(0.15);doc.setDrawColor(...BK);
-    doc.line(x,TAB_Y,x,TAB_Y+HDR1_H); // dans zone jours seulement
+    if(j>1) doc.line(x,TAB_Y,x,TAB_Y+HDR1_H); // dans zone jours seulement
     doc.line(x,H2Y+HDR2_H,x,H2Y+HDR2_H+eleves.length*ELEVE_H); // dans zone données
   }
   doc.setLineWidth(0.3);
@@ -3733,8 +3733,8 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.setDrawColor(...BK);doc.setLineWidth(0.5);
   // Bordure gauche — seulement sur les données (pas le header NOM/ADR)
   doc.line(ML,H2Y+HDR2_H,ML,TAB_Y+tabH);
-  // Haut — seulement sur la partie jours+MAT+AR
-  doc.line(ML+C_NOM+C_ADR,TAB_Y,ML+TAB_W,TAB_Y);
+  // Haut — seulement sur la partie jours (pas MAT+AR)
+  doc.line(ML+C_NOM+C_ADR+C_MAT+C_AR,TAB_Y,ML+TAB_W,TAB_Y);
   // Bas complet
   doc.line(ML,TAB_Y+tabH,ML+TAB_W,TAB_Y+tabH);
   // Droite complète
