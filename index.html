@@ -3488,7 +3488,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     ['Nom du client :', s.client||''],
   ];
   // Bloc info : se termine à XS[2] = 10+C0+CT+CT = 10+38+16+16 = 80mm
-  const INFO_LABEL_W=30, INFO_VAL_W=40; // total 70mm, de x=10 à x=80
+  const INFO_LABEL_W=30, INFO_VAL_W=24; // total 70mm, de x=10 à x=80
   infoData.forEach(([label,val],i)=>{
     const y=23+i*5;
     doc.setFillColor(255,255,255);doc.rect(10,y-3,INFO_LABEL_W,5,'F');
