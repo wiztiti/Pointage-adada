@@ -4184,8 +4184,9 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Bordure gauche tableau à partir des données seulement
 
   // Bordure haute des données NOM/ADR
-  doc.setLineWidth(0.3);
+  doc.setLineWidth(0.8);
   doc.line(ML,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H);
+  doc.setLineWidth(0.3);
   // Bordure droite NOM/ADR sur toute la hauteur des données
   doc.line(ML+C_NOM+C_ADR,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H+eleves.length*ELEVE_H);
 
