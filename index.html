@@ -3761,7 +3761,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.setFontSize(10);doc.text(prenom||s.conducteur||'',sigX,ligne1Y,{align:'center'});
     if(nom){doc.setFontSize(11);doc.text(nom,sigX,ligne2Y,{align:'center'});}
     doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
-    doc.text('Signature :',sigX-35,midY-9);
+    doc.text('Signature :',sigX-35,TotalY+DAY_H+3);
   }
   doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
 
