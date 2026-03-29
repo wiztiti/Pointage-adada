@@ -4102,7 +4102,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   });
 
   // ---- BLOC MOIS/ANNEE (centre) ----
-  const MBX=PW/2-17.5,MBY=BY+2,MBW=35,MBH=14;
+  const MBX=(BX+BW+CBX)/2-MBW/2,MBY=BY+2,MBW=35,MBH=14;
   doc.setLineWidth(0.8);doc.rect(MBX,MBY,MBW,MBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Mois :',MBX+2,MBY+5);
@@ -4111,7 +4111,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.setFont('helvetica','normal');doc.text(String(annee),MBX+14,MBY+11);
 
   // ---- BLOC CIRCUIT (droite) ----
-  const CBX=PW-MR-85,CBY=BY+2,CBW=37,CBH=14;
+  const CBX=PW-MR-85,CBY=BY+2,CBW=42,CBH=14;
   doc.setLineWidth(0.8);doc.rect(CBX,CBY,CBW,CBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Numéro Circuit',CBX+CBW/2,CBY+5,{align:'center'});
@@ -4168,7 +4168,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Header ligne 2 : ELEVES / NOM Prénom / Adresse — aucune bordure sur NOM et ADR
   // Pas de bordure sur MAT+AR dans le header — cellules vides sans bordure
 
-  doc.setFontSize(5.5);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
+  doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+1.5,{align:'center'});
   doc.text('NOM Prénom',ML+C_NOM/2,H2Y+3.2,{align:'center'});
   doc.text('Adresse',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
