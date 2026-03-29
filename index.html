@@ -3741,9 +3741,12 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   }
   doc.setFont('helvetica','normal');doc.setTextColor(0,0,0);
 
-  // Contour tableau
+  // Contour tableau (sans la bordure du haut qui traverserait le header teal)
   doc.setDrawColor(0,0,0);doc.setLineWidth(0.5);
-  doc.rect(XS[0],TY,W-20,TotalY+DAY_H-TY);
+  // Côtés gauche, bas, droit — pas le haut
+  doc.line(XS[0],TY,XS[0],TotalY+DAY_H);           // gauche
+  doc.line(XS[0],TotalY+DAY_H,XS[XS.length-1]-10,TotalY+DAY_H); // bas
+  doc.line(XS[XS.length-1]-10,TY,XS[XS.length-1]-10,TotalY+DAY_H); // droite
 
   // Titre fichier
   const d0=new Date(mondayOf(mondayDs)+'T12:00:00');
