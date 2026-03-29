@@ -3483,14 +3483,14 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Bloc info : se termine à XS[2] = 10+C0+CT+CT = 10+38+16+16 = 80mm
   const INFO_LABEL_W=30, INFO_VAL_W=40; // total 70mm, de x=10 à x=80
   infoData.forEach(([label,val],i)=>{
-    const y=15+i*7;
-    doc.setFillColor(255,255,255);doc.rect(10,y-4,INFO_LABEL_W,7,'F');
-    doc.rect(10,y-4,INFO_LABEL_W,7,'S');
-    doc.setFontSize(7);doc.setTextColor(80,80,80);
+    const y=13+i*5;
+    doc.setFillColor(255,255,255);doc.rect(10,y-3,INFO_LABEL_W,5,'F');
+    doc.rect(10,y-3,INFO_LABEL_W,5,'S');
+    doc.setFontSize(6.5);doc.setTextColor(80,80,80);
     doc.text(label,12,y);
-    doc.setFillColor(255,255,255);doc.rect(10+INFO_LABEL_W,y-4,INFO_VAL_W,7,'F');
-    doc.rect(10+INFO_LABEL_W,y-4,INFO_VAL_W,7,'S');
-    doc.setFontSize(7);doc.setTextColor(30,30,30);
+    doc.setFillColor(255,255,255);doc.rect(10+INFO_LABEL_W,y-3,INFO_VAL_W,5,'F');
+    doc.rect(10+INFO_LABEL_W,y-3,INFO_VAL_W,5,'S');
+    doc.setFontSize(6.5);doc.setTextColor(30,30,30);
     doc.text(val,10+INFO_LABEL_W+2,y);
   });
 
@@ -3503,7 +3503,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
 
   // === TABLEAU ===
   const TY=52;
-  const declY=TY-5;
+  const declY=TY-2;
   doc.setFontSize(9);doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
   doc.text('Déclaration individuelle du conducteur : ............'+(s.conducteur||'')+'................',10,declY);
   const declText='Déclaration individuelle du conducteur : ............'+(s.conducteur||'')+'................';
@@ -3745,8 +3745,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   if(s.nom||s.prenom||s.conducteur){
     const nom=(s.nom||'').toUpperCase();
     const prenom=s.prenom||'';
-    const ligne1Y=TotalY+DAY_H+7;
-    const ligne2Y=TotalY+DAY_H+12;
+    const ligne1Y=TotalY+DAY_H+9;
+    const ligne2Y=TotalY+DAY_H+14;
     const midY=(ligne1Y+ligne2Y)/2;
     const sigX=W/2;
     doc.setFont('helvetica','bolditalic');doc.setTextColor(80,140,230);
