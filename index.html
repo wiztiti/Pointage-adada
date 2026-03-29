@@ -4068,7 +4068,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const TitleY=MT;
   doc.setFillColor(...TITLE_BG);
   doc.rect(TitleX,TitleY,TitleW,TitleH,'F');
-  doc.setDrawColor(...BK);doc.setLineWidth(0.4);
+  doc.setDrawColor(...BK);doc.setLineWidth(0.8);
   doc.rect(TitleX,TitleY,TitleW,TitleH,'S');
   doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ETAT DES PRESENCES',TitleX+TitleW/2,TitleY+TitleH/2+1.5,{align:'center'});
@@ -4152,7 +4152,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       // Jour vertical — centré horizontalement dans la cellule
       // Avec angle:90, cx+offset compense le décalage vers la gauche
       doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...BK);
-      doc.text(JOURS_FR[d.getDay()],cx+4,TAB_Y+cellH*0.45,{align:'center',angle:90});
+      doc.text(JOURS_FR[d.getDay()],cx+4,TAB_Y+cellH*0.6,{align:'center',angle:90});
       // Numéro en bas de la cellule
       doc.setFontSize(10);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+cellH-1.5,{align:'center'});
