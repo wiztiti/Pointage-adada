@@ -3551,6 +3551,10 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const TOTAL_HDR=HDR_H+SUB_H;
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],SY,W-20,SUB_H,'F');
+  // Effacer la jointure visible entre HDR et SUB
+  doc.setDrawColor(...TEAL);doc.setLineWidth(0.4);
+  doc.line(XS[0],SY,XS[XS.length-1],SY);
+  doc.setDrawColor(0,0,0);
 
   // Cellules fusionnées (couvrent les 2 lignes)
   doc.setFontSize(6);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
