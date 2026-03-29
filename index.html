@@ -4064,7 +4064,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // De la colonne Matin (75mm) jusqu'au 23ème jour
   // C_NOM_PRE=35, C_NOM=35, C_ADR=35 => Matin start = ML+35+35+35 = 110... 
   // On utilise les valeurs hardcodées: Matin = 75mm, 23ème jour ≈ 234mm
-  const TitleX=75,TitleH=5,TitleW=159;
+  const TitleX=75,TitleH=8,TitleW=159;
   const TitleY=MT;
   doc.setFillColor(...TITLE_BG);
   doc.rect(TitleX,TitleY,TitleW,TitleH,'F');
@@ -4080,7 +4080,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // BX calculé après les constantes du tableau — on anticipe C_NOM=26
   const C_NOM_PRE=35;
   const BX=ML+C_NOM_PRE,BY=MT+TitleH+6,BW=66,BH=26;
-  doc.setLineWidth(0.4);doc.rect(BX,BY,BW,BH,'S');
+  doc.setLineWidth(0.8);doc.rect(BX,BY,BW,BH,'S');
   doc.setFontSize(7.5);
   const cLines=[
     {label:'Conducteur :',val:null,bold:true},
@@ -4103,7 +4103,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   // ---- BLOC MOIS/ANNEE (centre) ----
   const MBX=PW/2-15,MBY=BY+2,MBW=30,MBH=14;
-  doc.setLineWidth(0.4);doc.rect(MBX,MBY,MBW,MBH,'S');
+  doc.setLineWidth(0.8);doc.rect(MBX,MBY,MBW,MBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Mois :',MBX+2,MBY+5);
   doc.setFont('helvetica','normal');doc.text(MOIS_FR[mois],MBX+14,MBY+5);
@@ -4112,7 +4112,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
 
   // ---- BLOC CIRCUIT (droite) ----
   const CBX=PW-MR-100,CBY=BY+2,CBW=32,CBH=14;
-  doc.setLineWidth(0.4);doc.rect(CBX,CBY,CBW,CBH,'S');
+  doc.setLineWidth(0.8);doc.rect(CBX,CBY,CBW,CBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Numéro Circuit',CBX+CBW/2,CBY+5,{align:'center'});
   doc.setFontSize(14);doc.setFont('helvetica','bold');
