@@ -4171,7 +4171,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Pas de bordure sur MAT+AR dans le header — cellules vides sans bordure
 
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
-  doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+1.5,{align:'center'});
+  doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+0.8,{align:'center'});
   doc.text('NOM Prénom',ML+C_NOM/2,H2Y+3.2,{align:'center'});
   doc.text('Adresse',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
 
