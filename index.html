@@ -3480,16 +3480,18 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     ['N°de licence :', s.licence||''],
     ['Nom du client :', s.client||''],
   ];
+  // Bloc info : se termine à XS[2] = 10+C0+CT+CT = 10+38+16+16 = 80mm
+  const INFO_LABEL_W=30, INFO_VAL_W=40; // total 70mm, de x=10 à x=80
   infoData.forEach(([label,val],i)=>{
     const y=15+i*7;
-    doc.setFillColor(240,240,240);doc.rect(10,y-4,45,7,'F');
-    doc.rect(10,y-4,45,7,'S');
+    doc.setFillColor(255,255,255);doc.rect(10,y-4,INFO_LABEL_W,7,'F');
+    doc.rect(10,y-4,INFO_LABEL_W,7,'S');
     doc.setFontSize(7);doc.setTextColor(80,80,80);
     doc.text(label,12,y);
-    doc.setFillColor(255,255,255);doc.rect(55,y-4,45,7,'F');
-    doc.rect(55,y-4,45,7,'S');
+    doc.setFillColor(255,255,255);doc.rect(10+INFO_LABEL_W,y-4,INFO_VAL_W,7,'F');
+    doc.rect(10+INFO_LABEL_W,y-4,INFO_VAL_W,7,'S');
     doc.setFontSize(7);doc.setTextColor(30,30,30);
-    doc.text(val,57,y);
+    doc.text(val,10+INFO_LABEL_W+2,y);
   });
 
   // Logo ADIATE
