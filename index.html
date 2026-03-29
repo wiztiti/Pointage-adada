@@ -1311,6 +1311,9 @@ html, body {
             <button class="btn-valider" style="background:linear-gradient(135deg,#38bdf8,#0284c7);flex:1;" onclick="genererFeuille('pdf')">📄 PDF</button>
             <button class="btn-valider" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);flex:1;" onclick="genererFeuille('jpg')">🖼️ JPG</button>
           </div>
+          <div style="margin-top:6px;">
+            <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);width:100%;font-size:0.82rem;" onclick="genererFeuille('vierge')">📋 Feuille vierge</button>
+          </div>
         </div>
       </div>
     </div>
@@ -3425,6 +3428,27 @@ function saveFdrSettings(){
 }
 
 function genererFeuille(mode){
+  // Mode vierge : pas besoin de date ni de paramètres
+  if(mode==='vierge'){
+    closeModal('modalFDR');
+    showToast('⏳ Génération en cours...');
+    setTimeout(()=>{
+      try{
+        const generate=()=>{
+          const result=_buildPDF(null,'','',{},true);
+          _downloadPDF(result.doc,'FDR_vierge');
+          showToast('✅ Feuille vierge générée !');
+        };
+        if(typeof window.jspdf==='undefined'){
+          const script=document.createElement('script');
+          script.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+          script.onload=generate;
+          document.head.appendChild(script);
+        } else { generate(); }
+      }catch(e){showToast('❌ Erreur: '+e.message);}
+    },100);
+    return;
+  }
   const mondayDs=document.getElementById('feuilleDate').value;
   if(!mondayDs){showToast('❌ Choisissez une date');return;}
   saveFdrSettings();
@@ -3471,7 +3495,7 @@ function genererFeuille(mode){
   } else { doGenerate(); }
 }
 
-function _buildPDF(mondayDs,lieuDep,lieuArr,s){
+function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
   const W=297,H=210;
@@ -3503,8 +3527,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.setFont('helvetica','normal');
     doc.setFillColor(255,255,255);doc.rect(10+INFO_LABEL_W,y-3,INFO_VAL_W,5,'F');
     doc.rect(10+INFO_LABEL_W,y-3,INFO_VAL_W,5,'S');
-    doc.setFontSize(6.5);doc.setTextColor(30,30,30);
-    doc.text(val,10+INFO_LABEL_W+2,y);
+    if(!vierge){doc.setFontSize(6.5);doc.setTextColor(30,30,30);doc.text(val,10+INFO_LABEL_W+2,y);}
   });
 
   // Logo ADIATE
@@ -3516,21 +3539,23 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // === TABLEAU ===
   const TY=52;
   const declY=TY-2;
-  doc.setFontSize(9);doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
-  const part1='Déclaration individuelle du conducteur : ............';
-  doc.text(part1,10,declY);
-  const w1=doc.getTextWidth(part1);
-  doc.setFontSize(11);doc.setFont('helvetica','bold');
-  const conducteurName=s.conducteur||'';
-  doc.text(conducteurName,10+w1,declY);
-  const w2=doc.getTextWidth(conducteurName);
-  doc.setFontSize(9);doc.setFont('helvetica','normal');
-  const part3='................';
-  doc.text(part3,10+w1+w2,declY);
-  const w3=doc.getTextWidth(part3);
-  doc.setFontSize(12);doc.setFont('helvetica','bold');
-  doc.text(' Semaine '+wnHeader,10+w1+w2+w3,declY);
-  doc.setFont('helvetica','normal');doc.setFontSize(9);
+  if(!vierge){
+    doc.setFontSize(9);doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
+    const part1='Déclaration individuelle du conducteur : ............';
+    doc.text(part1,10,declY);
+    const w1=doc.getTextWidth(part1);
+    doc.setFontSize(11);doc.setFont('helvetica','bold');
+    const conducteurName=s.conducteur||'';
+    doc.text(conducteurName,10+w1,declY);
+    const w2=doc.getTextWidth(conducteurName);
+    doc.setFontSize(9);doc.setFont('helvetica','normal');
+    const part3='................';
+    doc.text(part3,10+w1+w2,declY);
+    const w3=doc.getTextWidth(part3);
+    doc.setFontSize(12);doc.setFont('helvetica','bold');
+    doc.text(' Semaine '+wnHeader,10+w1+w2+w3,declY);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);
+  }
   const TH=H-TY-20;
   const HDR_H=7;
   const SUB_H=9;
@@ -3647,7 +3672,9 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // === LIGNES JOURS ===
   const JOURS_FR=['lundi','mardi','mercredi','jeudi','vendredi','samedi','dimanche'];
   const MOIS_FR=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-  const refDate=new Date(mondayDs+'T12:00:00');
+  // En mode vierge, utiliser des dates fictives (lundi courant)
+  const baseDs=mondayDs||dateStr(new Date());
+  const refDate=new Date(baseDs+'T12:00:00');
   const dayOffset=(refDate.getDay()+6)%7;
   refDate.setDate(refDate.getDate()-dayOffset);
   const days=[];
@@ -3682,8 +3709,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
 
     // Date + lieu départ + km
     const dateLabel=JOURS_FR[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS_FR[d.getMonth()];
-    doc.setFontSize(7);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
-    doc.text(dateLabel,XS[0]+C0/2,y+DAY_H*0.28,{align:'center'});
+    if(!vierge){doc.setFontSize(7);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
+    doc.text(dateLabel,XS[0]+C0/2,y+DAY_H*0.28,{align:'center'});}
     doc.setFont('helvetica','normal');doc.setFontSize(8);
 
     // Km de début : dernier km connu en remontant (sauf samedi/dimanche sans vacations)
@@ -3779,14 +3806,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.line(XS[0],TotalY,XS[XS.length-1],TotalY);
   doc.line(XS[0],TotalY+DAY_H,XS[XS.length-1],TotalY+DAY_H);
 
-  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
-  if(totalAnx){doc.setTextColor(249,115,22);doc.text(minToHM(totalAnx),XS[10]+C_ANX/2,TotalY+DAY_H/2+1,{align:'center'});}
-  doc.setTextColor(...DARK);
-  doc.text(minToHM(totalReel),XS[11]+C_REEL/2,TotalY+DAY_H/2+1,{align:'center'});
-  doc.text(minToHM(totalConv),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
+  if(!vierge){
+    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
+    if(totalAnx){doc.setTextColor(249,115,22);doc.text(minToHM(totalAnx),XS[10]+C_ANX/2,TotalY+DAY_H/2+1,{align:'center'});}
+    doc.setTextColor(...DARK);
+    doc.text(minToHM(totalReel),XS[11]+C_REEL/2,TotalY+DAY_H/2+1,{align:'center'});
+    doc.text(minToHM(totalConv),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
+  }
 
   // === SIGNATURE manuscrite ===
-  if(s.nom||s.prenom||s.conducteur){
+  if(!vierge && (s.nom||s.prenom||s.conducteur)){
     const nom=(s.nom||'').toUpperCase();
     const prenom=s.prenom||'';
     const ligne1Y=TotalY+DAY_H+6;
@@ -3809,6 +3838,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.line(XS[XS.length-1],TY,XS[XS.length-1],TotalY+DAY_H);
 
   // Titre fichier
+  if(vierge) return {doc,title:'FDR_vierge'};
   const d0=new Date(mondayOf(mondayDs)+'T12:00:00');
   const wn=isoWeekNum(d0);
   const d6=new Date(d0);d6.setDate(d0.getDate()+6);
