@@ -3651,7 +3651,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     doc.rect(XS[12],y,C_CONV,DAY_H,'F'); // temps conv
 
     // Bordures noires
-    doc.setDrawColor(0,0,0);doc.setLineWidth(0.2);
+    doc.setDrawColor(0,0,0);doc.setLineWidth(0.4);
     XS.forEach(x=>doc.line(x,y,x,y+DAY_H));
     doc.line(XS[0],y,XS[XS.length-1],y);
 
@@ -3738,7 +3738,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.rect(XS[9],TotalY,C_LIEU,DAY_H,'F');
   doc.rect(XS[11],TotalY,C_REEL,DAY_H,'F');
   doc.rect(XS[12],TotalY,C_CONV,DAY_H,'F');
-  doc.setDrawColor(0,0,0);doc.setLineWidth(0.2);
+  doc.setDrawColor(0,0,0);doc.setLineWidth(0.4);
   XS.forEach(x=>doc.line(x,TotalY,x,TotalY+DAY_H));
   doc.line(XS[0],TotalY,XS[XS.length-1],TotalY);
   doc.line(XS[0],TotalY+DAY_H,XS[XS.length-1],TotalY+DAY_H);
