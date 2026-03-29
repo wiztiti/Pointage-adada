@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4379,29 +4380,34 @@ function _downloadJPG(doc, title){
 
   loadPdfJs().then(()=>{
     const pdfData=doc.output('arraybuffer');
-    pdfjsLib.getDocument({data:pdfData}).promise.then(pdf=>{
+    pdfjsLib.getDocument({data:pdfData}).promise.then(async pdf=>{
       const numPages=pdf.numPages;
       const scale=150/72;
-      // Rendre chaque page et l'ouvrir
-      const renderPage=(pageNum)=>{
-        pdf.getPage(pageNum).then(page=>{
-          const viewport=page.getViewport({scale});
-          const canvas=document.createElement('canvas');
-          canvas.width=viewport.width;
-          canvas.height=viewport.height;
-          const ctx=canvas.getContext('2d');
-          page.render({canvasContext:ctx,viewport}).promise.then(()=>{
-            canvas.toBlob(blob=>{
-              const url=URL.createObjectURL(blob);
-              window.open(url,'_blank');
-              if(pageNum===numPages){
-                showToast('✅ '+(numPages>1?numPages+' images ouvertes':'Image ouverte')+' — appui long pour enregistrer !');
-              }
-            },'image/jpeg',0.95);
-          }).catch(e=>showToast('❌ Erreur: '+e.message));
-        }).catch(e=>showToast('❌ Erreur page: '+e.message));
-      };
-      for(let p=1;p<=numPages;p++) renderPage(p);
+      // Rendre toutes les pages dans des canvas temporaires
+      const canvases=[];
+      for(let p=1;p<=numPages;p++){
+        const page=await pdf.getPage(p);
+        const viewport=page.getViewport({scale});
+        const c=document.createElement('canvas');
+        c.width=viewport.width;
+        c.height=viewport.height;
+        await page.render({canvasContext:c.getContext('2d'),viewport}).promise;
+        canvases.push(c);
+      }
+      // Fusionner verticalement dans un seul canvas
+      const totalW=canvases[0].width;
+      const totalH=canvases.reduce((s,c)=>s+c.height,0);
+      const merged=document.createElement('canvas');
+      merged.width=totalW;
+      merged.height=totalH;
+      const ctx=merged.getContext('2d');
+      let y=0;
+      canvases.forEach(c=>{ctx.drawImage(c,0,y);y+=c.height;});
+      merged.toBlob(blob=>{
+        const url=URL.createObjectURL(blob);
+        window.open(url,'_blank');
+        showToast('✅ Image ouverte — appui long pour enregistrer !');
+      },'image/jpeg',0.95);
     }).catch(e=>showToast('❌ Erreur PDF: '+e.message));
   }).catch(e=>showToast('❌ Erreur: '+e.message));
 }
