@@ -3483,7 +3483,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   // Bloc info : se termine à XS[2] = 10+C0+CT+CT = 10+38+16+16 = 80mm
   const INFO_LABEL_W=30, INFO_VAL_W=40; // total 70mm, de x=10 à x=80
   infoData.forEach(([label,val],i)=>{
-    const y=13+i*5;
+    const y=23+i*5;
     doc.setFillColor(255,255,255);doc.rect(10,y-3,INFO_LABEL_W,5,'F');
     doc.rect(10,y-3,INFO_LABEL_W,5,'S');
     doc.setFontSize(6.5);doc.setTextColor(80,80,80);
@@ -3505,11 +3505,19 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const TY=52;
   const declY=TY-2;
   doc.setFontSize(9);doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
-  doc.text('Déclaration individuelle du conducteur : ............'+(s.conducteur||'')+'................',10,declY);
-  const declText='Déclaration individuelle du conducteur : ............'+(s.conducteur||'')+'................';
-  const declWidth=doc.getTextWidth(declText);
+  const part1='Déclaration individuelle du conducteur : ............';
+  doc.text(part1,10,declY);
+  const w1=doc.getTextWidth(part1);
+  doc.setFontSize(11);doc.setFont('helvetica','bold');
+  const conducteurName=s.conducteur||'';
+  doc.text(conducteurName,10+w1,declY);
+  const w2=doc.getTextWidth(conducteurName);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');
+  const part3='................';
+  doc.text(part3,10+w1+w2,declY);
+  const w3=doc.getTextWidth(part3);
   doc.setFontSize(12);doc.setFont('helvetica','bold');
-  doc.text(' Semaine '+wnHeader,10+declWidth,declY);
+  doc.text(' Semaine '+wnHeader,10+w1+w2+w3,declY);
   doc.setFont('helvetica','normal');doc.setFontSize(9);
   const TH=H-TY-20;
   const HDR_H=7;
@@ -3745,8 +3753,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   if(s.nom||s.prenom||s.conducteur){
     const nom=(s.nom||'').toUpperCase();
     const prenom=s.prenom||'';
-    const ligne1Y=TotalY+DAY_H+9;
-    const ligne2Y=TotalY+DAY_H+14;
+    const ligne1Y=TotalY+DAY_H+4;
+    const ligne2Y=TotalY+DAY_H+9;
     const midY=(ligne1Y+ligne2Y)/2;
     const sigX=W/2;
     doc.setFont('helvetica','bolditalic');doc.setTextColor(80,140,230);
