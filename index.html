@@ -4152,13 +4152,13 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       // Jour vertical — centré horizontalement dans la cellule
       // Avec angle:90, cx+offset compense le décalage vers la gauche
       doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...BK);
-      doc.text(JOURS_FR[d.getDay()],cx+2.5,TAB_Y+cellH*0.45,{align:'center',angle:90});
+      doc.text(JOURS_FR[d.getDay()],cx+4,TAB_Y+cellH*0.45,{align:'center',angle:90});
       // Numéro en bas de la cellule
       doc.setFontSize(10);doc.setFont('helvetica','bold');
       doc.text(String(j),cx,TAB_Y+cellH-1.5,{align:'center'});
     }
     // Ligne verticale séparatrice
-    doc.setLineWidth(j===1?0.3:0.15);doc.setDrawColor(...BK);
+    doc.setLineWidth(j===1?0.5:0.15);doc.setDrawColor(...BK);
     doc.line(x,TAB_Y,x,TAB_Y+HDR1_H+HDR2_H); // bordure gauche de chaque jour (fusionné)
     doc.line(x,H2Y+HDR2_H,x,H2Y+HDR2_H+eleves.length*ELEVE_H); // dans zone données
   }
