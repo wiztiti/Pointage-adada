@@ -4102,7 +4102,9 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   });
 
   // ---- BLOC MOIS/ANNEE (centre) ----
-  const MBX=(BX+BW+CBX)/2-MBW/2,MBY=BY+2,MBW=35,MBH=14;
+  const MBW=35,MBH=14;
+  const CBX_TMP=PW-MR-85;
+  const MBX=(BX+BW+CBX_TMP)/2-MBW/2,MBY=BY+2;
   doc.setLineWidth(0.8);doc.rect(MBX,MBY,MBW,MBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Mois :',MBX+2,MBY+5);
@@ -4111,7 +4113,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.setFont('helvetica','normal');doc.text(String(annee),MBX+14,MBY+11);
 
   // ---- BLOC CIRCUIT (droite) ----
-  const CBX=PW-MR-85,CBY=BY+2,CBW=42,CBH=14;
+  const CBX=CBX_TMP,CBY=BY+2,CBW=42,CBH=14;
   doc.setLineWidth(0.8);doc.rect(CBX,CBY,CBW,CBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Numéro Circuit',CBX+CBW/2,CBY+5,{align:'center'});
