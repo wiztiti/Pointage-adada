@@ -4183,9 +4183,9 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   // Pas de ligne horizontale entre HDR1 et HDR2 sur MAT/AR
   // Bordure gauche tableau à partir des données seulement
 
-  // Bordure haute des données NOM/ADR
-  doc.setLineWidth(0.8);
-  doc.line(ML,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H);
+  // Bordure haute des données — toute la largeur du tableau
+  doc.setLineWidth(0.5);
+  doc.line(ML,H2Y+HDR2_H,ML+TAB_W,H2Y+HDR2_H);
   doc.setLineWidth(0.3);
   // Bordure droite NOM/ADR sur toute la hauteur des données
   doc.line(ML+C_NOM+C_ADR,H2Y+HDR2_H,ML+C_NOM+C_ADR,H2Y+HDR2_H+eleves.length*ELEVE_H);
