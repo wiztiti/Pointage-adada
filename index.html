@@ -3691,14 +3691,23 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const isWeekend=jourSemaine>=5;
     const vacsCheck=vacsForDate(ds).filter(v=>v.dep&&v.ret);
     if(vacsCheck.length>0) doc.text(lieuDep,XS[0]+C0/2,y+DAY_H*0.52,{align:'center'});
+    const todayDs=dateStr(new Date());
+    const isFuture=ds>todayDs;
     let kmDeb=null;
+    let lastKmDs=null; // date du dernier relevé km connu
     if(!isWeekend||vacsCheck.length>0){
       const dTmp=new Date(d);
       for(let k=1;k<=365;k++){
         dTmp.setDate(dTmp.getDate()-1);
         const kv=peekDayData(dateStr(dTmp)).km;
-        if(kv){kmDeb=kv;break;}
+        if(kv){kmDeb=kv;lastKmDs=dateStr(dTmp);break;}
       }
+    }
+    // Pour les jours futurs : n'afficher le km que si ce jour est le lendemain du dernier relevé
+    if(isFuture && lastKmDs){
+      const lendemain=new Date(lastKmDs+'T12:00:00');
+      lendemain.setDate(lendemain.getDate()+1);
+      if(dateStr(lendemain)!==ds) kmDeb=null;
     }
     if(kmDeb){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(kmDeb,XS[0]+C0/2,y+DAY_H*0.82,{align:'center'});doc.setFont('helvetica','normal');}
 
