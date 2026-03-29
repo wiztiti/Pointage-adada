@@ -4297,7 +4297,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   });
 
   const tabH=HDR1_H+HDR2_H+eleves.length*ELEVE_H;
-  doc.setDrawColor(...BK);doc.setLineWidth(0.5);
+  doc.setDrawColor(...BK);doc.setLineWidth(0.8);
   // Bordure gauche — seulement sur les données (pas le header NOM/ADR)
   doc.line(ML,H2Y+HDR2_H,ML,TAB_Y+tabH);
   // Haut — seulement sur la partie jours (pas MAT+AR)
