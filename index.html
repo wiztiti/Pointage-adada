@@ -4312,7 +4312,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const sigH=PH-footY-3;
 
   // Texte "Indiquer X" à gauche
-  doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
   doc.text("Indiquer \u00ab X \u00bb si l'\u00e9l\u00e8ve est pr\u00e9sent",ML,footY+4);
 
   // Encadrement Visa conducteur
@@ -4331,7 +4331,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.text(nomCond2,visaX+visaW/2+9,footY+sigH/2+3,{align:'center'});
 
   // Email retour — après le cadre visa
-  doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+  doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
   doc.text('A retourner imp\u00e9rativement le dernier jour du mois \u00e0 : qdelvallee@adiate.fr',visaX+visaW+3,footY+4);
 }
 
