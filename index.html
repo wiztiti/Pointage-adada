@@ -4039,7 +4039,9 @@ function _buildAndDownloadFDR_UNUSED(mode,mondayDs,s,lieuArr){
 function _buildEtatMensuelPDF(jsPDF,mois,annee,s,mode){
   const MOIS_FR=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   const nbJours=new Date(annee,mois+1,0).getDate();
-  const eleves=state.eleves.slice(0,8);
+  const elevesReal=state.eleves.slice(0,8);
+  // Forcer 8 lignes minimum
+  const eleves=elevesReal.length<8?[...elevesReal,...Array(8-elevesReal.length).fill(null)]:elevesReal;
   const elevesPage2=state.eleves.length>8?state.eleves.slice(8,16):[];
 
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
@@ -4198,6 +4200,13 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const AR_LBL=['Aller','Retour','Aller','Retour'];
 
   eleves.forEach((prenom,ei)=>{
+    if(!prenom) {
+      // Ligne vide
+      const baseY=H2Y+HDR2_H+ei*ELEVE_H;
+      doc.setDrawColor(...BK);doc.setLineWidth(0.5);
+      doc.line(ML,baseY+ELEVE_H,ML+TAB_W,baseY+ELEVE_H);
+      return;
+    }
     const baseY=H2Y+HDR2_H+ei*ELEVE_H;
     const a=state.adresses&&state.adresses[prenom]?state.adresses[prenom]:{};
 
