@@ -4327,8 +4327,8 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   const prenomCond=s.prenom||'';
   const nomCond2=(s.nom||'').toUpperCase();
   doc.setFontSize(9);doc.setFont('courier','bolditalic');doc.setTextColor(80,140,230);
-  doc.text(prenomCond,visaX+visaW/2+5,footY+sigH/2-1,{align:'center'});
-  doc.text(nomCond2,visaX+visaW/2+5,footY+sigH/2+5,{align:'center'});
+  doc.text(prenomCond,visaX+visaW/2+9,footY+sigH/2-5,{align:'center'});
+  doc.text(nomCond2,visaX+visaW/2+9,footY+sigH/2+1,{align:'center'});
 
   // Email retour — après le cadre visa
   doc.setFontSize(5.5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
