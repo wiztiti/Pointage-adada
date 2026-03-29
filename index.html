@@ -3533,6 +3533,9 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
 
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],TY,W-20,HDR_H,'F');
+  // Bordure noire du haut du header
+  doc.setDrawColor(0,0,0);doc.setLineWidth(0.5);
+  doc.line(XS[0],TY,XS[XS.length-1],TY);
   doc.setFontSize(6.5);doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');
 
   groups.forEach(g=>{
@@ -3551,9 +3554,13 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   const TOTAL_HDR=HDR_H+SUB_H;
   doc.setFillColor(...TEAL);
   doc.rect(XS[0],SY,W-20,SUB_H,'F');
-  // Effacer la jointure visible entre HDR et SUB
+  // Bordure noire bas des "Tranche de travail" (= haut du sous-header)
+  doc.setDrawColor(0,0,0);doc.setLineWidth(0.3);
+  doc.line(XS[1],SY,XS[9],SY);
+  // Effacer la jointure teal entre HDR et SUB sur les zones fusionnées
   doc.setDrawColor(...TEAL);doc.setLineWidth(0.4);
-  doc.line(XS[0],SY,XS[XS.length-1],SY);
+  doc.line(XS[0],SY,XS[1],SY);       // cellule Date/Lieu/Km
+  doc.line(XS[9],SY,XS[XS.length-1],SY); // cellules droites fusionnées
   doc.setDrawColor(0,0,0);
 
   // Cellules fusionnées (couvrent les 2 lignes)
