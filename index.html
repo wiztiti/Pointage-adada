@@ -3659,7 +3659,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const dateLabel=JOURS_FR[(d.getDay()+6)%7]+' '+d.getDate()+' '+MOIS_FR[d.getMonth()];
     doc.setFontSize(7);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
     doc.text(dateLabel,XS[0]+C0/2,y+DAY_H*0.28,{align:'center'});
-    doc.setFont('helvetica','normal');doc.setFontSize(6.5);
+    doc.setFont('helvetica','normal');doc.setFontSize(8);
     doc.text(lieuDep,XS[0]+C0/2,y+DAY_H*0.52,{align:'center'});
 
     // Km de début : dernier km connu en remontant (sauf samedi/dimanche sans vacations)
@@ -3675,7 +3675,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
         if(kv){kmDeb=kv;break;}
       }
     }
-    if(kmDeb){doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(kmDeb,XS[0]+C0/2,y+DAY_H*0.82,{align:'center'});doc.setFont('helvetica','normal');}
+    if(kmDeb){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(kmDeb,XS[0]+C0/2,y+DAY_H*0.82,{align:'center'});doc.setFont('helvetica','normal');}
 
     // Vacations
     const vacs=vacsForDate(ds).filter(v=>v.dep&&v.ret);
@@ -3686,16 +3686,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
       const depStr=String(hDep.getHours()).padStart(2,'0')+':'+String(hDep.getMinutes()).padStart(2,'0');
       const retStr=String(hRet.getHours()).padStart(2,'0')+':'+String(hRet.getMinutes()).padStart(2,'0');
       const cx=XS[1+vi*2];
-      doc.setFontSize(8);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
+      doc.setFontSize(9.5);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
       doc.text(depStr,cx+CT/2,y+DAY_H/2+1,{align:'center'});
       doc.text(retStr,cx+CT+CT/2,y+DAY_H/2+1,{align:'center'});
     });
 
     // Lieu arrivée + km fin
-    doc.setFontSize(6);doc.setTextColor(...DARK);doc.setFont('helvetica','normal');
+    doc.setFontSize(8);doc.setTextColor(...DARK);doc.setFont('helvetica','normal');
     doc.text(lieuArr,XS[9]+C_LIEU/2,y+DAY_H*0.4,{align:'center'});
     const kmFin=peekDayData(ds).km;
-    if(kmFin&&(!isWeekend||vacs.length>0)){doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.text(kmFin,XS[9]+C_LIEU/2,y+DAY_H*0.72,{align:'center'});doc.setFont('helvetica','normal');}
+    if(kmFin&&(!isWeekend||vacs.length>0)){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(kmFin,XS[9]+C_LIEU/2,y+DAY_H*0.72,{align:'center'});doc.setFont('helvetica','normal');}
 
     // Temps
     const normal=vacs.filter(v=>!v.annexe);
@@ -3704,7 +3704,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const aMin=annexeMins(vacs);
     totalReel+=rMin;totalConv+=cMin;totalAnx+=aMin;
 
-    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.setFontSize(9.5);doc.setFont('helvetica','bold');
     if(aMin>0){doc.setTextColor(249,115,22);doc.text(minToHM(aMin),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});}
     doc.setTextColor(...DARK);
     if(rMin>0) doc.text(minToHM(rMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
@@ -3714,12 +3714,12 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const note=peekDayData(ds).note;
     if(note&&note.trim()){
       doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
-      doc.setFontSize(6.5);
+      doc.setFontSize(7.5);
       let noteLines=doc.splitTextToSize(note.trim(),C_COM-4);
       let fontSize=6.5;
       if(noteLines.length>3){
-        fontSize=5;
-        doc.setFontSize(5);
+        fontSize=6;
+        doc.setFontSize(6);
         noteLines=doc.splitTextToSize(note.trim(),C_COM-4);
       }
       noteLines=noteLines.slice(0,6);
@@ -3743,7 +3743,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   doc.line(XS[0],TotalY,XS[XS.length-1],TotalY);
   doc.line(XS[0],TotalY+DAY_H,XS[XS.length-1],TotalY+DAY_H);
 
-  doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
   if(totalAnx){doc.setTextColor(249,115,22);doc.text(minToHM(totalAnx),XS[10]+C_ANX/2,TotalY+DAY_H/2+1,{align:'center'});}
   doc.setTextColor(...DARK);
   doc.text(minToHM(totalReel),XS[11]+C_REEL/2,TotalY+DAY_H/2+1,{align:'center'});
