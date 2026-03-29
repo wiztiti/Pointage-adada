@@ -4102,7 +4102,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   });
 
   // ---- BLOC MOIS/ANNEE (centre) ----
-  const MBX=PW/2-15,MBY=BY+2,MBW=30,MBH=14;
+  const MBX=PW/2-17.5,MBY=BY+2,MBW=35,MBH=14;
   doc.setLineWidth(0.8);doc.rect(MBX,MBY,MBW,MBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Mois :',MBX+2,MBY+5);
@@ -4111,7 +4111,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.setFont('helvetica','normal');doc.text(String(annee),MBX+14,MBY+11);
 
   // ---- BLOC CIRCUIT (droite) ----
-  const CBX=PW-MR-100,CBY=BY+2,CBW=32,CBH=14;
+  const CBX=PW-MR-100,CBY=BY+2,CBW=37,CBH=14;
   doc.setLineWidth(0.8);doc.rect(CBX,CBY,CBW,CBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Numéro Circuit',CBX+CBW/2,CBY+5,{align:'center'});
@@ -4154,7 +4154,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
       doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(...BK);
       doc.text(JOURS_FR[d.getDay()],cx+4,TAB_Y+cellH*0.6,{align:'center',angle:90});
       // Numéro en bas de la cellule
-      doc.setFontSize(10);doc.setFont('helvetica','bold');
+      doc.setFontSize(10);doc.setFont('helvetica','normal');
       doc.text(String(j),cx,TAB_Y+cellH-1.5,{align:'center'});
     }
     // Ligne verticale séparatrice
