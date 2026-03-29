@@ -4378,27 +4378,30 @@ function _downloadJPG(doc, title){
   });
 
   loadPdfJs().then(()=>{
-
     const pdfData=doc.output('arraybuffer');
     pdfjsLib.getDocument({data:pdfData}).promise.then(pdf=>{
-
-      pdf.getPage(1).then(page=>{
-
-        const scale=150/72;
-        const viewport=page.getViewport({scale});
-        const canvas=document.createElement('canvas');
-        canvas.width=viewport.width;
-        canvas.height=viewport.height;
-        const ctx=canvas.getContext('2d');
-        page.render({canvasContext:ctx,viewport}).promise.then(()=>{
-
-          canvas.toBlob(blob=>{
-            const url=URL.createObjectURL(blob);
-            window.open(url,'_blank');
-            showToast('✅ Image ouverte — appui long pour enregistrer !');
-          },'image/jpeg',0.95);
-        }).catch(e=>showToast('❌ Erreur: '+e.message));
-      }).catch(e=>showToast('❌ Erreur page: '+e.message));
+      const numPages=pdf.numPages;
+      const scale=150/72;
+      // Rendre chaque page et l'ouvrir
+      const renderPage=(pageNum)=>{
+        pdf.getPage(pageNum).then(page=>{
+          const viewport=page.getViewport({scale});
+          const canvas=document.createElement('canvas');
+          canvas.width=viewport.width;
+          canvas.height=viewport.height;
+          const ctx=canvas.getContext('2d');
+          page.render({canvasContext:ctx,viewport}).promise.then(()=>{
+            canvas.toBlob(blob=>{
+              const url=URL.createObjectURL(blob);
+              window.open(url,'_blank');
+              if(pageNum===numPages){
+                showToast('✅ '+(numPages>1?numPages+' images ouvertes':'Image ouverte')+' — appui long pour enregistrer !');
+              }
+            },'image/jpeg',0.95);
+          }).catch(e=>showToast('❌ Erreur: '+e.message));
+        }).catch(e=>showToast('❌ Erreur page: '+e.message));
+      };
+      for(let p=1;p<=numPages;p++) renderPage(p);
     }).catch(e=>showToast('❌ Erreur PDF: '+e.message));
   }).catch(e=>showToast('❌ Erreur: '+e.message));
 }
