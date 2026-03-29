@@ -3486,8 +3486,9 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
     const y=23+i*5;
     doc.setFillColor(255,255,255);doc.rect(10,y-3,INFO_LABEL_W,5,'F');
     doc.rect(10,y-3,INFO_LABEL_W,5,'S');
-    doc.setFontSize(6.5);doc.setTextColor(80,80,80);
+    doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(80,80,80);
     doc.text(label,12,y);
+    doc.setFont('helvetica','normal');
     doc.setFillColor(255,255,255);doc.rect(10+INFO_LABEL_W,y-3,INFO_VAL_W,5,'F');
     doc.rect(10+INFO_LABEL_W,y-3,INFO_VAL_W,5,'S');
     doc.setFontSize(6.5);doc.setTextColor(30,30,30);
@@ -3543,6 +3544,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   let xPos=10;
   const XS=[xPos];
   COLS.forEach(w=>{xPos+=w;XS.push(xPos);});
+
+
 
   // Groupes header ligne 1 : uniquement les 4 tranches (avec bordures noires)
   const groups=[
