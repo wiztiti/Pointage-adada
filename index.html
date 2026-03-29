@@ -3753,8 +3753,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s){
   if(s.nom||s.prenom||s.conducteur){
     const nom=(s.nom||'').toUpperCase();
     const prenom=s.prenom||'';
-    const ligne1Y=TotalY+DAY_H+4;
-    const ligne2Y=TotalY+DAY_H+9;
+    const ligne1Y=TotalY+DAY_H+6;
+    const ligne2Y=TotalY+DAY_H+11;
     const midY=(ligne1Y+ligne2Y)/2;
     const sigX=W/2;
     doc.setFont('helvetica','bolditalic');doc.setTextColor(80,140,230);
