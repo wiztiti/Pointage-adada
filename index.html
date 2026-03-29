@@ -4173,7 +4173,7 @@ function _buildEtatPage(doc,mois,annee,s,eleves,nbJours,MOIS_FR,logoB64){
   doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...BK);
   doc.text('ÉLÈVES',ML+C_NOM/2,H2Y+0.8,{align:'center'});
   doc.text('NOM Prénom',ML+C_NOM/2,H2Y+3.2,{align:'center'});
-  doc.text('Adresse',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
+  doc.text('Adresses',ML+C_NOM+C_ADR/2,H2Y+2.5,{align:'center'});
 
   // Séparation NOM|ADR sur les données seulement (pas le header)
   doc.line(ML+C_NOM,H2Y+HDR2_H,ML+C_NOM,H2Y+HDR2_H+eleves.length*ELEVE_H);
