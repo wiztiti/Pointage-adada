@@ -4172,9 +4172,9 @@ function _buildEtatPage(doc,mois,annee,s,elevesInput,nbJours,MOIS_FR,logoB64,vie
   doc.setLineWidth(0.8);doc.rect(MBX,MBY,MBW,MBH,'S');
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Mois :',MBX+2,MBY+5);
-  if(!vierge){doc.setFont('helvetica','normal');doc.text(MOIS_FR[mois],MBX+14,MBY+5);}
+  doc.setFont('helvetica','normal');doc.text(MOIS_FR[mois],MBX+14,MBY+5);
   doc.setFont('helvetica','bold');doc.text('Année :',MBX+2,MBY+11);
-  if(!vierge){doc.setFont('helvetica','normal');doc.text(String(annee),MBX+14,MBY+11);}
+  doc.setFont('helvetica','normal');doc.text(String(annee),MBX+14,MBY+11);
 
   // ---- BLOC CIRCUIT (droite) ----
   const CBX=CBX_TMP,CBY=BY+2,CBW=42,CBH=14;
@@ -4182,7 +4182,7 @@ function _buildEtatPage(doc,mois,annee,s,elevesInput,nbJours,MOIS_FR,logoB64,vie
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Numéro Circuit',CBX+CBW/2,CBY+5,{align:'center'});
   doc.setFontSize(14);doc.setFont('helvetica','bold');
-  doc.text(s.circuit||'',CBX+CBW/2,CBY+12,{align:'center'});
+  if(!vierge) doc.text(s.circuit||'',CBX+CBW/2,CBY+12,{align:'center'});
 
   // ---- TABLEAU ----
   const TAB_Y=56; // légèrement descendu
