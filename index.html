@@ -4258,10 +4258,35 @@ function _buildEtatPage(doc,mois,annee,s,elevesInput,nbJours,MOIS_FR,logoB64){
 
   eleves.forEach((prenom,ei)=>{
     if(!prenom) {
-      // Ligne vide
+      // Ligne vide : dessiner la structure sans nom ni présences
       const baseY=H2Y+HDR2_H+ei*ELEVE_H;
+      MOMENTS_KEY.forEach((m,mi)=>{
+        const ry=baseY+mi*ROW_H;
+        doc.setDrawColor(...BK);
+        if(mi===0){
+          doc.setLineWidth(0.3);
+          doc.line(ML+C_NOM+C_ADR,baseY,ML+TAB_W,baseY);
+          doc.setFontSize(5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+          doc.text('Matin',ML+C_NOM+C_ADR+C_MAT/2,baseY+ROW_H,{align:'center'});
+          doc.setLineWidth(0.2);
+          doc.line(ML+C_NOM+C_ADR+C_MAT,baseY,ML+C_NOM+C_ADR+C_MAT,baseY+ROW_H*2);
+        }
+        if(mi===2){
+          doc.setFontSize(5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+          doc.text('Après-midi',ML+C_NOM+C_ADR+C_MAT/2,baseY+ROW_H*3,{align:'center'});
+          doc.setLineWidth(0.2);
+          doc.line(ML+C_NOM+C_ADR+C_MAT,baseY+ROW_H*2,ML+C_NOM+C_ADR+C_MAT,baseY+ROW_H*4);
+          doc.setLineWidth(0.3);
+          doc.line(ML+C_NOM+C_ADR,baseY+ROW_H*2,ML+TAB_W,baseY+ROW_H*2);
+        }
+        doc.setFontSize(4.5);doc.setFont('helvetica','normal');doc.setTextColor(...BK);
+        doc.text(AR_LBL[mi],ML+C_NOM+C_ADR+C_MAT+C_AR/2,ry+ROW_H/2+1,{align:'center'});
+        doc.setLineWidth(0.1);
+        if(mi===1||mi===3) doc.line(ML+C_NOM+C_ADR+C_MAT,ry,ML+TAB_W,ry);
+      });
       doc.setDrawColor(...BK);doc.setLineWidth(0.5);
       doc.line(ML,baseY+ELEVE_H,ML+TAB_W,baseY+ELEVE_H);
+      if(ei>0){ doc.setLineWidth(0.3);doc.line(ML,baseY,ML+C_NOM+C_ADR,baseY); }
       return;
     }
     const baseY=H2Y+HDR2_H+ei*ELEVE_H;
