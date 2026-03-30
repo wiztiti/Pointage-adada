@@ -4115,7 +4115,7 @@ function _buildEtatMensuelPDF(jsPDF,mois,annee,s,mode,vierge=false){
   else _downloadJPG(doc,titre);
 }
 
-function _buildEtatPage(doc,mois,annee,s,elevesInput,nbJours,MOIS_FR,logoB64){
+function _buildEtatPage(doc,mois,annee,s,elevesInput,nbJours,MOIS_FR,logoB64,vierge=false){
   // Forcer 8 lignes minimum
   const eleves=elevesInput.length<8?[...elevesInput,...Array(8-elevesInput.length).fill(null)]:elevesInput;
   const PW=297,PH=210;
