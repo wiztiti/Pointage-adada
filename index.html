@@ -3436,8 +3436,8 @@ function genererFeuille(mode){
       try{
         const generate=()=>{
           const result=_buildPDF(null,'','',{},true);
-          _downloadPDF(result.doc,'FDR_vierge');
-          showToast('✅ Feuille vierge générée !');
+          _downloadJPG(result.doc,'FDR_vierge');
+          
         };
         if(typeof window.jspdf==='undefined'){
           const script=document.createElement('script');
