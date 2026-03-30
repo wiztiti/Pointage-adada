@@ -3539,6 +3539,10 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
   // === TABLEAU ===
   const TY=52;
   const declY=TY-2;
+  if(vierge){
+    doc.setFontSize(9);doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
+    doc.text('Déclaration individuelle du conducteur : ............................................................',10,declY);
+  }
   if(!vierge){
     doc.setFontSize(9);doc.setTextColor(30,30,30);doc.setFont('helvetica','normal');
     const part1='Déclaration individuelle du conducteur : ............';
@@ -3742,36 +3746,35 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
 
     // Vacations
     const vacs=vacsForDate(ds).filter(v=>v.dep&&v.ret);
-    vacs.forEach((v,vi)=>{
-      if(vi>=4) return;
-      const hDep=v.dep instanceof Date?v.dep:new Date(v.dep);
-      const hRet=v.ret instanceof Date?v.ret:new Date(v.ret);
-      const depStr=String(hDep.getHours()).padStart(2,'0')+':'+String(hDep.getMinutes()).padStart(2,'0');
-      const retStr=String(hRet.getHours()).padStart(2,'0')+':'+String(hRet.getMinutes()).padStart(2,'0');
-      const cx=XS[1+vi*2];
-      doc.setFontSize(9.5);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
-      doc.text(depStr,cx+CT/2,y+DAY_H/2+1,{align:'center'});
-      doc.text(retStr,cx+CT+CT/2,y+DAY_H/2+1,{align:'center'});
-    });
-
-    // Lieu arrivée + km fin
-    doc.setFontSize(8);doc.setTextColor(...DARK);doc.setFont('helvetica','normal');
-    if(vacs.length>0) doc.text(lieuArr,XS[9]+C_LIEU/2,y+DAY_H*0.4,{align:'center'});
-    const kmFin=peekDayData(ds).km;
-    if(kmFin&&(!isWeekend||vacs.length>0)){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(kmFin,XS[9]+C_LIEU/2,y+DAY_H*0.72,{align:'center'});doc.setFont('helvetica','normal');}
-
-    // Temps
-    const normal=vacs.filter(v=>!v.annexe);
-    const rMin=realMins(normal);
-    const cMin=convMins(normal,getDeduc(ds));
-    const aMin=annexeMins(vacs);
-    totalReel+=rMin;totalConv+=cMin;totalAnx+=aMin;
-
-    doc.setFontSize(9.5);doc.setFont('helvetica','bold');
-    if(aMin>0){doc.setTextColor(249,115,22);doc.text(minToHM(aMin),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});}
-    doc.setTextColor(...DARK);
-    if(rMin>0) doc.text(minToHM(rMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
-    if(cMin>0) doc.text(minToHM(cMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
+    if(!vierge){
+      vacs.forEach((v,vi)=>{
+        if(vi>=4) return;
+        const hDep=v.dep instanceof Date?v.dep:new Date(v.dep);
+        const hRet=v.ret instanceof Date?v.ret:new Date(v.ret);
+        const depStr=String(hDep.getHours()).padStart(2,'0')+':'+String(hDep.getMinutes()).padStart(2,'0');
+        const retStr=String(hRet.getHours()).padStart(2,'0')+':'+String(hRet.getMinutes()).padStart(2,'0');
+        const cx=XS[1+vi*2];
+        doc.setFontSize(9.5);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
+        doc.text(depStr,cx+CT/2,y+DAY_H/2+1,{align:'center'});
+        doc.text(retStr,cx+CT+CT/2,y+DAY_H/2+1,{align:'center'});
+      });
+      // Lieu arrivée + km fin
+      doc.setFontSize(8);doc.setTextColor(...DARK);doc.setFont('helvetica','normal');
+      if(vacs.length>0) doc.text(lieuArr,XS[9]+C_LIEU/2,y+DAY_H*0.4,{align:'center'});
+      const kmFin=peekDayData(ds).km;
+      if(kmFin&&(!isWeekend||vacs.length>0)){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(kmFin,XS[9]+C_LIEU/2,y+DAY_H*0.72,{align:'center'});doc.setFont('helvetica','normal');}
+      // Temps
+      const normal=vacs.filter(v=>!v.annexe);
+      const rMin=realMins(normal);
+      const cMin=convMins(normal,getDeduc(ds));
+      const aMin=annexeMins(vacs);
+      totalReel+=rMin;totalConv+=cMin;totalAnx+=aMin;
+      doc.setFontSize(9.5);doc.setFont('helvetica','bold');
+      if(aMin>0){doc.setTextColor(249,115,22);doc.text(minToHM(aMin),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});}
+      doc.setTextColor(...DARK);
+      if(rMin>0) doc.text(minToHM(rMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
+      if(cMin>0) doc.text(minToHM(cMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
+    }
 
     // Commentaires : note du jour avec taille adaptative
     const note=peekDayData(ds).note;
@@ -3815,6 +3818,11 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
   }
 
   // === SIGNATURE manuscrite ===
+  if(vierge){
+    const sigX=W/2;
+    doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(80,80,80);
+    doc.text('Signature :',sigX-35,TotalY+DAY_H+3);
+  }
   if(!vierge && (s.nom||s.prenom||s.conducteur)){
     const nom=(s.nom||'').toUpperCase();
     const prenom=s.prenom||'';
