@@ -3916,9 +3916,10 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     doc.text(minToHM(totalReel),XS[11]+C_REEL/2,TotalY+DAY_H/2+1,{align:'center'});
     doc.text(minToHM(totalConv),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
     // Déduction ½ heure dans cellule commentaires de la ligne total
-    const totalDeducMin=days.reduce((acc,ds)=>{
-      if(!getDeduc(ds)) return acc;
-      const vacs=vacsForDate(ds).filter(v=>!v.annexe);
+    const totalDeducMin=days.reduce((acc,d2)=>{
+      const ds2=dateStr(d2);
+      if(!getDeduc(ds2)) return acc;
+      const vacs=vacsForDate(ds2).filter(v=>!v.annexe);
       return acc+(convMins(vacs,false)-convMins(vacs,true));
     },0);
     if(totalDeducMin>0){
