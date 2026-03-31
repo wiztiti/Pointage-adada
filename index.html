@@ -861,7 +861,7 @@ html, body {
   <!-- CARD 2 - HEURES -->
   <div class="card" id="card-hrs">
     <div class="card-header" onclick="toggleCard('hrs')">
-      <div class="card-title"><span class="card-icon">⏱</span> Heures</div>
+      <div class="card-title"><span class="card-icon">📈</span> Compteurs</div>
       <span class="card-chevron">▼</span>
     </div>
     <div class="card-body" style="padding-top:14px;">
@@ -879,9 +879,8 @@ html, body {
       <div style="margin-top:8px;">
         <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openModalFDR()">📄 Feuille de route hebdo</button>
       </div>
-      <div class="deduc-row" id="deducRow" style="margin-top:14px;justify-content:flex-start;">
-        <input type="checkbox" class="deduc-cb" id="cbDeduc" onchange="saveDeduc()">
-        <label class="deduc-lbl" for="cbDeduc">Déduction de la ½ heure</label>
+      <div style="margin-top:10px;">
+        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openModalDeduc()">⏱ Déduction ½ heure</button>
       </div>
       <div style="text-align:center;margin-top:14px;font-style:italic;font-size:0.78rem;color:#4ade80;">Les totaux d'heures sont donnés à titre indicatif</div>
     </div>
@@ -1044,6 +1043,22 @@ html, body {
 
 <!-- Input file hors modal pour compatibilité mobile -->
 
+
+<!-- ===== MODAL DEDUCTION ===== -->
+<div class="modal-overlay" id="modalDeduc">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div class="modal-head">⏱ Déduction ½ heure</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;flex:1;">
+      <div style="font-size:0.82rem;color:#475569;">Définissez les périodes pendant lesquelles la déduction de la ½ heure s'applique automatiquement.</div>
+      <div id="deducPeriodesList" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="addDeducPeriode()">+ Ajouter une période</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalDeduc')">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <!-- ===== MODAL AIDE ===== -->
 <div class="modal-overlay" id="modalHelp">
@@ -1794,8 +1809,75 @@ function renderVacations(){
 // ============================================================
 function getDayData(ds){if(!state.dayData)state.dayData={};if(!state.dayData[ds])state.dayData[ds]={};return state.dayData[ds];}
 function peekDayData(ds){return(state.dayData&&state.dayData[ds])||{};}
-function getDeduc(ds){return!!(state.deduc&&state.deduc.global);}
-function saveDeduc(){if(!state.deduc)state.deduc={};state.deduc.global=document.getElementById('cbDeduc').checked;saveState();refreshHeures();}
+function getDeduc(ds){
+  // Vérifier si ds tombe dans une période de déduction active
+  if(!ds) return false;
+  const periodes=state.deduc&&state.deduc.periodes?state.deduc.periodes:[];
+  return periodes.some(p=>p.debut&&p.fin&&ds>=p.debut&&ds<=p.fin);
+}
+
+function openModalDeduc(){
+  renderDeducPeriodes();
+  document.getElementById('modalDeduc').classList.add('open');
+}
+
+function renderDeducPeriodes(){
+  const periodes=state.deduc&&state.deduc.periodes?state.deduc.periodes:[];
+  const container=document.getElementById('deducPeriodesList');
+  if(periodes.length===0){
+    container.innerHTML='<div style="font-size:0.82rem;color:#94a3b8;font-style:italic;text-align:center;">Aucune période définie — la déduction ne s\'applique jamais.</div>';
+    return;
+  }
+  container.innerHTML=periodes.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:#f0f9ff;border-radius:10px;border:1.5px solid #bae6fd;">
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.72rem;color:#475569;min-width:36px;">Début</span>
+          <input type="date" value="${p.debut||''}" oninput="updateDeducPeriode(${i},'debut',this.value)"
+            style="flex:1;border:1.5px solid #bae6fd;border-radius:8px;padding:4px 8px;font-size:0.82rem;font-family:'Quicksand',sans-serif;">
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.72rem;color:#475569;min-width:36px;">Fin</span>
+          <input type="date" value="${p.fin||''}" oninput="updateDeducPeriode(${i},'fin',this.value)"
+            style="flex:1;border:1.5px solid #bae6fd;border-radius:8px;padding:4px 8px;font-size:0.82rem;font-family:'Quicksand',sans-serif;">
+        </div>
+      </div>
+      <button onclick="removeDeducPeriode(${i})" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:#ef4444;padding:4px;">🗑️</button>
+    </div>
+  `).join('');
+}
+
+function addDeducPeriode(){
+  if(!state.deduc) state.deduc={};
+  if(!state.deduc.periodes) state.deduc.periodes=[];
+  state.deduc.periodes.push({debut:'',fin:''});
+  saveState();
+  renderDeducPeriodes();
+}
+
+function removeDeducPeriode(i){
+  if(!state.deduc||!state.deduc.periodes) return;
+  state.deduc.periodes.splice(i,1);
+  saveState();
+  renderDeducPeriodes();
+  refreshHeures();
+}
+
+function updateDeducPeriode(i,field,val){
+  if(!state.deduc||!state.deduc.periodes) return;
+  state.deduc.periodes[i][field]=val;
+  saveState();
+  refreshHeures();
+}
+
+function deducBadge(active){
+  if(!active) return '';
+  return ' <span style="font-size:0.68rem;color:#94a3b8;font-style:italic;">-½h</span>';
+}
+
+function dsDaysHaveDeduct(dsList){
+  return dsList.some(ds=>getDeduc(ds));
+}
 
 function vacsForDate(ds){return state.vacations.filter(v=>v.date===ds&&v.dep&&v.ret);}
 function realMins(vacs){return vacs.reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
@@ -1822,15 +1904,7 @@ function monthDates(ds){
 }
 
 function refreshHeures(){
-  // Case déduction : visible uniquement aujourd'hui
-  const deducRow=document.getElementById('deducRow');
-  if(isToday()){
-    deducRow.style.display='';
-    document.getElementById('cbDeduc').checked=getDeduc();
-    document.getElementById('cbDeduc').disabled=false;
-  } else {
-    deducRow.style.display='none';
-  }
+  // Rien à mettre à jour — la déduction est gérée via le modal des périodes
 }
 
 // ============================================================
@@ -2372,7 +2446,8 @@ function renderRecapSemaine(){
     aTotal+=annexeMins(vacs);
     html+=buildDayRow(ds);
   });
-  document.getElementById('recapSemTotal').innerHTML=totalHoursHtml(rTotal,cTotal,aTotal);
+  const semHasDeduct=days.some(ds=>getDeduc(ds));
+  document.getElementById('recapSemTotal').innerHTML=totalHoursHtml(rTotal,cTotal,aTotal,semHasDeduct);
   document.getElementById('recapSemaineBody').innerHTML=html;
 }
 
@@ -2432,7 +2507,9 @@ function renderRecapMois(){
   });
 
   // Mise à jour du bandeau fixe
-  document.getElementById('recapMoisTotal').innerHTML=totalHoursHtml(rMoisTotal,cMoisTotal,aMoisTotal);
+  const allMoisDays=semaines.flatMap(mondayDs=>weekDatesFrom(mondayDs));
+  const moisHasDeduct=allMoisDays.some(ds=>getDeduc(ds));
+  document.getElementById('recapMoisTotal').innerHTML=totalHoursHtml(rMoisTotal,cMoisTotal,aMoisTotal,moisHasDeduct);
 
   let html='';
 
@@ -2485,13 +2562,12 @@ let recapAnneeOpenSem=null;   // clé "moisIdx-semIdx" ouverte
 let recapAnneeScoOpenMois=null;
 let recapAnneeScoOpenSem=null;
 
-function totalHoursHtml(rMin,cMin,aMin){
+function totalHoursHtml(rMin,cMin,aMin,hasDeduct=false){
   const rTotal=rMin+aMin;
   const cTotal=cMin+aMin;
   let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#8b5cf6;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
-  if(aMin){
-    h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} annexe</span>`;
-  }
+  // badge géré ailleurs
+  if(aMin) h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} annexe</span>`;
   return h;
 }
 
@@ -2523,9 +2599,12 @@ function calcMoisTotaux(y,m){
 function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
   const {rTotal,cTotal,aTotal}=calcMoisTotaux(y,m);
   const isOpen=openMois===moisIdx;
+  const moisDays=Array.from({length:new Date(y,m+1,0).getDate()},(_,i)=>`${y}-${String(m+1).padStart(2,'0')}-${String(i+1).padStart(2,'0')}`);
+  const moisHD=moisDays.some(ds=>getDeduc(ds));
   let html=`<div class="recap-semaine-row" onclick="${toggleMoisFn}(${moisIdx})">
     <div style="flex:1;">
       <div class="recap-sem-label">${MOIS[m]} ${y}</div>
+      ${moisHD?'<div style="font-size:0.65rem;color:#f59e0b;font-weight:600;">½ heure déduite</div>':''}
     </div>
     <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cTotal+aTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
     <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
@@ -2553,6 +2632,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
         <div style="flex:1;">
           <div class="recap-sem-label" style="font-size:0.78rem;">Semaine ${weekNum}</div>
           <div class="recap-sem-dates">${duAu}</div>
+          ${days.some(ds=>getDeduc(ds))?'<div style="font-size:0.65rem;color:#f59e0b;font-weight:600;">½ heure déduite</div>':''}
         </div>
         <div class="recap-sem-hrs">${minToHM(rSem+aSem)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cSem+aSem)}</span>${aSem?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aSem)}</span>`:''}</div>
         <span class="recap-sem-chev" style="transform:${semOpen?'rotate(90deg)':''};">▶</span>
@@ -2598,7 +2678,8 @@ function renderRecapAnnee(){
   document.getElementById('btnRecapAnneeNext').disabled=y>=now.getFullYear();
   let rAnn=0,cAnn=0,aAnn=0;
   for(let m=0;m<12;m++){const t=calcMoisTotaux(y,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;}
-  document.getElementById('recapAnneeTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn);
+  const annHD=Array.from({length:12},(_,m2)=>Array.from({length:new Date(y,m2+1,0).getDate()},(_,d)=>`${y}-${String(m2+1).padStart(2,'0')}-${String(d+1).padStart(2,'0')}`)).flat().some(ds=>getDeduc(ds));
+  document.getElementById('recapAnneeTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn,annHD);
   let html='';
   for(let m=0;m<12;m++){
     html+=buildMoisBlock(y,m,m,recapAnneeOpenMois,recapAnneeOpenSem,'toggleRecapAnneeMois','toggleRecapAnneeSem');
@@ -2643,7 +2724,8 @@ function renderRecapAnneeSco(){
   ];
   let rAnn=0,cAnn=0,aAnn=0;
   moisSco.forEach(({y:my,m})=>{const t=calcMoisTotaux(my,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;});
-  document.getElementById('recapAnneeScoTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn);
+  const annHD=moisSco.flatMap(({y:my,m})=>Array.from({length:new Date(my,m+1,0).getDate()},(_,d)=>`${my}-${String(m+1).padStart(2,'0')}-${String(d+1).padStart(2,'0')}`)).some(ds=>getDeduc(ds));
+  document.getElementById('recapAnneeScoTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn,annHD);
   let html='';
   moisSco.forEach(({y:my,m},idx)=>{
     html+=buildMoisBlock(my,m,idx,recapAnneeScoOpenMois,recapAnneeScoOpenSem,'toggleRecapAnneeScoMois','toggleRecapAnneeScoSem');
