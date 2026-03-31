@@ -1870,6 +1870,19 @@ function updateDeducPeriode(i,field,val){
   refreshHeures();
 }
 
+function calcDeducTotal(dsList){
+  // Calcule le total de minutes déduites sur une liste de jours
+  let total=0;
+  dsList.forEach(ds=>{
+    if(!getDeduc(ds)) return;
+    const vacs=vacsForDate(ds).filter(v=>!v.annexe);
+    const sans=convMins(vacs,false);
+    const avec=convMins(vacs,true);
+    total+=sans-avec;
+  });
+  return total;
+}
+
 function deducBadge(active){
   if(!active) return '';
   return ' <span style="font-size:0.68rem;color:#94a3b8;font-style:italic;">-½h</span>';
@@ -2604,7 +2617,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
   let html=`<div class="recap-semaine-row" onclick="${toggleMoisFn}(${moisIdx})">
     <div style="flex:1;">
       <div class="recap-sem-label">${MOIS[m]} ${y}</div>
-      ${moisHD?'<div style="font-size:0.65rem;color:#f59e0b;font-weight:600;">½ heure déduite</div>':''}
+      ${moisHD?`<div style="font-size:0.65rem;font-weight:600;background:linear-gradient(90deg,#f97316,#eab308,#22c55e,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">½ heure déduite (${minToHM(calcDeducTotal(moisDays))})</div>`:''}
     </div>
     <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cTotal+aTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
     <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
@@ -2632,7 +2645,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
         <div style="flex:1;">
           <div class="recap-sem-label" style="font-size:0.78rem;">Semaine ${weekNum}</div>
           <div class="recap-sem-dates">${duAu}</div>
-          ${days.some(ds=>getDeduc(ds))?'<div style="font-size:0.65rem;color:#f59e0b;font-weight:600;">½ heure déduite</div>':''}
+          ${days.some(ds=>getDeduc(ds))?`<div style="font-size:0.65rem;font-weight:600;background:linear-gradient(90deg,#f97316,#eab308,#22c55e,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">½ heure déduite (${minToHM(calcDeducTotal(days))})</div>`:''}
         </div>
         <div class="recap-sem-hrs">${minToHM(rSem+aSem)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cSem+aSem)}</span>${aSem?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aSem)}</span>`:''}</div>
         <span class="recap-sem-chev" style="transform:${semOpen?'rotate(90deg)':''};">▶</span>
@@ -3902,6 +3915,16 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     doc.setTextColor(...DARK);
     doc.text(minToHM(totalReel),XS[11]+C_REEL/2,TotalY+DAY_H/2+1,{align:'center'});
     doc.text(minToHM(totalConv),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
+    // Déduction ½ heure dans cellule commentaires de la ligne total
+    const totalDeducMin=days.reduce((acc,ds)=>{
+      if(!getDeduc(ds)) return acc;
+      const vacs=vacsForDate(ds).filter(v=>!v.annexe);
+      return acc+(convMins(vacs,false)-convMins(vacs,true));
+    },0);
+    if(totalDeducMin>0){
+      doc.setFontSize(7);doc.setFont('helvetica','italic');doc.setTextColor(120,120,120);
+      doc.text(minToHM(totalDeducMin)+' déduites au titre de la ½ heure',XS[13]+C_COM/2,TotalY+DAY_H/2+1,{align:'center'});
+    }
   }
 
   // === SIGNATURE manuscrite ===
