@@ -1067,6 +1067,15 @@ html, body {
     <div class="modal-head">ℹ️ Guide d'utilisation</div>
     <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;font-size:0.82rem;color:#334155;line-height:1.5;overflow-y:auto;flex:1;">
 
+      <div style="background:linear-gradient(135deg,#1e3a5f,#0c4a6e);border-radius:12px;padding:14px 16px;">
+        <div style="font-weight:700;color:#fff;margin-bottom:8px;font-size:0.9rem;">🚌 À quoi sert cette app ?</div>
+        <div style="color:#e0f2fe;line-height:1.6;">
+          Cette app est conçue pour les conducteurs ADIATE ou autre afin de <span style="font-weight:600;color:#fff;">mémoriser facilement leurs vacations</span> au fil de la journée — via les boutons <span style="font-weight:600;color:#fff;">Départ</span> et <span style="font-weight:600;color:#fff;">Retour</span> en temps réel, ou en les saisissant manuellement.<br><br>
+          À partir de ces données, l'app calcule automatiquement vos heures réelles et conventionnelles, génère votre <span style="font-weight:600;color:#fff;">feuille de route hebdomadaire</span> et suit vos totaux sur l'année.<br><br>
+          La section <span style="font-weight:600;color:#fff;">Élèves</span> et l'<span style="font-weight:600;color:#fff;">état mensuel des présences</span> sont <span style="font-weight:600;color:#fde68a;">optionnels</span> — utilisez-les uniquement si vous souhaitez assurer le suivi du pointage de vos élèves.
+        </div>
+      </div>
+
       <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
         <div style="font-weight:700;color:#166534;margin-bottom:6px;">🗓️ Navigation</div>
         Les flèches <span style="font-weight:600;">‹ ›</span> dans l'en-tête permettent de naviguer jour par jour.<br><br>
@@ -1089,12 +1098,12 @@ html, body {
       </div>
 
       <div style="background:#eff6ff;border-radius:12px;padding:12px 14px;border:1.5px solid #bfdbfe;">
-        <div style="font-weight:700;color:#1e40af;margin-bottom:6px;">📊 Heures</div>
-        Consultez vos totaux par semaine, mois, année ou année scolaire.<br><br>
-        <span style="font-weight:600;">💡 Astuce</span> — Dans chaque récap, cliquez sur un jour pour ouvrir directement son rapport.<br><br>
+        <div style="font-weight:700;color:#1e40af;margin-bottom:6px;">📈 Compteurs</div>
+        Consultez vos totaux par semaine, mois, année ou année scolaire. Dans les récaps Année et Année scolaire, vous pouvez développer chaque mois, puis chaque semaine, puis chaque jour.<br><br>
+        <span style="font-weight:600;">💡 Astuce</span> — Dans chaque récap, appuyez sur un jour pour ouvrir directement son rapport.<br><br>
         Le bouton <span style="font-weight:600;">Comparatif heures bulletin</span> permet de comparer vos heures calculées avec celles de votre bulletin de salaire.<br><br>
-        La case <span style="font-weight:600;">Déduction ½ heure</span> ajuste les totaux conventionnels.<br><br>
-        Le bouton <span style="font-weight:600;">📄 Feuille de route hebdo</span> permet de générer directement la feuille de route depuis cette section.
+        Le bouton <span style="font-weight:600;">⏱ Déduction ½ heure</span> ouvre un modal pour définir les périodes pendant lesquelles la déduction s'applique automatiquement. Un indicateur arc-en-ciel <span style="font-weight:600;">½ heure déduite</span> apparaît dans les récaps concernés.<br><br>
+        Le bouton <span style="font-weight:600;">📄 Feuille de route hebdo</span> génère la FDR depuis cette section. La <span style="font-weight:600;">📋 Feuille vierge</span> est disponible dans ce même modal.
       </div>
 
       <div style="background:#fefce8;border-radius:12px;padding:12px 14px;border:1.5px solid #fde68a;">
@@ -1127,7 +1136,7 @@ html, body {
 
       <div style="background:#f0f9ff;border-radius:12px;padding:12px 14px;border:1.5px solid #bae6fd;">
         <div style="font-weight:700;color:#0c4a6e;margin-bottom:6px;">📄 Feuille de route (FDR)</div>
-        Accessible depuis la carte <span style="font-weight:600;">Heures</span> via le bouton "Feuille de route hebdo".<br><br>
+        Accessible depuis la carte <span style="font-weight:600;">Compteurs</span> via le bouton "Feuille de route hebdo".<br><br>
         <span style="color:#dc2626;font-weight:600;">📧 À envoyer chaque vendredi à : fdrscolaire@adiate.fr</span><br><br>
         Renseignez une fois les <span style="font-weight:600;">paramètres fixes</span> (agence, immatriculation, licence, client, nom, prénom, lieu de départ et d'arrivée).<br><br>
         Chaque semaine, choisissez simplement la date et générez en <span style="font-weight:600;">PDF</span> ou en <span style="font-weight:600;">image JPG</span>.<br><br>
@@ -1137,7 +1146,7 @@ html, body {
 
       <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
         <div style="font-weight:700;color:#166534;margin-bottom:6px;">📊 État mensuel des présences</div>
-        Accessible depuis la carte <span style="font-weight:600;">Élèves</span> via le bouton "État mensuel".<br><br>
+        Accessible depuis la carte <span style="font-weight:600;">Élèves</span> via le bouton "📊 État mensuel des présences".<br><br>
         <span style="color:#dc2626;font-weight:600;">📧 À envoyer chaque dernier jour du mois à : qdelvallee@adiate.fr</span><br><br>
         Renseignez les adresses des élèves via le bouton ✏️ dans la Gestion. Ces adresses apparaîtront sur le document officiel.<br><br>
         Choisissez le mois et l'année, puis générez en <span style="font-weight:600;">PDF</span> ou en <span style="font-weight:600;">image JPG</span>.<br><br>
