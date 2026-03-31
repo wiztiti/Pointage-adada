@@ -1050,9 +1050,23 @@ html, body {
     <div class="modal-handle"></div>
     <div class="modal-head">⏱ Déduction ½ heure</div>
     <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;flex:1;">
-      <div style="font-size:0.82rem;color:#475569;">Définissez les périodes pendant lesquelles la déduction de la ½ heure s'applique automatiquement.</div>
-      <div id="deducPeriodesList" style="display:flex;flex-direction:column;gap:8px;"></div>
-      <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="addDeducPeriode()">+ Ajouter une période</button>
+      <!-- Sélecteur de mode -->
+      <div style="display:flex;gap:8px;">
+        <button id="btnDeducToujours" onclick="setDeducMode('toujours')"
+          style="flex:1;padding:10px;border-radius:10px;border:2px solid #bae6fd;font-family:'Quicksand',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.2s;">
+          Toujours
+        </button>
+        <button id="btnDeducPeriodes" onclick="setDeducMode('periodes')"
+          style="flex:1;padding:10px;border-radius:10px;border:2px solid #bae6fd;font-family:'Quicksand',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.2s;">
+          Par périodes
+        </button>
+      </div>
+      <!-- Zone periodes (visible uniquement en mode periodes) -->
+      <div id="deducPeriodesZone" style="display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:0.78rem;color:#475569;">Définissez les périodes pendant lesquelles la déduction s'applique.</div>
+        <div id="deducPeriodesList" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="addDeducPeriode()">+ Ajouter une période</button>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalDeduc')">Fermer</button>
@@ -1819,15 +1833,45 @@ function renderVacations(){
 function getDayData(ds){if(!state.dayData)state.dayData={};if(!state.dayData[ds])state.dayData[ds]={};return state.dayData[ds];}
 function peekDayData(ds){return(state.dayData&&state.dayData[ds])||{};}
 function getDeduc(ds){
-  // Vérifier si ds tombe dans une période de déduction active
   if(!ds) return false;
+  const mode=(state.deduc&&state.deduc.mode)||'periodes';
+  if(mode==='toujours') return true;
   const periodes=state.deduc&&state.deduc.periodes?state.deduc.periodes:[];
   return periodes.some(p=>p.debut&&p.fin&&ds>=p.debut&&ds<=p.fin);
 }
 
 function openModalDeduc(){
+  renderDeducMode();
   renderDeducPeriodes();
   document.getElementById('modalDeduc').classList.add('open');
+}
+
+function setDeducMode(mode){
+  if(!state.deduc) state.deduc={};
+  state.deduc.mode=mode;
+  saveState();
+  renderDeducMode();
+  refreshHeures();
+}
+
+function renderDeducMode(){
+  const mode=(state.deduc&&state.deduc.mode)||'periodes';
+  const btnT=document.getElementById('btnDeducToujours');
+  const btnP=document.getElementById('btnDeducPeriodes');
+  const zone=document.getElementById('deducPeriodesZone');
+  const activeStyle='background:linear-gradient(135deg,#38bdf8,#0284c7);color:#fff;border-color:#0284c7;';
+  const inactiveStyle='background:#f8fafc;color:#475569;border-color:#e2e8f0;';
+  btnT.style.cssText=btnT.style.cssText.replace(/background[^;]*;|color[^;]*;|border-color[^;]*;/g,'');
+  btnP.style.cssText=btnP.style.cssText.replace(/background[^;]*;|color[^;]*;|border-color[^;]*;/g,'');
+  if(mode==='toujours'){
+    btnT.setAttribute('style',btnT.getAttribute('style')+activeStyle);
+    btnP.setAttribute('style',btnP.getAttribute('style')+inactiveStyle);
+    zone.style.display='none';
+  } else {
+    btnT.setAttribute('style',btnT.getAttribute('style')+inactiveStyle);
+    btnP.setAttribute('style',btnP.getAttribute('style')+activeStyle);
+    zone.style.display='flex';
+  }
 }
 
 function renderDeducPeriodes(){
