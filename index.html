@@ -3924,7 +3924,12 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     },0);
     if(totalDeducMin>0){
       doc.setFontSize(7);doc.setFont('helvetica','italic');doc.setTextColor(120,120,120);
-      doc.text('Temps déduit au titre de la ½ heure : '+minToHM(totalDeducMin),XS[13]+C_COM/2,TotalY+DAY_H/2+1,{align:'center'});
+      const deducX=XS[13]+C_COM/2;
+      const deducY=TotalY+DAY_H*0.3;
+      doc.text('Temps déduit',deducX,deducY,{align:'center'});
+      doc.text('au titre de la ½ heure :',deducX,deducY+3.5,{align:'center'});
+      doc.setFont('helvetica','bolditalic');
+      doc.text(minToHM(totalDeducMin),deducX,deducY+7,{align:'center'});
     }
   }
 
