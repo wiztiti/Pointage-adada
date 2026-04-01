@@ -786,6 +786,92 @@ html, body {
   cursor: not-allowed;
 }
 
+
+/* ===== TAB BAR ===== */
+#tab-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 58px;
+  background: rgba(255,255,255,0.97);
+  border-top: 1.5px solid var(--border-light);
+  display: flex;
+  z-index: 200;
+  box-shadow: 0 -2px 12px rgba(100,180,220,0.1);
+}
+.tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 6px 0;
+  transition: all 0.18s;
+  color: #94a3b8;
+  font-family: 'Nunito', sans-serif;
+}
+.tab-btn .tab-icon { font-size: 1.3rem; line-height: 1; }
+.tab-btn .tab-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.01em; }
+.tab-btn.active { color: #0284c7; }
+.tab-btn.active .tab-icon { transform: translateY(-1px); }
+
+/* ===== TAB CONTENT ===== */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== ADJUST MAIN for tab bar ===== */
+#main { bottom: 58px !important; }
+
+/* ===== COMPTEURS TAB ===== */
+#tab-compteurs {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#tab-compteurs .btn-open-modal { font-size: 0.88rem; }
+.btn-fdr-etat {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: linear-gradient(135deg, #fbcfe8, #f9a8d4);
+  color: #831843;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  box-shadow: 0 3px 10px rgba(249,168,212,0.3);
+}
+.btn-fdr-etat:hover { transform: translateY(-1px); }
+
+/* ===== PARAMETRES TAB ===== */
+#tab-params {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+.params-section-title {
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--text-med);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1.5px solid var(--border-light);
+}
 /* scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: #bae6fd; border-radius: 4px; }
@@ -798,140 +884,220 @@ html, body {
 
 <!-- ===== HEADER ===== -->
 <div id="header" style="flex-wrap:wrap;height:auto;padding:8px 14px;gap:0;">
-  <!-- Row 1 : left arrow + date + right arrow -->
-  <div style="display:flex;align-items:center;width:100%;gap:0;">
-    <button class="h-arrow" id="btnPrev" onclick="navDay(-1)">‹</button>
+  <!-- Header Aujourd'hui -->
+  <div id="headerToday" style="display:flex;align-items:center;width:100%;gap:0;">
     <div class="h-date-center">
       <div class="h-date-main" id="hDateMain"></div>
       <div class="h-date-saint" id="hDateSaint"></div>
     </div>
-    <button class="h-arrow" id="btnNext" onclick="navDay(1)">›</button>
+    <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+      <span id="backupWarn1" class="backup-warning" title="Pensez à sauvegarder !">⚠️</span>
+      <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
+    </div>
   </div>
-  <!-- Row 2 : Rapport only (today) -->
-  <div id="rapportToday" style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
-    <button onclick="openCalendarPicker()" style="background:none;border:none;cursor:pointer;padding:4px;position:absolute;left:0;font-size:1.2rem;">📅</button>
-    <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport quotidien</button>
-    <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
-      <span id="backupWarn1" class="backup-warning" onclick="event.stopPropagation();openSettings()" title="Pensez à sauvegarder !">⚠️</span>
-      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:3px;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
+  <!-- Header Historique -->
+  <div id="headerHistory" style="display:none;flex-wrap:wrap;width:100%;gap:0;">
+    <div style="display:flex;align-items:center;width:100%;gap:0;">
+      <button class="h-arrow" id="btnPrev" onclick="navDay(-1)">‹</button>
+      <div class="h-date-center">
+        <div class="h-date-main" id="hDateMainHist"></div>
+        <div class="h-date-saint" id="hDateSaintHist"></div>
+      </div>
+      <button class="h-arrow" id="btnNext" onclick="navDay(1)">›</button>
+    </div>
+    <div style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
+      <button onclick="openCalendarPicker()" style="background:none;border:none;cursor:pointer;padding:4px;position:absolute;left:0;font-size:1.2rem;">📅</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
+        <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
+        <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
+      </div>
+      <span id="backupWarn2" class="backup-warning" style="position:absolute;right:4px;" title="Pensez à sauvegarder !">⚠️</span>
+    </div>
   </div>
-  <!-- Row 2 : all 3 buttons (history) -->
-  <div id="historyBtns" style="display:none;width:100%;justify-content:center;align-items:center;gap:8px;padding-top:6px;position:relative;">
-    <button onclick="openCalendarPicker()" style="background:none;border:none;cursor:pointer;padding:4px;position:absolute;left:0;font-size:1.2rem;">📅</button>
-    <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
-    <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
-    <button class="h-btn h-btn-cejourhui" id="btnCeJour" onclick="goToday()">Ce jour</button>
-    <button onclick="openSettings()" style="background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;gap:4px;position:absolute;right:0;">
-      <span id="backupWarn2" class="backup-warning" onclick="event.stopPropagation();openSettings()" title="Pensez à sauvegarder !">⚠️</span>
-      <span onclick="event.stopPropagation();openHelp()" style="width:20px;height:20px;border-radius:3px;background:#e0f2fe;color:#0284c7;font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:1.5px solid #7dd3fc;">i</span>
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
+  <!-- Header simple (Compteurs / Paramètres) -->
+  <div id="headerSimple" style="display:none;align-items:center;width:100%;justify-content:center;">
+    <div class="h-date-main" id="hDateSimple" style="font-size:0.9rem;color:var(--text-med);"></div>
   </div>
 </div>
 
 <!-- ===== MAIN ===== -->
 <div id="main">
 
-  <!-- Action buttons -->
-  <div class="action-row" id="actionRow">
-    <button class="btn-action btn-dep active" id="btnDep" onclick="clickDep()">
-      <span class="btn-icon">🚍</span>
-      <span>DÉPART</span>
-      <span class="btn-sub">Démarrer une vacation</span>
-    </button>
-    <button class="btn-action btn-ret inactive" id="btnRet" onclick="clickRet()">
-      <span class="btn-icon">🏁</span>
-      <span>RETOUR</span>
-      <span class="btn-sub">Terminer la vacation</span>
-    </button>
-  </div>
+  <!-- ===== ONGLET AUJOURD'HUI ===== -->
+  <div id="tab-today" class="tab-content active">
 
-  <!-- CARD 1 - VACATIONS -->
-  <div class="card" id="card-vac">
-    <div class="card-header" onclick="toggleCard('vac')">
-      <div class="card-title"><span class="card-icon">🗓</span> Vacations</div>
-      <span class="card-chevron">▼</span>
+    <!-- Action buttons -->
+    <div class="action-row" id="actionRow">
+      <button class="btn-action btn-dep active" id="btnDep" onclick="clickDep()">
+        <span class="btn-icon">🚍</span>
+        <span>DÉPART</span>
+        <span class="btn-sub">Démarrer une vacation</span>
+      </button>
+      <button class="btn-action btn-ret inactive" id="btnRet" onclick="clickRet()">
+        <span class="btn-icon">🏁</span>
+        <span>RETOUR</span>
+        <span class="btn-sub">Terminer la vacation</span>
+      </button>
     </div>
-    <div class="card-body">
-      <div id="vacList"></div>
-      <button class="btn-ajout-manuel" id="btnAjoutManuel" onclick="ajoutManuel()">+ Ajout manuel</button>
-    </div>
-  </div>
 
-  <!-- CARD 2 - HEURES -->
-  <div class="card" id="card-hrs">
-    <div class="card-header" onclick="toggleCard('hrs')">
-      <div class="card-title"><span class="card-icon">📈</span> Compteurs</div>
-      <span class="card-chevron">▼</span>
+    <!-- CARD VACATIONS -->
+    <div class="card" id="card-vac">
+      <div class="card-header" onclick="toggleCard('vac')">
+        <div class="card-title"><span class="card-icon">🗓</span> Vacations</div>
+        <span class="card-chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div id="vacList"></div>
+        <button class="btn-ajout-manuel" id="btnAjoutManuel" onclick="ajoutManuel()">+ Ajout manuel</button>
+      </div>
     </div>
-    <div class="card-body" style="padding-top:14px;">
-      <div style="margin-bottom:8px;">
-        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openRecapAnneeSco()">🎒 Année scolaire</button>
-      </div>
-      <div style="margin-bottom:8px;">
-        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openRecapAnnee()">📅 Année civile</button>
-      </div>
-      <div style="margin-top:10px;">
-        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openSuiviEntreprise()">📊 Comparatif heures bulletin</button>
-      </div>
-      <div style="margin-top:8px;">
-        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openModalFDR()">📄 Feuille de route hebdo</button>
-      </div>
-      <div style="margin-top:10px;">
-        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openModalDeduc()">⏳ Déduction ½ heure</button>
-      </div>
-      <div style="text-align:center;margin-top:14px;font-style:italic;font-size:0.78rem;color:#4ade80;">Les totaux d'heures sont donnés à titre indicatif</div>
-    </div>
-  </div>
 
-  <!-- CARD 3 - NOTES -->
-  <div class="card" id="card-notes">
-    <div class="card-header" onclick="toggleCard('notes')">
-      <div class="card-title"><span class="card-icon">📝</span> Notes</div>
-      <span class="card-chevron">▼</span>
-    </div>
-    <div class="card-body">
-      <div class="notes-field-label" style="margin-top:10px;">Kilométrage fin de journée</div>
-      <input class="note-km-input" type="tel" inputmode="numeric" pattern="[0-9]*" id="kmInput" placeholder="" autocomplete="off" oninput="saveNotes()">
-      <div id="kmLastInfo" style="font-size:0.75rem;color:#94a3b8;font-style:italic;margin-top:4px;min-height:1em;"></div>
-      <div class="notes-field-label" style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;">
-        <span>Commentaires</span>
-        <button onclick="clearNote()" style="background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;" title="Effacer la note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+    <!-- CARD NOTES -->
+    <div class="card" id="card-notes">
+      <div class="card-header" onclick="toggleCard('notes')">
+        <div class="card-title"><span class="card-icon">📝</span> Notes</div>
+        <span class="card-chevron">▼</span>
       </div>
-      <textarea class="note-text-input" id="noteInput" placeholder="" autocomplete="off" oninput="saveNotes(); autoResize(this); limitLines(this, 6)"></textarea>
-      <div style="font-size:0.72rem;color:#94a3b8;font-style:italic;margin-top:4px;">Les commentaires seront repris dans la feuille de route hebdomadaire.</div>
+      <div class="card-body">
+        <div class="notes-field-label" style="margin-top:10px;">Kilométrage fin de journée</div>
+        <input class="note-km-input" type="tel" inputmode="numeric" pattern="[0-9]*" id="kmInput" placeholder="" autocomplete="off" oninput="saveNotes()">
+        <div id="kmLastInfo" style="font-size:0.75rem;color:#94a3b8;font-style:italic;margin-top:4px;min-height:1em;"></div>
+        <div class="notes-field-label" style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;">
+          <span>Commentaires</span>
+          <button onclick="clearNote()" style="background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;" title="Effacer la note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+        </div>
+        <textarea class="note-text-input" id="noteInput" placeholder="" autocomplete="off" oninput="saveNotes(); autoResize(this); limitLines(this, 6)"></textarea>
+        <div style="font-size:0.72rem;color:#94a3b8;font-style:italic;margin-top:4px;">Les commentaires seront repris dans la feuille de route hebdomadaire.</div>
+      </div>
     </div>
-  </div>
 
-  <!-- CARD 4 - ELEVES -->
-  <div class="card" id="card-elv">
-    <div class="card-header" onclick="toggleCard('elv')">
-      <div class="card-title"><span class="card-icon">👦</span> Élèves</div>
-      <span class="card-chevron">▼</span>
+    <!-- CARD ELEVES -->
+    <div class="card" id="card-elv">
+      <div class="card-header" onclick="toggleCard('elv')">
+        <div class="card-title"><span class="card-icon">👦</span> Élèves</div>
+        <span class="card-chevron">▼</span>
+      </div>
+      <div class="card-body" style="padding-top:14px;">
+        <div style="display:flex;gap:10px;">
+          <button class="btn-open-modal" style="flex:1;" onclick="openModalPointage()">📋 Pointage</button>
+          <button class="btn-open-modal" style="flex:1;" onclick="openModalGestion()">⚙️ Gestion</button>
+        </div>
+      </div>
     </div>
-    <div class="card-body" style="padding-top:14px;">
+
+    <!-- CARD RAPPELS -->
+    <div class="card" id="card-rappel" style="display:none;">
+      <div class="card-header" onclick="toggleRappelCard()">
+        <div class="card-title"><span class="card-icon">🔔</span> Rappels</div>
+        <span class="card-chevron" id="chevRappel">▼</span>
+      </div>
+      <div class="card-body" id="rappelBody"></div>
+    </div>
+
+  </div><!-- /tab-today -->
+
+  <!-- ===== ONGLET HISTORIQUE ===== -->
+  <div id="tab-history" class="tab-content">
+
+    <!-- Action buttons historique (readonly) -->
+    <div class="action-row" id="actionRowHist" style="display:none;">
+      <button class="btn-action btn-dep active" id="btnDepHist" onclick="clickDep()">
+        <span class="btn-icon">🚍</span>
+        <span>DÉPART</span>
+        <span class="btn-sub">Démarrer une vacation</span>
+      </button>
+      <button class="btn-action btn-ret inactive" id="btnRetHist" onclick="clickRet()">
+        <span class="btn-icon">🏁</span>
+        <span>RETOUR</span>
+        <span class="btn-sub">Terminer la vacation</span>
+      </button>
+    </div>
+
+    <!-- CARD VACATIONS HISTORIQUE -->
+    <div class="card" id="card-vac-hist">
+      <div class="card-header" onclick="toggleCard('vac-hist')">
+        <div class="card-title"><span class="card-icon">🗓</span> Vacations</div>
+        <span class="card-chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div id="vacListHist"></div>
+      </div>
+    </div>
+
+    <!-- CARD NOTES HISTORIQUE -->
+    <div class="card" id="card-notes-hist">
+      <div class="card-header" onclick="toggleCard('notes-hist')">
+        <div class="card-title"><span class="card-icon">📝</span> Notes</div>
+        <span class="card-chevron">▼</span>
+      </div>
+      <div class="card-body">
+        <div class="notes-field-label" style="margin-top:10px;">Kilométrage fin de journée</div>
+        <input class="note-km-input" type="tel" inputmode="numeric" pattern="[0-9]*" id="kmInputHist" placeholder="" autocomplete="off" oninput="saveNotesHist()">
+        <div id="kmLastInfoHist" style="font-size:0.75rem;color:#94a3b8;font-style:italic;margin-top:4px;min-height:1em;"></div>
+        <div class="notes-field-label" style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;">
+          <span>Commentaires</span>
+          <button onclick="clearNoteHist()" style="background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;" title="Effacer la note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+        </div>
+        <textarea class="note-text-input" id="noteInputHist" placeholder="" autocomplete="off" oninput="saveNotesHist(); autoResize(this); limitLines(this, 6)"></textarea>
+      </div>
+    </div>
+
+  </div><!-- /tab-history -->
+
+  <!-- ===== ONGLET COMPTEURS ===== -->
+  <div id="tab-compteurs" class="tab-content">
+    <button class="btn-open-modal" onclick="openRecapAnneeSco()">🎒 Année scolaire</button>
+    <button class="btn-open-modal" onclick="openRecapAnnee()">📅 Année civile</button>
+    <button class="btn-open-modal" onclick="openSuiviEntreprise()">📊 Comparatif heures bulletin</button>
+    <button class="btn-open-modal" onclick="openModalDeduc()">⏳ Déduction ½ heure</button>
+    <button class="btn-fdr-etat" onclick="openModalFDR()">📄 Feuille de route hebdo</button>
+    <button class="btn-fdr-etat" onclick="openModalEtatMensuel()">📊 État mensuel des présences</button>
+    <div style="text-align:center;font-style:italic;font-size:0.78rem;color:#94a3b8;">Les totaux d'heures sont donnés à titre indicatif</div>
+  </div><!-- /tab-compteurs -->
+
+  <!-- ===== ONGLET PARAMETRES ===== -->
+  <div id="tab-params" class="tab-content">
+    <div>
+      <div class="params-section-title">Paramètres FDR et état des présences</div>
+      <div id="paramsFieldsFDR"></div>
+    </div>
+    <div>
+      <div class="params-section-title">Élèves</div>
       <div style="display:flex;gap:10px;">
-        <button class="btn-open-modal" style="flex:1;" onclick="openModalPointage()">📋 Pointage</button>
-        <button class="btn-open-modal" style="flex:1;" onclick="openModalGestion()">⚙️ Gestion</button>
-      </div>
-      <div style="margin-top:8px;">
-        <button class="btn-open-modal" style="width:100%;font-size:0.82rem;" onclick="openModalEtatMensuel()">📊 État mensuel des présences</button>
+        <button class="btn-open-modal" style="flex:1;" onclick="openModalGestion()">⚙️ Gestion élèves</button>
       </div>
     </div>
-  </div>
-
-  <!-- CARD 5 - RAPPELS (aujourd'hui uniquement) -->
-  <div class="card" id="card-rappel" style="display:none;">
-    <div class="card-header" onclick="toggleRappelCard()">
-      <div class="card-title"><span class="card-icon">🔔</span> Rappels</div>
-      <span class="card-chevron" id="chevRappel">▼</span>
+    <div>
+      <div class="params-section-title">Données</div>
+      <div id="paramsBtnsData"></div>
     </div>
-    <div class="card-body" id="rappelBody"></div>
-  </div>
+    <div>
+      <button class="btn-open-modal" onclick="openHelp()">ℹ️ Aide</button>
+    </div>
+  </div><!-- /tab-params -->
 
 </div><!-- /main -->
+
+<!-- ===== TAB BAR ===== -->
+<div id="tab-bar">
+  <button class="tab-btn active" id="tabBtnToday" onclick="switchTab('today')">
+    <span class="tab-icon">📅</span>
+    <span class="tab-label">Aujourd'hui</span>
+  </button>
+  <button class="tab-btn" id="tabBtnHistory" onclick="switchTab('history')">
+    <span class="tab-icon">🕐</span>
+    <span class="tab-label">Historique</span>
+  </button>
+  <button class="tab-btn" id="tabBtnCompteurs" onclick="switchTab('compteurs')">
+    <span class="tab-icon">📈</span>
+    <span class="tab-label">Compteurs</span>
+  </button>
+  <button class="tab-btn" id="tabBtnParams" onclick="switchTab('params')">
+    <span class="tab-icon">⚙️</span>
+    <span class="tab-label">Paramètres</span>
+  </button>
+</div>
 
 <!-- ===== MODAL SUIVI ENTREPRISE ===== -->
 <div class="modal-overlay" id="modalSuiviEntreprise">
@@ -1656,42 +1822,108 @@ function isToday(){return viewDate===todayStr();}
 function navDay(delta){
   const d=new Date(viewDate+'T12:00:00');d.setDate(d.getDate()+delta);
   const ns=dateStr(d);if(ns>todayStr())return;
-  viewDate=ns;editMode=false;renderAll();
+  viewDate=ns;editMode=false;
+  if(currentTab==='today') switchTab('history');
+  else renderAll();
 }
-function goToday(){viewDate=todayStr();editMode=false;renderAll();}
+function goToday(){viewDate=todayStr();editMode=false;switchTab('today');}
 
 const JOURS=['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
 const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
 
+let currentTab='today';
+
+function switchTab(tab){
+  currentTab=tab;
+  // Masquer tous les onglets
+  ['today','history','compteurs','params'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el) el.classList.remove('active');
+    const btn=document.getElementById('tabBtn'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(btn) btn.classList.remove('active');
+  });
+  // Afficher l'onglet actif
+  const activeEl=document.getElementById('tab-'+tab);
+  if(activeEl) activeEl.classList.add('active');
+  const activeBtn=document.getElementById('tabBtn'+tab.charAt(0).toUpperCase()+tab.slice(1));
+  if(activeBtn) activeBtn.classList.add('active');
+  // Adapter le header
+  document.getElementById('headerToday').style.display=tab==='today'?'flex':'none';
+  document.getElementById('headerHistory').style.display=tab==='history'?'flex':'none';
+  document.getElementById('headerSimple').style.display=(tab==='compteurs'||tab==='params')?'flex':'none';
+  if(tab==='compteurs') document.getElementById('hDateSimple').textContent='Compteurs';
+  if(tab==='params') document.getElementById('hDateSimple').textContent='Paramètres';
+  // Lors du passage à Historique, aller au dernier jour pas aujourd'hui
+  if(tab==='history'&&isToday()){
+    const d=new Date(viewDate+'T12:00:00');
+    d.setDate(d.getDate()-1);
+    viewDate=dateStr(d);
+    editMode=false;
+  }
+  if(tab==='params') renderParamsTab();
+  renderHeader();
+  setTimeout(()=>{
+    document.getElementById('main').style.top=document.getElementById('header').offsetHeight+'px';
+  },0);
+}
+
+function renderParamsTab(){
+  // Champs FDR dans paramètres
+  const s=state.pdfSettings||{};
+  document.getElementById('paramsFieldsFDR').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
+      ${['agence','immat','licence','client','nom','prenom','lieu','circuit'].map(k=>`
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.78rem;color:#475569;min-width:80px;text-transform:capitalize;">${k==='lieu'?'Lieu départ':k==='prenom'?'Prénom':k.charAt(0).toUpperCase()+k.slice(1)}</span>
+          <input type="text" value="${s[k]||''}" oninput="saveParamField('${k}',this.value)"
+            style="flex:1;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.82rem;font-family:'Quicksand',sans-serif;">
+        </div>`).join('')}
+    </div>`;
+  // Boutons export/import
+  const exportBtn=document.getElementById('paramsBtnsData');
+  if(exportBtn) exportBtn.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
+      <button class="btn-open-modal" onclick="exportData()">💾 Exporter les données</button>
+      <button class="btn-open-modal" onclick="document.getElementById('importFileInput').click()">📂 Importer des données</button>
+      <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importData(event)">
+    </div>`;
+}
+
+function saveParamField(key,val){
+  if(!state.pdfSettings) state.pdfSettings={};
+  state.pdfSettings[key]=val;
+  saveState();
+}
+
 function renderHeader(){
   const d=new Date(viewDate+'T12:00:00');
-  document.getElementById('hDateMain').textContent=JOURS[d.getDay()]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' '+d.getFullYear();
+  const dateText=JOURS[d.getDay()]+' '+d.getDate()+' '+MOIS[d.getMonth()]+' '+d.getFullYear();
   const saint=getSaint(d);
   const femEndings=['e','ie','ine','ette','elle','ise','ce','nce','rie'];
   const isFem=femEndings.some(e=>saint.toLowerCase().endsWith(e));
   const prefix=isFem?'Ste':'St';
   const isNoel=d.getMonth()===11&&d.getDate()===25;
-  // Numéro de semaine ISO correct
   const tmp=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
   tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7));
   const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
   const weekNum=Math.ceil((((tmp-yearStart)/86400000)+1)/7);
-
-  document.getElementById('hDateSaint').innerHTML=(isNoel
-    ? `Ste ${saint} &nbsp;🎅 Noël !`
-    : prefix+' '+saint)
+  const saintHtml=(isNoel?`Ste ${saint} &nbsp;🎅 Noël !`:prefix+' '+saint)
     +` <span style="color:#fca5a5;">&nbsp;&nbsp;·&nbsp;&nbsp;Semaine ${weekNum}</span>`;
-  document.getElementById('btnNext').disabled=isToday();
-  const histRow=document.getElementById('historyBtns');
-  const today=isToday();
-  histRow.style.display=today?'none':'flex';
-  document.getElementById('rapportToday').style.display=today?'flex':'none';
+
+  if(currentTab==='today'){
+    document.getElementById('hDateMain').textContent=dateText;
+    document.getElementById('hDateSaint').innerHTML=saintHtml;
+  } else if(currentTab==='history'){
+    document.getElementById('hDateMainHist').textContent=dateText;
+    document.getElementById('hDateSaintHist').innerHTML=saintHtml;
+    document.getElementById('btnNext').disabled=isToday();
+    const hdr=document.getElementById('header');
+    if(editMode){hdr.classList.add('edit-mode');document.getElementById('btnEdit').classList.add('active');}
+    else{hdr.classList.remove('edit-mode');document.getElementById('btnEdit').classList.remove('active');}
+  }
   setTimeout(()=>{
     document.getElementById('main').style.top=document.getElementById('header').offsetHeight+'px';
   },0);
-  const hdr=document.getElementById('header');
-  if(editMode){hdr.classList.add('edit-mode');document.getElementById('btnEdit').classList.add('active');document.getElementById('btnEdit').textContent='Édition';}
-  else{hdr.classList.remove('edit-mode');document.getElementById('btnEdit').classList.remove('active');document.getElementById('btnEdit').textContent='Édition';}
 }
 
 function toggleEdit(){
@@ -1711,7 +1943,7 @@ function getVacsSorted(){
     return a.dep - b.dep;
   });
 }
-function canEdit(){return isToday()||editMode;}
+function canEdit(){return (currentTab==='today'&&isToday())||editMode;}
 
 function clickDep(){
   if(!canEdit())return;
@@ -1779,11 +2011,13 @@ function minToHM(m){if(m===null)return'';return Math.floor(m/60)+'h'+String(m%60
 
 function renderVacations(){
   const vacs=getVacsSorted();
-  const list=document.getElementById('vacList');
+  const listId=currentTab==='history'?'vacListHist':'vacList';
+  const list=document.getElementById(listId);
+  if(!list) return;
   const canE=canEdit();
   if(!vacs.length){
     list.innerHTML='<div class="empty-state">Aucune vacation pour cette journée</div>';
-    document.getElementById('btnAjoutManuel').style.display=canE?'flex':'none';
+    const am=document.getElementById('btnAjoutManuel');if(am) am.style.display=canE?'flex':'none';
     return;
   }
   const vacsComplete=vacsForDate(viewDate);
@@ -1824,7 +2058,7 @@ function renderVacations(){
       ${canE?`<button class="vac-del mgmt-del" onclick="deleteVac('${v.id}')">🗑</button>`:''}
     </div>`;
   }).join('')+totalsHtml;
-  document.getElementById('btnAjoutManuel').style.display=canE?'flex':'none';
+  const am=document.getElementById('btnAjoutManuel');if(am) am.style.display=canE?'flex':'none';
 }
 
 // ============================================================
@@ -1976,17 +2210,22 @@ function refreshHeures(){
 // ============================================================
 // NOTES
 // ============================================================
+function _kmId(){return currentTab==='history'?'kmInputHist':'kmInput';}
+function _noteId(){return currentTab==='history'?'noteInputHist':'noteInput';}
+function _kmInfoId(){return currentTab==='history'?'kmLastInfoHist':'kmLastInfo';}
+
 function loadNotes(){
   const dd=getDayData(viewDate);
-  const kmEl=document.getElementById('kmInput');
-  const noteEl=document.getElementById('noteInput');
+  const kmEl=document.getElementById(_kmId());
+  const noteEl=document.getElementById(_noteId());
+  if(!kmEl||!noteEl) return;
   kmEl.value=dd.km||'';
   noteEl.value=dd.note||'';
   autoResize(noteEl);
   kmEl.disabled=!canEdit();
   noteEl.disabled=!canEdit();
   // Afficher le dernier relevé connu
-  const infoEl=document.getElementById('kmLastInfo');
+  const infoEl=document.getElementById(_kmInfoId());
   if(infoEl){
     let lastKm=null, lastDs=null;
     const d2=new Date(viewDate+'T12:00:00');
@@ -2008,9 +2247,9 @@ function loadNotes(){
 function saveNotes(){
   if(!canEdit()) return;
   const dd=getDayData(viewDate);
-  dd.km=document.getElementById('kmInput').value.replace(/[^0-9]/g,'');
-  dd.note=document.getElementById('noteInput').value;
-  document.getElementById('kmInput').value=dd.km;
+  dd.km=document.getElementById(_kmId()).value.replace(/[^0-9]/g,'');
+  dd.note=document.getElementById(_noteId()).value;
+  document.getElementById(_kmId()).value=dd.km;
   saveState();
 }
 function autoResize(el){el.style.height='auto';el.style.height=(el.scrollHeight)+'px';}
@@ -2021,7 +2260,9 @@ function limitLines(el, max){
   }
 }
 
-function clearNote(){const el=document.getElementById('noteInput');el.value='';autoResize(el);saveNotes();}
+function saveNotesHist(){saveNotes();}
+function clearNoteHist(){const el=document.getElementById(_noteId());if(el){el.value='';autoResize(el);saveNotes();}}
+function clearNote(){const el=document.getElementById(_noteId());if(el){el.value='';autoResize(el);saveNotes();}}
 
 // ============================================================
 // PRESENCE
@@ -3126,8 +3367,11 @@ function updateActionBtns(){
   const vacs=getVacs();
   const last=vacs[vacs.length-1];
   const waitingRet=last && last.dep && !last.ret;
-  const show=isToday();
+  const show=isToday()&&currentTab==='today';
   document.getElementById('actionRow').style.display=show?'grid':'none';
+  // Historique : boutons masqués (edit mode gère l'affichage)
+  if(document.getElementById('actionRowHist'))
+    document.getElementById('actionRowHist').style.display='none';
   if(!show)return;
   const depBtn=document.getElementById('btnDep');
   const retBtn=document.getElementById('btnRet');
@@ -3145,11 +3389,17 @@ function updateActionBtns(){
 // ============================================================
 function renderAll(){
   renderHeader();
-  updateActionBtns();
-  renderVacations();
-  refreshHeures();
-  loadNotes();
-  renderRappelCard();
+  if(currentTab==='today'){
+    updateActionBtns();
+    renderVacations();
+    refreshHeures();
+    loadNotes();
+    renderRappelCard();
+  } else if(currentTab==='history'){
+    updateActionBtns();
+    renderVacations();
+    loadNotes();
+  }
 }
 
 // ============================================================
@@ -3376,13 +3626,17 @@ function renderSuivi(){
 
 // ============================================================
 setupClockEvents();
-renderAll();
+document.addEventListener('DOMContentLoaded', function(){
+  renderAll();
+}, false);
+// Fallback si DOM déjà chargé
+if(document.readyState==='complete'||document.readyState==='interactive') renderAll();
 
 // ============================================================
 // SETTINGS — MODE SOMBRE / EXPORT / IMPORT
 // ============================================================
 function openSettings(){
-  document.getElementById('modalSettings').classList.add('open');
+  switchTab('params');
 }
 
 
@@ -3517,7 +3771,8 @@ function openCalendarPicker(){
   input.addEventListener('change',function(){
     if(input.value && input.value<=todayStr()){
       viewDate=input.value;
-      renderAll();
+      if(currentTab==='today') switchTab('history');
+      else renderAll();
     }
     input.remove();
   });
