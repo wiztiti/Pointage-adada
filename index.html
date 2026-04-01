@@ -1058,14 +1058,12 @@ html, body {
   <!-- ===== ONGLET PARAMETRES ===== -->
   <div id="tab-params" class="tab-content">
     <div>
-      <div class="params-section-title">Paramètres FDR et état des présences</div>
-      <div id="paramsFieldsFDR"></div>
+      <div class="params-section-title">FDR et état des présences</div>
+      <button class="btn-open-modal" onclick="openModalInfosFixes()">⚙️ Informations fixes (FDR et état des présences)</button>
     </div>
     <div>
       <div class="params-section-title">Élèves</div>
-      <div style="display:flex;gap:10px;">
-        <button class="btn-open-modal" style="flex:1;" onclick="openModalGestion()">⚙️ Gestion élèves</button>
-      </div>
+      <button class="btn-open-modal" onclick="openModalGestion()">⚙️ Gestion élèves</button>
     </div>
     <div>
       <div class="params-section-title">Données</div>
@@ -1421,7 +1419,7 @@ html, body {
         </div>
       </div>
       <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
-        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">📅 Génération</div>
+
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;gap:8px;">
             <div style="flex:1;">
@@ -1509,7 +1507,7 @@ html, body {
         </div>
       </div>
       <div style="padding:12px 16px;background:#f0f9ff;border-radius:12px;border:1.5px solid #bae6fd;">
-        <div style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">📅 Génération</div>
+        <div id="fdrGenerateZone" style="font-size:0.85rem;font-weight:600;color:#0c4a6e;margin-bottom:10px;">📅 Génération</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div>
             <div style="font-size:0.75rem;color:#475569;margin-bottom:3px;">Semaine du (lundi)</div>
@@ -1527,6 +1525,60 @@ html, body {
     </div>
     <div class="modal-footer">
       <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalFDR')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL INFOS FIXES ===== -->
+<div class="modal-overlay" id="modalInfosFixes">
+  <div class="modal-sheet" style="border-radius:24px 24px 0 0;max-height:90vh;display:flex;flex-direction:column;">
+    <div class="modal-handle"></div>
+    <div class="modal-head">⚙️ Informations fixes</div>
+    <div class="modal-body" style="padding:20px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1;">
+      <div style="font-size:0.78rem;color:#475569;font-style:italic;margin-bottom:4px;">Utilisées dans la feuille de route et l'état des présences.</div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Agence</span>
+        <input type="text" id="infoFix_agence" placeholder="Ex: Mon Agence" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('agence',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Immatriculation</span>
+        <input type="text" id="infoFix_immat" placeholder="Ex: AA-123-BB" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('immat',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Licence</span>
+        <input type="text" id="infoFix_licence" placeholder="Ex: 2021/11/0000000" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('licence',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Client</span>
+        <input type="text" id="infoFix_client" placeholder="Ex: Mon Client" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('client',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Nom</span>
+        <input type="text" id="infoFix_nom" placeholder="Ex: NOM" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('nom',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Prénom</span>
+        <input type="text" id="infoFix_prenom" placeholder="Ex: Prénom" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('prenom',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Lieu départ</span>
+        <input type="text" id="infoFix_lieu" placeholder="Ex: Ma ville" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('lieu',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Lieu arrivée</span>
+        <input type="text" id="infoFix_lieuArrivee" placeholder="Ex: Ma ville" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('lieuArrivee',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Numéro circuit</span>
+        <input type="text" id="infoFix_circuit" placeholder="Ex: 123" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('circuit',this.value)">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <span style="font-size:0.75rem;color:#475569;font-weight:600;">Numéro carte</span>
+        <input type="text" id="infoFix_carte" placeholder="Ex: 0000000" style="border:1.5px solid #bae6fd;border-radius:8px;padding:7px 10px;font-size:0.85rem;font-family:'Quicksand',sans-serif;" oninput="saveInfoFix('carte',this.value)">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-valider" style="background:linear-gradient(135deg,#94a3b8,#64748b);" onclick="closeModal('modalInfosFixes')">Fermer</button>
     </div>
   </div>
 </div>
@@ -1852,6 +1904,8 @@ function switchTab(tab){
   document.getElementById('headerSimple').style.display=(tab==='compteurs'||tab==='params')?'flex':'none';
   if(tab==='compteurs') document.getElementById('hDateSimple').textContent='Compteurs';
   if(tab==='params') document.getElementById('hDateSimple').textContent='Paramètres';
+  // Retour à aujourd'hui
+  if(tab==='today') viewDate=todayStr();
   // Lors du passage à Historique, aller au dernier jour pas aujourd'hui
   if(tab==='history'&&isToday()){
     const d=new Date(viewDate+'T12:00:00');
@@ -1867,24 +1921,11 @@ function switchTab(tab){
 }
 
 function renderParamsTab(){
-  // Champs FDR dans paramètres
-  const s=state.pdfSettings||{};
-  document.getElementById('paramsFieldsFDR').innerHTML=`
-    <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px;">
-      ${['agence','immat','licence','client','nom','prenom','lieu','circuit'].map(k=>`
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-size:0.78rem;color:#475569;min-width:80px;text-transform:capitalize;">${k==='lieu'?'Lieu départ':k==='prenom'?'Prénom':k.charAt(0).toUpperCase()+k.slice(1)}</span>
-          <input type="text" value="${s[k]||''}" oninput="saveParamField('${k}',this.value)"
-            style="flex:1;border:1.5px solid #bae6fd;border-radius:8px;padding:6px 10px;font-size:0.82rem;font-family:'Quicksand',sans-serif;">
-        </div>`).join('')}
-    </div>`;
-  // Boutons export/import
   const exportBtn=document.getElementById('paramsBtnsData');
   if(exportBtn) exportBtn.innerHTML=`
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
       <button class="btn-open-modal" onclick="exportData()">💾 Exporter les données</button>
-      <button class="btn-open-modal" onclick="document.getElementById('importFileInput').click()">📂 Importer des données</button>
-      <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importData(event)">
+      <button class="btn-open-modal" onclick="pickImportFile()">📂 Importer des données</button>
     </div>`;
 }
 
@@ -3794,7 +3835,29 @@ function openHelp(){
   document.getElementById('modalHelp').classList.add('open');
 }
 
+function openModalInfosFixes(){
+  const s=state.pdfSettings||{};
+  ['agence','immat','licence','client','nom','prenom','lieu','lieuArrivee','circuit','carte'].forEach(k=>{
+    const el=document.getElementById('infoFix_'+k);
+    if(el) el.value=s[k]||'';
+  });
+  document.getElementById('modalInfosFixes').classList.add('open');
+}
+function saveInfoFix(key,val){
+  if(!state.pdfSettings) state.pdfSettings={};
+  state.pdfSettings[key]=val;
+  saveState();
+}
+
+function openModalFDRParamsOnly(){
+  loadFdrSettings();
+  document.getElementById('fdrGenerateZone').style.display='none';
+  document.getElementById('modalFDR').classList.add('open');
+}
+
 function openModalFDR(){
+  loadFdrSettings();
+  document.getElementById('fdrGenerateZone').style.display='flex';
   loadFdrSettings();
   const today=new Date();
   const mon=new Date(today);
