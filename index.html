@@ -828,10 +828,10 @@ html, body {
 /* ===== COMPTEURS TAB ===== */
 #tab-compteurs {
   padding: 16px;
-  display: flex;
   flex-direction: column;
   gap: 10px;
 }
+#tab-compteurs.active { display: flex !important; }
 #tab-compteurs .btn-open-modal { font-size: 0.88rem; }
 .btn-fdr-etat {
   width: 100%;
@@ -856,11 +856,11 @@ html, body {
 /* ===== PARAMETRES TAB ===== */
 #tab-params {
   padding: 16px;
-  display: flex;
   flex-direction: column;
   gap: 14px;
   overflow-y: auto;
 }
+#tab-params.active { display: flex !important; }
 .params-section-title {
   font-family: 'Quicksand', sans-serif;
   font-weight: 700;
