@@ -3927,8 +3927,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
       doc.setFontSize(9.5);doc.setFont('helvetica','bold');
       if(aMin>0){doc.setTextColor(249,115,22);doc.text(minToHM(aMin),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});}
       doc.setTextColor(...DARK);
-      if(rMin>0) doc.text(minToHM(rMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
-      if(cMin>0) doc.text(minToHM(cMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
+      if(rMin+aMin>0) doc.text(minToHM(rMin+aMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
+      if(cMin+aMin>0) doc.text(minToHM(cMin+aMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
     }
 
     // Commentaires : note du jour avec taille adaptative
