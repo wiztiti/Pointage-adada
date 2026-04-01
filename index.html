@@ -1905,8 +1905,11 @@ function switchTab(tab){
   document.getElementById('headerSimple').style.display=(tab==='compteurs'||tab==='params')?'flex':'none';
   if(tab==='compteurs') document.getElementById('hDateSimple').textContent='Compteurs';
   if(tab==='params') document.getElementById('hDateSimple').textContent='Paramètres';
+  // Stopper le mode édition et le clignotement
+  editMode=false;
+  document.getElementById('header').classList.remove('edit-mode');
   // Retour à aujourd'hui
-  if(tab==='today'){ viewDate=todayStr(); editMode=false; }
+  if(tab==='today') viewDate=todayStr();
   // Lors du passage à Historique, aller au dernier jour pas aujourd'hui
   if(tab==='history'&&isToday()){
     const d=new Date(viewDate+'T12:00:00');
