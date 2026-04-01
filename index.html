@@ -885,12 +885,12 @@ html, body {
 <!-- ===== HEADER ===== -->
 <div id="header" style="flex-wrap:wrap;height:auto;padding:8px 14px;gap:0;">
   <!-- Header Aujourd'hui -->
-  <div id="headerToday" style="display:flex;align-items:center;width:100%;gap:0;">
+  <div id="headerToday" style="display:flex;flex-direction:column;align-items:center;width:100%;gap:0;">
     <div class="h-date-center">
       <div class="h-date-main" id="hDateMain"></div>
       <div class="h-date-saint" id="hDateSaint"></div>
     </div>
-    <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding-top:5px;">
       <span id="backupWarn1" class="backup-warning" title="Pensez à sauvegarder !">⚠️</span>
       <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
     </div>
@@ -1058,12 +1058,12 @@ html, body {
   <!-- ===== ONGLET PARAMETRES ===== -->
   <div id="tab-params" class="tab-content">
     <div>
-      <div class="params-section-title">FDR et état des présences</div>
-      <button class="btn-open-modal" onclick="openModalInfosFixes()">⚙️ Informations fixes (FDR et état des présences)</button>
+      <div class="params-section-title" style="text-align:center;">FDR et état des présences</div>
+      <button class="btn-open-modal" onclick="openModalInfosFixes()">⚙️ Renseignements fixes</button>
     </div>
     <div>
-      <div class="params-section-title">Élèves</div>
-      <button class="btn-open-modal" onclick="openModalGestion()">⚙️ Gestion élèves</button>
+      <div class="params-section-title" style="text-align:center;">Élèves</div>
+      <button class="btn-open-modal" onclick="openModalGestion()">⚙️ Gestion</button>
     </div>
     <div>
       <div class="params-section-title">Données</div>
@@ -1247,102 +1247,95 @@ html, body {
       <div style="background:linear-gradient(135deg,#0ea5e9,#0369a1);border-radius:12px;padding:14px 16px;">
         <div style="font-weight:700;color:#fff;margin-bottom:8px;font-size:0.9rem;">🚌 À quoi sert cette app ?</div>
         <div style="color:#e0f2fe;line-height:1.6;">
-          Cette app est conçue pour les conducteurs ADIATE ou autre afin de <span style="font-weight:600;color:#fff;">mémoriser facilement leurs vacations</span> au fil de la journée — via les boutons <span style="font-weight:600;color:#fff;">Départ</span> et <span style="font-weight:600;color:#fff;">Retour</span> en temps réel, ou en les saisissant manuellement.<br><br>
-          À partir de ces données, l'app calcule automatiquement vos heures réelles et conventionnelles, génère votre <span style="font-weight:600;color:#fff;">feuille de route hebdomadaire</span> et suit vos totaux sur l'année.<br><br>
-          La section <span style="font-weight:600;color:#fff;">Élèves</span> et l'<span style="font-weight:600;color:#fff;">état mensuel des présences</span> sont <span style="font-weight:600;color:#fde68a;">optionnels</span> — utilisez-les uniquement si vous souhaitez assurer le suivi du pointage de vos élèves.
+          Conçue pour les conducteurs ADIATE, cette app permet de <span style="font-weight:600;color:#fff;">mémoriser facilement ses vacations</span> via les boutons <span style="font-weight:600;color:#fff;">Départ</span> et <span style="font-weight:600;color:#fff;">Retour</span> en temps réel, ou en les saisissant manuellement.<br><br>
+          Elle calcule automatiquement les heures réelles et conventionnelles, génère la <span style="font-weight:600;color:#fff;">feuille de route hebdomadaire</span> et l'<span style="font-weight:600;color:#fff;">état mensuel des présences</span>, et suit les totaux sur l'année.
         </div>
       </div>
 
       <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
-        <div style="font-weight:700;color:#166534;margin-bottom:6px;">🗓️ Navigation</div>
-        Les flèches <span style="font-weight:600;">‹ ›</span> dans l'en-tête permettent de naviguer jour par jour.<br><br>
-        Lorsque vous êtes sur le <span style="font-weight:600;">jour actuel</span>, le bouton <span style="font-weight:600;">Rapport quotidien</span> est affiché — il génère un résumé de la journée.<br><br>
-        Lorsque vous consultez un <span style="font-weight:600;">jour passé ou futur</span>, trois boutons apparaissent :<br>
-        &nbsp;• <span style="font-weight:600;">Édition</span> — permet de modifier les vacations du jour consulté (ajouter, supprimer)<br>
-        &nbsp;• <span style="font-weight:600;">Rapport</span> — génère le rapport du jour consulté<br>
-        &nbsp;• <span style="font-weight:600;">Ce jour</span> — revient immédiatement au jour actuel<br><br>
-        Le <span style="font-weight:600;">saint du jour</span> et le <span style="font-weight:600;">numéro de semaine</span> sont affichés sous la date.
+        <div style="font-weight:700;color:#166534;margin-bottom:6px;">📅 Aujourd'hui</div>
+        L'onglet par défaut. Affiche la journée en cours avec :<br>
+        &nbsp;• Les boutons <span style="font-weight:600;">Départ</span> et <span style="font-weight:600;">Retour</span> pour saisir les vacations en temps réel<br>
+        &nbsp;• La section <span style="font-weight:600;">Vacations</span> — liste et totaux du jour<br>
+        &nbsp;• La section <span style="font-weight:600;">Notes</span> — kilométrage et commentaires<br>
+        &nbsp;• La section <span style="font-weight:600;">Élèves</span> — pointage du jour<br>
+        &nbsp;• La section <span style="font-weight:600;">Rappels</span> — alertes du jour<br><br>
+        Le header affiche la date, le saint, le numéro de semaine et le bouton <span style="font-weight:600;">Rapport</span> pour générer un résumé de la journée.
       </div>
 
       <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
-        <div style="font-weight:700;color:#166534;margin-bottom:6px;">🕐 Vacations</div>
-        Enregistrez vos heures en appuyant sur les boutons <span style="font-weight:600;">Départ</span> et <span style="font-weight:600;">Retour</span> en temps réel, ou ajoutez une vacation manuellement en saisissant les heures directement.<br><br>
-        L'app calcule automatiquement vos heures réelles et conventionnelles :<br>
-        &nbsp;• 1 vacation = 2h conv.<br>
-        &nbsp;• 2 vacations = 3h conv.<br>
-        &nbsp;• 3 vacations et plus = 4h30 conv.<br><br>
-        Une vacation peut être marquée <span style="color:#f97316;font-weight:600;">Annexe</span> — elle apparaît en orange et est comptabilisée séparément des heures principales.
+        <div style="font-weight:700;color:#166534;margin-bottom:6px;">🕐 Historique</div>
+        Consultez et modifiez n'importe quel jour passé.<br><br>
+        Les flèches <span style="font-weight:600;">‹ ›</span> permettent de naviguer jour par jour. Le bouton <span style="font-weight:600;">📅</span> permet d'accéder directement à une date précise.<br><br>
+        Les sections Vacations et Notes sont <span style="font-weight:600;">consultables</span> sans mode édition. Pour <span style="font-weight:600;">modifier</span>, activez le bouton <span style="font-weight:600;">Édition</span> dans le header — il s'active en rouge pour signaler que vous êtes en mode modification.<br><br>
+        Le bouton <span style="font-weight:600;">Rapport</span> génère le rapport du jour consulté.
       </div>
 
       <div style="background:#eff6ff;border-radius:12px;padding:12px 14px;border:1.5px solid #bfdbfe;">
         <div style="font-weight:700;color:#1e40af;margin-bottom:6px;">📈 Compteurs</div>
-        Consultez vos totaux par <span style="font-weight:600;">📅 Année civile</span> ou <span style="font-weight:600;">🎒 Année scolaire</span>. Dans chaque récap, vous pouvez développer chaque mois, puis chaque semaine, puis chaque jour.<br><br>
-        <span style="font-weight:600;">💡 Astuce</span> — Dans chaque récap, appuyez sur un jour pour ouvrir directement son rapport.<br><br>
-        Le bouton <span style="font-weight:600;">Comparatif heures bulletin</span> permet de comparer vos heures calculées avec celles de votre bulletin de salaire.<br><br>
-        Le bouton <span style="font-weight:600;">⏳ Déduction ½ heure</span> ouvre un modal avec deux modes : <span style="font-weight:600;">Toujours</span> — la déduction s'applique sur tous les jours sans exception — ou <span style="font-weight:600;">Par périodes</span> — vous définissez des plages de dates précises. Un indicateur arc-en-ciel <span style="font-weight:600;">½ heure déduite</span> apparaît dans les récaps concernés.<br><br>
-        Le bouton <span style="font-weight:600;">📄 Feuille de route hebdo</span> génère la FDR depuis cette section. La <span style="font-weight:600;">📋 Feuille vierge</span> est disponible dans ce même modal.
+        Consultez vos totaux via les boutons :<br>
+        &nbsp;• <span style="font-weight:600;">🎒 Année scolaire</span> et <span style="font-weight:600;">📅 Année civile</span> — développez chaque mois, semaine et jour<br>
+        &nbsp;• <span style="font-weight:600;">📊 Comparatif heures bulletin</span> — comparez avec votre bulletin de salaire<br>
+        &nbsp;• <span style="font-weight:600;">⏳ Déduction ½ heure</span> — appliquez une déduction en mode Toujours ou Par périodes<br><br>
+        <span style="font-weight:600;">💡 Astuce</span> — Dans les récaps, appuyez sur un jour pour ouvrir son rapport.<br><br>
+        Les boutons roses permettent de générer :<br>
+        &nbsp;• <span style="font-weight:600;">📄 Feuille de route hebdo</span> — choisissez la semaine, générez en PDF ou JPG<br>
+        &nbsp;• <span style="font-weight:600;">📊 État mensuel des présences</span> — choisissez le mois, générez en PDF ou JPG
+      </div>
+
+      <div style="background:#fefce8;border-radius:12px;padding:12px 14px;border:1.5px solid #fde68a;">
+        <div style="font-weight:700;color:#854d0e;margin-bottom:6px;">🕐 Vacations</div>
+        Enregistrez vos heures via <span style="font-weight:600;">Départ</span> / <span style="font-weight:600;">Retour</span> ou ajoutez-les manuellement.<br><br>
+        L'app calcule automatiquement vos heures conventionnelles :<br>
+        &nbsp;• 1 vacation = 2h conv. &nbsp;• 2 vacations = 3h conv. &nbsp;• 3+ = 4h30 conv.<br><br>
+        Une vacation peut être marquée <span style="color:#f97316;font-weight:600;">Annexe</span> — elle est comptabilisée séparément et s'ajoute au total.
       </div>
 
       <div style="background:#fefce8;border-radius:12px;padding:12px 14px;border:1.5px solid #fde68a;">
         <div style="font-weight:700;color:#854d0e;margin-bottom:6px;">📝 Notes</div>
-        Saisissez le kilométrage journalier et vos commentaires du jour.<br><br>
-        Le kilométrage est repris automatiquement dans la feuille de route.<br>
-        Les commentaires apparaissent dans la colonne Commentaires de la feuille de route hebdomadaire.<br><br>
-        <span style="font-weight:600;">💡</span> Les commentaires sont limités à <span style="font-weight:600;">6 lignes</span> maximum.
+        Saisissez le <span style="font-weight:600;">kilométrage</span> journalier et vos <span style="font-weight:600;">commentaires</span>.<br><br>
+        Ces données sont reprises automatiquement dans la feuille de route hebdomadaire. Les commentaires sont limités à <span style="font-weight:600;">6 lignes</span>.
       </div>
 
       <div style="background:#fdf4ff;border-radius:12px;padding:12px 14px;border:1.5px solid #e9d5ff;">
         <div style="font-weight:700;color:#6b21a8;margin-bottom:6px;">👥 Élèves</div>
-        Gérez la liste de vos élèves et leur pointage quotidien :<br>
-        &nbsp;• Matin aller / retour<br>
-        &nbsp;• Soir aller / retour<br><br>
-        Pour chaque case de pointage, un appui fait cycler entre 3 états :<br>
-        &nbsp;• <span style="color:#059669;font-weight:600;">1 appui</span> → présent (vert)<br>
-        &nbsp;• <span style="color:#dc2626;font-weight:600;">2 appuis</span> → absent non prévenu (rouge)<br>
-        &nbsp;• <span style="color:#64748b;font-weight:600;">3 appuis</span> → reset (vide)<br><br>
-        Dans la section <span style="font-weight:600;">Gestion</span>, appuyez sur ✏️ à côté d'un élève pour renseigner son adresse. Elle sera utilisée dans l'état mensuel des présences.<br><br>
-        Vous pouvez renommer un élève — toutes ses présences passées sont mises à jour automatiquement.
+        Gérez le pointage quotidien de vos élèves (matin aller/retour, soir aller/retour).<br><br>
+        Chaque case cycle entre 3 états : <span style="color:#059669;font-weight:600;">présent</span> → <span style="color:#dc2626;font-weight:600;">absent non prévenu</span> → <span style="color:#64748b;font-weight:600;">vide</span>.<br><br>
+        Via <span style="font-weight:600;">Gestion</span>, appuyez sur ✏️ pour renseigner l'adresse d'un élève — elle apparaîtra dans l'état mensuel.
       </div>
 
       <div style="background:#fff7ed;border-radius:12px;padding:12px 14px;border:1.5px solid #fed7aa;">
         <div style="font-weight:700;color:#9a3412;margin-bottom:6px;">🔔 Rappels</div>
-        Ajoutez des rappels qui apparaîtront le jour concerné.<br>
-        Pratique pour noter les absences prévues, changements de circuit, etc.<br><br>
-        Si plusieurs rappels sont enregistrés pour la même journée, ils s'affichent à la suite dans la même fenêtre de rappel.
+        Ajoutez des rappels qui apparaîtront le jour concerné (absences prévues, changements de circuit...).
       </div>
 
       <div style="background:#f0f9ff;border-radius:12px;padding:12px 14px;border:1.5px solid #bae6fd;">
         <div style="font-weight:700;color:#0c4a6e;margin-bottom:6px;">📄 Feuille de route (FDR)</div>
-        Accessible depuis la carte <span style="font-weight:600;">Compteurs</span> via le bouton "Feuille de route hebdo".<br><br>
         <span style="color:#dc2626;font-weight:600;">📧 À envoyer chaque vendredi à : fdrscolaire@adiate.fr</span><br><br>
-        Renseignez une fois les <span style="font-weight:600;">paramètres fixes</span> (agence, immatriculation, licence, client, nom, prénom, lieu de départ et d'arrivée).<br><br>
-        Chaque semaine, choisissez simplement la date et générez en <span style="font-weight:600;">PDF</span> ou en <span style="font-weight:600;">image JPG</span>.<br><br>
-        Les heures, kilométrages et commentaires sont remplis automatiquement depuis vos données.<br><br>
-        Le bouton <span style="font-weight:600;">📋 Feuille vierge</span> permet de générer une feuille de route sans données, utile pour un remplissage manuel.
+        Accessible depuis l'onglet <span style="font-weight:600;">Compteurs</span>. Choisissez la semaine et générez en PDF ou JPG.<br><br>
+        Les renseignements fixes (agence, immat, nom, lieu...) se configurent dans l'onglet <span style="font-weight:600;">Paramètres</span> → Renseignements fixes.<br><br>
+        Le bouton <span style="font-weight:600;">📋 Feuille vierge</span> génère une feuille sans données pour remplissage manuel.
       </div>
 
       <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
         <div style="font-weight:700;color:#166534;margin-bottom:6px;">📊 État mensuel des présences</div>
-        Accessible depuis la carte <span style="font-weight:600;">Élèves</span> via le bouton "📊 État mensuel des présences".<br><br>
         <span style="color:#dc2626;font-weight:600;">📧 À envoyer chaque dernier jour du mois à : qdelvallee@adiate.fr</span><br><br>
-        Renseignez les adresses des élèves via le bouton ✏️ dans la Gestion. Ces adresses apparaîtront sur le document officiel.<br><br>
-        Choisissez le mois et l'année, puis générez en <span style="font-weight:600;">PDF</span> ou en <span style="font-weight:600;">image JPG</span>.<br><br>
-        Les données de pointage (présent, absent non prévenu) sont reprises automatiquement. Une deuxième page est générée automatiquement si vous avez plus de 8 élèves.<br><br>
-        En mode JPG, une page s'ouvre avec toutes les feuilles — appui long sur chaque image pour enregistrer.<br><br>
-        Le bouton <span style="font-weight:600;">📋 État vierge</span> génère un état vierge avec le mois choisi, sans nom d'élève ni données de pointage.
+        Accessible depuis l'onglet <span style="font-weight:600;">Compteurs</span>. Choisissez le mois et générez en PDF ou JPG.<br><br>
+        Une 2ème page est générée automatiquement si vous avez plus de 8 élèves. En mode JPG, appui long sur chaque image pour enregistrer.<br><br>
+        Le bouton <span style="font-weight:600;">📋 État vierge</span> génère un état sans données de pointage.
       </div>
 
       <div style="background:#f8fafc;border-radius:12px;padding:12px 14px;border:1.5px solid #e2e8f0;">
         <div style="font-weight:700;color:#475569;margin-bottom:6px;">⚙️ Paramètres</div>
-        <span style="font-weight:600;">💾 Exporter</span> — Télécharge un fichier JSON contenant toutes vos données (vacations, élèves, présences, notes, km...). À faire régulièrement et à conserver précieusement.<br><br>
-        <span style="font-weight:600;">📂 Importer</span> — Restaure les données depuis un fichier JSON exporté. Deux options :<br>
-        &nbsp;• <span style="font-weight:600;">Fusionner</span> — ajoute les données du fichier sans écraser ce qui existe déjà (recommandé)<br>
-        &nbsp;• <span style="font-weight:600;">Remplacer</span> — efface tout et repart du fichier importé<br><br>
-        <span style="color:#ef4444;font-weight:600;">⚠️ Pensez à exporter régulièrement — si le navigateur est réinitialisé, ou si vous avez vidé le cache ou changé d'appareil, les données sont perdues sans sauvegarde !</span>
+        &nbsp;• <span style="font-weight:600;">Renseignements fixes</span> — agence, immat, licence, client, nom, prénom, lieux, circuit, carte<br>
+        &nbsp;• <span style="font-weight:600;">Gestion élèves</span> — ajout, suppression, adresses<br>
+        &nbsp;• <span style="font-weight:600;">💾 Exporter</span> — sauvegardez toutes vos données en JSON<br>
+        &nbsp;• <span style="font-weight:600;">📂 Importer</span> — restaurez depuis un fichier JSON (Fusionner ou Remplacer)<br><br>
+        <span style="color:#ef4444;font-weight:600;">⚠️ Exportez régulièrement — sans sauvegarde, les données sont perdues si le cache est vidé !</span>
       </div>
 
       <div style="text-align:center;padding:10px 0 4px;font-size:0.75rem;color:#94a3b8;border-top:1px solid #e2e8f0;margin-top:4px;">
-        © 2026 Frédéric Lepreux — Tous droits réservés — v2.0
+        © 2026 Frédéric Lepreux — Tous droits réservés — v2.1
       </div>
 
     </div>
@@ -1905,7 +1898,7 @@ function switchTab(tab){
   if(tab==='compteurs') document.getElementById('hDateSimple').textContent='Compteurs';
   if(tab==='params') document.getElementById('hDateSimple').textContent='Paramètres';
   // Retour à aujourd'hui
-  if(tab==='today') viewDate=todayStr();
+  if(tab==='today'){ viewDate=todayStr(); editMode=false; }
   // Lors du passage à Historique, aller au dernier jour pas aujourd'hui
   if(tab==='history'&&isToday()){
     const d=new Date(viewDate+'T12:00:00');
@@ -1914,7 +1907,7 @@ function switchTab(tab){
     editMode=false;
   }
   if(tab==='params') renderParamsTab();
-  renderHeader();
+  renderAll();
   setTimeout(()=>{
     document.getElementById('main').style.top=document.getElementById('header').offsetHeight+'px';
   },0);
@@ -3447,9 +3440,15 @@ function renderAll(){
     loadNotes();
     renderRappelCard();
   } else if(currentTab==='history'){
+    // Préserver l'état ouvert/fermé des cards historique
+    const vacOpen=document.getElementById('card-vac-hist')&&document.getElementById('card-vac-hist').classList.contains('open');
+    const notesOpen=document.getElementById('card-notes-hist')&&document.getElementById('card-notes-hist').classList.contains('open');
     updateActionBtns();
     renderVacations();
     loadNotes();
+    // Restaurer l'état
+    if(vacOpen&&document.getElementById('card-vac-hist')) document.getElementById('card-vac-hist').classList.add('open');
+    if(notesOpen&&document.getElementById('card-notes-hist')) document.getElementById('card-notes-hist').classList.add('open');
   }
 }
 
