@@ -414,7 +414,7 @@ html, body {
 .recap-day-row.absent   { background:#fff7ed; color:#c4975a; }
 .recap-day-name { font-weight:700; min-width:32px; }
 .recap-day-date { min-width:60px; color:#64748b; font-size:0.78rem; }
-.recap-day-vacs { flex:1; font-size:0.78rem; color:#475569; }
+.recap-day-vacs { flex:1; font-size:0.72rem; color:#475569; line-height:1.4; }
 .recap-day-hrs  { font-weight:700; font-size:0.78rem; color:#1e3a5f; white-space:nowrap; }
 .recap-total-row {
   display:flex; justify-content:space-between; align-items:center;
@@ -2796,7 +2796,7 @@ function buildDayRow(ds){
       const dep=new Date(v.dep);const ret=new Date(v.ret);
       const times=`(${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')})`;
       const vtype=v.type||(v.annexe?'annexe':null);
-      return vtype?`<span style="color:${VAC_COLORS[vtype]};">${times}</span>`:times;
+      return vtype?`<span style="color:${VAC_COLORS[vtype]};display:inline;">${times}</span>`:times;
     });
     const lines=[];
     for(let i=0;i<vacsFormatted.length;i+=2) lines.push(vacsFormatted.slice(i,i+2).join(' '));
