@@ -1037,6 +1037,7 @@ html, body {
       </div>
       <div class="card-body">
         <div id="vacListHist"></div>
+        <button class="btn-ajout-manuel" id="btnAjoutManuelHist" style="display:none;" onclick="ajoutManuel()">+ Ajout manuel</button>
       </div>
     </div>
 
@@ -2088,6 +2089,7 @@ function renderVacations(){
   if(!vacs.length){
     list.innerHTML='<div class="empty-state">Aucune vacation pour cette journée</div>';
     const am=document.getElementById('btnAjoutManuel');if(am) am.style.display=canE?'flex':'none';
+    const amh=document.getElementById('btnAjoutManuelHist');if(amh) amh.style.display=canE?'flex':'none';
     return;
   }
   const vacsComplete=vacsForDate(viewDate);
@@ -2129,6 +2131,7 @@ function renderVacations(){
     </div>`;
   }).join('')+totalsHtml;
   const am=document.getElementById('btnAjoutManuel');if(am) am.style.display=canE?'flex':'none';
+  const amh=document.getElementById('btnAjoutManuelHist');if(amh) amh.style.display=canE?'flex':'none';
 }
 
 // ============================================================
