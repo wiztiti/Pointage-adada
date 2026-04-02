@@ -94,13 +94,8 @@ html, body {
   animation: headerBlink 0.8s ease-in-out infinite;
 }
 @keyframes headerBlink {
-  0%,100% { background: #ffcccc; }
-  50% { background: #ff9999; }
-}
-
-/* Fond app en mode édition */
-body.edit-mode-bg {
-  background: #ffcccc !important;
+  0%,100% { background: rgba(255,255,255,0.88); }
+  50% { background: rgba(255,160,160,0.88); }
 }
 
 .h-nav { display: flex; align-items: center; gap: 6px; }
@@ -1920,7 +1915,6 @@ function switchTab(tab){
   // Stopper le mode édition et le clignotement
   editMode=false;
   document.getElementById('header').classList.remove('edit-mode');
-  document.body.classList.remove('edit-mode-bg');
   // Retour à aujourd'hui
   if(tab==='today') viewDate=todayStr();
   // Lors du passage à Historique, aller au dernier jour pas aujourd'hui
@@ -1983,11 +1977,9 @@ function renderHeader(){
     if(editMode){
       hdr.classList.add('edit-mode');
       document.getElementById('btnEdit').classList.add('active');
-      document.body.classList.add('edit-mode-bg');
     } else {
       hdr.classList.remove('edit-mode');
       document.getElementById('btnEdit').classList.remove('active');
-      document.body.classList.remove('edit-mode-bg');
     }
   }
   setTimeout(()=>{
