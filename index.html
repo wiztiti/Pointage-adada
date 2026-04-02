@@ -2801,8 +2801,11 @@ function buildDayRow(ds){
     const lines=[];
     for(let i=0;i<vacsFormatted.length;i+=2){
       const pair=vacsFormatted.slice(i,i+2);
-      const lineHtml=pair.map(p=>p.col?`<font color="${p.col}">${p.txt}</font>`:p.txt).join(' ');
-      lines.push(lineHtml);
+      const lineHtml=pair.map(p=>{
+        const style=`white-space:nowrap;${p.col?'color:'+p.col+';':''}`;
+        return `<span style="${style}">${p.txt}</span>`;
+      }).join(' ');
+      lines.push(`<span style="white-space:nowrap;">${lineHtml}</span>`);
     }
     vacsHtml=lines.join('<br>');
   } else {
