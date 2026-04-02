@@ -414,7 +414,7 @@ html, body {
 .recap-day-row.absent   { background:#fff7ed; color:#c4975a; }
 .recap-day-name { font-weight:700; min-width:32px; }
 .recap-day-date { min-width:60px; color:#64748b; font-size:0.78rem; }
-.recap-day-vacs { flex:1; font-size:0.72rem; color:#475569; line-height:1.4; }
+.recap-day-vacs { flex:1; font-size:0.72rem; color:#475569; line-height:1.4; overflow:hidden; }
 .recap-day-hrs  { font-weight:700; font-size:0.78rem; color:#1e3a5f; white-space:nowrap; }
 .recap-total-row {
   display:flex; justify-content:space-between; align-items:center;
@@ -2804,8 +2804,8 @@ function buildDayRow(ds){
       const lineHtml=pair.map(p=>{
         const style=`white-space:nowrap;${p.col?'color:'+p.col+';':''}`;
         return `<span style="${style}">${p.txt}</span>`;
-      }).join(' ');
-      lines.push(`<span style="white-space:nowrap;">${lineHtml}</span>`);
+      }).join('&nbsp;');
+      lines.push(lineHtml);
     }
     vacsHtml=lines.join('<br>');
   } else {
