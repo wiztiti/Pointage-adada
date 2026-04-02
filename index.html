@@ -91,11 +91,18 @@ html, body {
   transition: background 0.3s;
 }
 #header.edit-mode {
-  animation: headerBlink 0.8s ease-in-out infinite;
 }
 @keyframes headerBlink {
   0%,100% { background: rgba(255,255,255,0.88); }
   50% { background: rgba(255,160,160,0.88); }
+}
+@keyframes btnBlink {
+  0%,100% { box-shadow: 0 0 0 0 rgba(220,0,0,0); }
+  50% { box-shadow: 0 0 0 4px rgba(220,0,0,0.4); }
+}
+.edit-blink {
+  animation: btnBlink 0.8s ease-in-out infinite !important;
+  outline: 2px solid rgba(220,0,0,0.3);
 }
 
 .h-nav { display: flex; align-items: center; gap: 6px; }
@@ -170,6 +177,7 @@ html, body {
   color: #b91c1c;
   border-color: transparent;
   box-shadow: 0 3px 10px rgba(239,68,68,0.2);
+  animation: btnBlink 0.8s ease-in-out infinite;
 }
 
 /* ===== MAIN SCROLL ===== */
@@ -3485,6 +3493,13 @@ function renderAll(){
     // Corbeille visible uniquement en mode édition
     const corbHist=document.getElementById('btnClearNoteHist');
     if(corbHist) corbHist.style.display=editMode?'inline-block':'none';
+    // Clignotement des cards en mode édition
+    ['card-vac-hist','card-notes-hist','card-elv-hist'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(!el) return;
+      if(editMode) el.classList.add('edit-blink');
+      else el.classList.remove('edit-blink');
+    });
   }
 }
 
