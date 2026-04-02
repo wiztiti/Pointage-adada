@@ -2792,14 +2792,18 @@ function buildDayRow(ds){
     const normalVacs=vacs.filter(v=>!v.type&&!v.annexe);
     const annexeVacs=vacs.filter(v=>v.annexe);
     const vacsFormatted=vacs.map(v=>{
-      if(!v.dep||!v.ret) return '';
+      if(!v.dep||!v.ret) return {txt:'',col:null};
       const dep=new Date(v.dep);const ret=new Date(v.ret);
       const times=`(${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')})`;
       const vtype=v.type||(v.annexe?'annexe':null);
-      return vtype?`<span style="color:${VAC_COLORS[vtype]};display:inline;">${times}</span>`:times;
-    });
+      return {txt:times,col:vtype?VAC_COLORS[vtype]:null};
+    }).filter(x=>x.txt);
     const lines=[];
-    for(let i=0;i<vacsFormatted.length;i+=2) lines.push(vacsFormatted.slice(i,i+2).join(' '));
+    for(let i=0;i<vacsFormatted.length;i+=2){
+      const pair=vacsFormatted.slice(i,i+2);
+      const lineHtml=pair.map(p=>p.col?`<span style="color:${p.col};">${p.txt}</span>`:p.txt).join(' ');
+      lines.push(lineHtml);
+    }
     vacsHtml=lines.join('<br>');
   } else {
     vacsHtml=isWE?'—':'—';
