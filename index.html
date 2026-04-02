@@ -94,8 +94,13 @@ html, body {
   animation: headerBlink 0.8s ease-in-out infinite;
 }
 @keyframes headerBlink {
-  0%,100% { background: rgba(255,255,255,0.88); }
-  50% { background: rgba(255,210,200,0.88); }
+  0%,100% { background: #ffcccc; }
+  50% { background: #ff9999; }
+}
+
+/* Fond app en mode édition */
+body.edit-mode-bg {
+  background: #ffcccc !important;
 }
 
 .h-nav { display: flex; align-items: center; gap: 6px; }
@@ -1044,9 +1049,16 @@ html, body {
         <div id="kmLastInfoHist" style="font-size:0.75rem;color:#94a3b8;font-style:italic;margin-top:4px;min-height:1em;"></div>
         <div class="notes-field-label" style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;">
           <span>Commentaires</span>
-          <button onclick="clearNoteHist()" style="background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;" title="Effacer la note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+          <button id="btnClearNoteHist" onclick="clearNoteHist()" style="background:none;border:none;cursor:pointer;padding:2px 4px;line-height:1;display:none;" title="Effacer la note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
         </div>
         <textarea class="note-text-input" id="noteInputHist" placeholder="" autocomplete="off" oninput="saveNotesHist(); autoResize(this); limitLines(this, 6)"></textarea>
+      </div>
+    </div>
+
+    <!-- BOUTON POINTAGE ELEVES -->
+    <div class="card" id="card-elv-hist">
+      <div class="card-header" onclick="openModalPointageHist()">
+        <div class="card-title"><span class="card-icon">👦</span> Pointage des élèves</div>
       </div>
     </div>
 
@@ -1066,7 +1078,7 @@ html, body {
   <!-- ===== ONGLET PARAMETRES ===== -->
   <div id="tab-params" class="tab-content">
     <div>
-      <div class="params-section-title" style="text-align:center;">FDR et état des présences</div>
+      <div class="params-section-title" style="text-align:center;">Feuille de route et<br>état des présences</div>
       <button class="btn-open-modal" onclick="openModalInfosFixes()">⚙️ Renseignements fixes</button>
     </div>
     <div>
@@ -1074,7 +1086,7 @@ html, body {
       <button class="btn-open-modal" onclick="openModalGestion()">⚙️ Gestion</button>
     </div>
     <div>
-      <div class="params-section-title">Données</div>
+      <div class="params-section-title" style="text-align:center;">Données</div>
       <div id="paramsBtnsData"></div>
     </div>
     <div>
@@ -1255,7 +1267,7 @@ html, body {
       <div style="background:linear-gradient(135deg,#0ea5e9,#0369a1);border-radius:12px;padding:14px 16px;">
         <div style="font-weight:700;color:#fff;margin-bottom:8px;font-size:0.9rem;">🚌 À quoi sert cette app ?</div>
         <div style="color:#e0f2fe;line-height:1.6;">
-          Conçue pour les conducteurs ADIATE, cette app permet de <span style="font-weight:600;color:#fff;">mémoriser facilement ses vacations</span> via les boutons <span style="font-weight:600;color:#fff;">Départ</span> et <span style="font-weight:600;color:#fff;">Retour</span> en temps réel, ou en les saisissant manuellement.<br><br>
+          Conçue pour les conducteurs ADIATE ou autre société de transport scolaire, cette app permet de <span style="font-weight:600;color:#fff;">mémoriser facilement ses vacations</span> via les boutons <span style="font-weight:600;color:#fff;">Départ</span> et <span style="font-weight:600;color:#fff;">Retour</span> en temps réel, ou en les saisissant manuellement.<br><br>
           Elle calcule automatiquement les heures réelles et conventionnelles, génère la <span style="font-weight:600;color:#fff;">feuille de route hebdomadaire</span> et l'<span style="font-weight:600;color:#fff;">état mensuel des présences</span>, et suit les totaux sur l'année.
         </div>
       </div>
@@ -1908,6 +1920,7 @@ function switchTab(tab){
   // Stopper le mode édition et le clignotement
   editMode=false;
   document.getElementById('header').classList.remove('edit-mode');
+  document.body.classList.remove('edit-mode-bg');
   // Retour à aujourd'hui
   if(tab==='today') viewDate=todayStr();
   // Lors du passage à Historique, aller au dernier jour pas aujourd'hui
@@ -1967,8 +1980,15 @@ function renderHeader(){
     document.getElementById('hDateSaintHist').innerHTML=saintHtml;
     document.getElementById('btnNext').disabled=isToday();
     const hdr=document.getElementById('header');
-    if(editMode){hdr.classList.add('edit-mode');document.getElementById('btnEdit').classList.add('active');}
-    else{hdr.classList.remove('edit-mode');document.getElementById('btnEdit').classList.remove('active');}
+    if(editMode){
+      hdr.classList.add('edit-mode');
+      document.getElementById('btnEdit').classList.add('active');
+      document.body.classList.add('edit-mode-bg');
+    } else {
+      hdr.classList.remove('edit-mode');
+      document.getElementById('btnEdit').classList.remove('active');
+      document.body.classList.remove('edit-mode-bg');
+    }
   }
   setTimeout(()=>{
     document.getElementById('main').style.top=document.getElementById('header').offsetHeight+'px';
@@ -2333,9 +2353,13 @@ function togglePresence(ds,prenom,moment){
   saveState();
 }
 
+function openModalPointageHist(){
+  if(!canEdit()) return openModalPointage();
+  openModalPointage();
+}
+
 function openModalPointage(){
   if(!state.eleves.length){showToast('👶 Ajoutez d\'abord des élèves');return;}
-  if(!getVacs().length){showToast('🚍 Définissez d\'abord une vacation');return;}
   const body=document.getElementById('pointageBody');
   body.innerHTML='';
   const ds=viewDate;
@@ -3465,6 +3489,9 @@ function renderAll(){
     // Restaurer l'état
     if(vacOpen&&document.getElementById('card-vac-hist')) document.getElementById('card-vac-hist').classList.add('open');
     if(notesOpen&&document.getElementById('card-notes-hist')) document.getElementById('card-notes-hist').classList.add('open');
+    // Corbeille visible uniquement en mode édition
+    const corbHist=document.getElementById('btnClearNoteHist');
+    if(corbHist) corbHist.style.display=editMode?'inline-block':'none';
   }
 }
 
