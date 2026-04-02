@@ -2104,7 +2104,7 @@ function renderVacations(){
   const annexeMin=annexeMins(vacsComplete);
   const totalsHtml=vacsComplete.length?`<div style="text-align:center;margin-top:10px;font-size:0.82rem;">
     <span style="color:#3b82f6;font-weight:600;">${minToHM(rMin+annexeMin)} réelles</span>
-    <span style="color:#8b5cf6;font-weight:600;"> (${minToHM(cMin)} Conv.)</span>
+    <span style="color:#8b5cf6;font-weight:600;"> (${minToHM(cMin+annexeMin)} Conv.)</span>
     ${VAC_TYPES.map(t=>{const m=typedMins(vacsComplete,t);return m?`<br><span style="color:${VAC_COLORS[t]};font-weight:600;">dont ${minToHM(m)} ${t}</span>`:''}).join('')}
   </div>`:'';
   const headerHtml='';
@@ -2641,7 +2641,7 @@ function openRapport(){
     // Totaux
     html+='<div class="rapport-total">';
     html+=`<div class="rt-real" style="font-weight:400;">Heures réelles : ${minToHM(rMin+aMin)}</div>`;
-    html+=`<div class="rt-conv">(Conv : ${minToHM(cMin)})</div>`;
+    html+=`<div class="rt-conv">(Conv : ${minToHM(cMin+aMin)})</div>`;
     html+='</div>';
     if(aMin) html+=`<div style="color:#f97316;font-family:'Quicksand',sans-serif;font-size:0.88rem;padding:0 0 8px;text-align:right;">dont ${minToHM(aMin)} annexe</div>`;
     html+='<div class="divider"></div>';
@@ -2983,7 +2983,7 @@ let recapAnneeScoOpenSem=null;
 
 function totalHoursHtml(rMin,cMin,aMin,hasDeduct=false,vacs=[]){
   const rTotal=rMin+aMin;
-  const cTotal=cMin;
+  const cTotal=cMin+aMin; // heures typées ajoutées en réel
   let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#8b5cf6;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
   if(aMin){
     if(vacs.length){
@@ -3037,7 +3037,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
       <div class="recap-sem-label">${MOIS[m]} ${y}</div>
       ${moisHD?`<div style="font-size:0.65rem;font-weight:600;background:linear-gradient(90deg,#f97316,#eab308,#22c55e,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">½ heure déduite (${minToHM(calcDeducTotal(moisDays))})</div>`:''}
     </div>
-    <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
+    <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cTotal+aTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
     <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
   </div>`;
 
@@ -4373,7 +4373,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
       }
       doc.setTextColor(...DARK);
       if(rMin+aMin>0) doc.text(minToHM(rMin+aMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
-      if(cMin>0) doc.text(minToHM(cMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
+      if(cMin+aMin>0) doc.text(minToHM(cMin+aMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
     }
 
     // Commentaires : note du jour avec taille adaptative
@@ -4414,7 +4414,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     if(totalAnx){doc.setTextColor(249,115,22);doc.text(minToHM(totalAnx),XS[10]+C_ANX/2,TotalY+DAY_H/2+1,{align:'center'});}
     doc.setTextColor(...DARK);
     doc.text(minToHM(totalReel+totalAnx),XS[11]+C_REEL/2,TotalY+DAY_H/2+1,{align:'center'});
-    doc.text(minToHM(totalConv),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
+    doc.text(minToHM(totalConv+totalAnx),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
     // Détail par type dans cellule commentaires
     const typeTotals=VAC_TYPES.map(t=>({t,m:days.reduce((acc,d2)=>acc+typedMins(vacsForDate(dateStr(d2)),t),0)})).filter(x=>x.m>0);
     if(typeTotals.length>0){
