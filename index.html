@@ -2059,11 +2059,16 @@ function ajoutManuel(){
 }
 
 
-function toggleAnnexe(id, checked){
+function cycleType(id){
   if(!canEdit())return;
   const v=state.vacations.find(x=>x.id===id);
   if(!v)return;
-  v.annexe=checked||undefined;
+  // Migrer ancien format
+  if(v.annexe&&!v.type) v.type='annexe';
+  delete v.annexe;
+  const cur=v.type;
+  const idx=VAC_TYPES.indexOf(cur);
+  v.type=idx===-1?'annexe':idx===VAC_TYPES.length-1?undefined:VAC_TYPES[idx+1];
   saveState();renderVacations();refreshHeures();
 }
 
@@ -2099,34 +2104,44 @@ function renderVacations(){
   const annexeMin=annexeMins(vacsComplete);
   const totalsHtml=vacsComplete.length?`<div style="text-align:center;margin-top:10px;font-size:0.82rem;">
     <span style="color:#3b82f6;font-weight:600;">${minToHM(rMin+annexeMin)} réelles</span>
-    <span style="color:#8b5cf6;font-weight:600;"> (${minToHM(cMin+annexeMin)} Conv.)</span>
-    ${annexeMin?`<br><span style="color:#f97316;font-weight:600;">dont ${minToHM(annexeMin)} annexe</span>`:''}
+    <span style="color:#8b5cf6;font-weight:600;"> (${minToHM(cMin)} Conv.)</span>
+    ${VAC_TYPES.map(t=>{const m=typedMins(vacsComplete,t);return m?`<br><span style="color:${VAC_COLORS[t]};font-weight:600;">dont ${minToHM(m)} ${t}</span>`:''}).join('')}
   </div>`:'';
-  const headerHtml=canE?`<div style="display:flex;justify-content:flex-end;padding:0 0 4px 0;font-size:0.7rem;color:#f97316;font-weight:600;padding-right:38px;">annexe</div>`:'';
+  const headerHtml='';
   list.innerHTML=headerHtml+vacs.map((v,i)=>{
     const dur=durMin(v.dep,v.ret);
     const durTxt=dur!==null?'('+minToHM(dur)+')':'';
     const depCls=v.dep?'':'empty';
     const retCls=v.ret?'':'empty';
     // Numérotation indépendante
-    const normalVacs=vacs.filter(x=>!x.annexe);
-    const annexeVacs=vacs.filter(x=>x.annexe);
+    if(v.annexe&&!v.type) v.type='annexe';
+    const normalVacs=vacs.filter(x=>!x.type);
+    const typedVacs=vacs.filter(x=>x.type===v.type);
     let label;
-    if(v.annexe){
-      const idx=annexeVacs.indexOf(v);
-      label=annexeVacs.length>1?`Annexe ${idx+1}`:'Annexe';
+    if(v.type){
+      const idx=typedVacs.indexOf(v);
+      const tname=v.type.charAt(0).toUpperCase()+v.type.slice(1);
+      label=typedVacs.length>1?`${tname} ${idx+1}`:tname;
     } else {
       const idx=normalVacs.indexOf(v);
       label=`Vacation ${idx+1}`;
     }
-    const isAnnexe=!!v.annexe;
-    return`<div class="vacation-line" style="${isAnnexe?'background:#fff7ed;':''}">
-      <span class="vac-label" style="${isAnnexe?'color:#f97316;font-weight:700;':''}">${label}</span>
+    // Migrer ancien format
+    if(v.annexe&&!v.type){v.type='annexe';}
+    const vtype=v.type||null;
+    const vbg=vtype?VAC_BG[vtype]:'';
+    const vcol=vtype?VAC_COLORS[vtype]:'';
+    const pastilleLabel=vtype?vtype.charAt(0).toUpperCase()+vtype.slice(1):'';
+    const pastille=canE
+      ?`<span onclick="cycleType('${v.id}')" style="cursor:pointer;width:18px;height:18px;border-radius:50%;display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;background:${vtype?vcol:'#e2e8f0'};margin-left:6px;"></span>`
+      :(vtype?`<span style="width:18px;height:18px;border-radius:50%;display:inline-flex;flex-shrink:0;background:${vcol};margin-left:6px;"></span>`:'');
+    return`<div class="vacation-line" style="${vbg?'background:'+vbg+';':''}">
+      <span class="vac-label" style="${vcol?'color:'+vcol+';font-weight:700;':''}">${label}</span>
       <span class="vac-time-slot ${depCls}" onclick="${canE?`openClockFor('${v.id}','dep')`:'void 0'}">${fmt(v.dep)}</span>
       <span class="vac-sep">–</span>
       <span class="vac-time-slot ${retCls}" onclick="${canE?`openClockFor('${v.id}','ret')`:'void 0'}">${fmt(v.ret)}</span>
       <span class="vac-dur">${durTxt}</span>
-      ${canE?`<input type="checkbox" ${isAnnexe?'checked':''} onchange="toggleAnnexe('${v.id}',this.checked)" style="width:16px;height:16px;accent-color:#f97316;cursor:pointer;margin-left:auto;">`:''}
+      ${pastille}
       ${canE?`<button class="vac-del mgmt-del" onclick="deleteVac('${v.id}')">🗑</button>`:''}
     </div>`;
   }).join('')+totalsHtml;
@@ -2948,15 +2963,18 @@ let recapAnneeScoOpenSem=null;
 
 function totalHoursHtml(rMin,cMin,aMin,hasDeduct=false){
   const rTotal=rMin+aMin;
-  const cTotal=cMin+aMin;
+  const cTotal=cMin; // les heures typées ne comptent PAS dans le conventionnel
   let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#8b5cf6;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
-  // badge géré ailleurs
-  if(aMin) h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} annexe</span>`;
+  if(aMin) h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} spéciales</span>`;
   return h;
 }
 
 // --- Calcul totaux d'un mois ---
-function annexeMins(vacs){return vacs.filter(v=>v.annexe).reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
+function annexeMins(vacs){return vacs.filter(v=>v.annexe||v.type).reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
+function typedMins(vacs,type){return vacs.filter(v=>(v.type||( v.annexe?'annexe':undefined))===type).reduce((s,v)=>s+(v.dep&&v.ret?Math.round((v.ret-v.dep)/60000):0),0);}
+const VAC_TYPES=['annexe','mission','formation','autre'];
+const VAC_COLORS={annexe:'#f97316',mission:'#f59e0b',formation:'#0284c7',autre:'#64748b'};
+const VAC_BG={annexe:'#fff7ed',mission:'#fffbeb',formation:'#eff6ff',autre:'#f8fafc'};
 
 function calcMoisTotaux(y,m){
   const firstDay=new Date(y,m,1,12,0,0);
@@ -4308,10 +4326,21 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
       const aMin=annexeMins(vacs);
       totalReel+=rMin;totalConv+=cMin;totalAnx+=aMin;
       doc.setFontSize(9.5);doc.setFont('helvetica','bold');
-      if(aMin>0){doc.setTextColor(249,115,22);doc.text(minToHM(aMin),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});}
+      if(aMin>0){
+        // Afficher les types avec leurs couleurs dans la colonne annexes
+        const dayTypes=VAC_TYPES.map(t=>({t,m:typedMins(vacs,t)})).filter(x=>x.m>0);
+        if(dayTypes.length===1){
+          const rgb={'annexe':[249,115,22],'mission':[245,158,11],'formation':[2,132,199],'autre':[100,116,139]};
+          doc.setTextColor(...(rgb[dayTypes[0].t]||[249,115,22]));
+          doc.text(minToHM(dayTypes[0].m),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});
+        } else {
+          doc.setTextColor(249,115,22);
+          doc.text(minToHM(aMin),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});
+        }
+      }
       doc.setTextColor(...DARK);
       if(rMin+aMin>0) doc.text(minToHM(rMin+aMin),XS[11]+C_REEL/2,y+DAY_H/2+1,{align:'center'});
-      if(cMin+aMin>0) doc.text(minToHM(cMin+aMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
+      if(cMin>0) doc.text(minToHM(cMin),XS[12]+C_CONV/2,y+DAY_H/2+1,{align:'center'});
     }
 
     // Commentaires : note du jour avec taille adaptative
@@ -4352,12 +4381,24 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     if(totalAnx){doc.setTextColor(249,115,22);doc.text(minToHM(totalAnx),XS[10]+C_ANX/2,TotalY+DAY_H/2+1,{align:'center'});}
     doc.setTextColor(...DARK);
     doc.text(minToHM(totalReel+totalAnx),XS[11]+C_REEL/2,TotalY+DAY_H/2+1,{align:'center'});
-    doc.text(minToHM(totalConv+totalAnx),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
+    doc.text(minToHM(totalConv),XS[12]+C_CONV/2,TotalY+DAY_H/2+1,{align:'center'});
+    // Détail par type dans cellule commentaires
+    const typeTotals=VAC_TYPES.map(t=>({t,m:days.reduce((acc,d2)=>acc+typedMins(vacsForDate(dateStr(d2)),t),0)})).filter(x=>x.m>0);
+    if(typeTotals.length>0){
+      const existingDeducY=4382;// flag pour ne pas écraser
+      const typeX=XS[13]+C_COM/2;
+      let ty=TotalY+DAY_H*0.22;
+      doc.setFontSize(6.5);doc.setFont('helvetica','italic');doc.setTextColor(120,120,120);
+      typeTotals.forEach(({t,m})=>{
+        doc.text('dont '+minToHM(m)+' '+t,typeX,ty,{align:'center'});
+        ty+=3.5;
+      });
+    }
     // Déduction ½ heure dans cellule commentaires de la ligne total
     const totalDeducMin=days.reduce((acc,d2)=>{
       const ds2=dateStr(d2);
       if(!getDeduc(ds2)) return acc;
-      const vacs=vacsForDate(ds2).filter(v=>!v.annexe);
+      const vacs=vacsForDate(ds2).filter(v=>!v.type&&!v.annexe);
       return acc+(convMins(vacs,false)-convMins(vacs,true));
     },0);
     if(totalDeducMin>0){
