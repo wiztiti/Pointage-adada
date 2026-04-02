@@ -2251,8 +2251,9 @@ function calcDeducTotal(dsList){
   dsList.forEach(ds=>{
     if(!getDeduc(ds)) return;
     const vacs=vacsForDate(ds).filter(v=>!v.type&&!v.annexe);
-    const sans=convMins(vacs,false);
-    const avec=convMins(vacs,true);
+    const vn=vacs.filter(v=>!v.type&&!v.annexe);
+    const sans=convMins(vn,false);
+    const avec=convMins(vn,true);
     total+=sans-avec;
   });
   return total;
@@ -2640,7 +2641,7 @@ function openRapport(){
     // Totaux
     html+='<div class="rapport-total">';
     html+=`<div class="rt-real" style="font-weight:400;">Heures réelles : ${minToHM(rMin+aMin)}</div>`;
-    html+=`<div class="rt-conv">(Conv : ${minToHM(cMin+aMin)})</div>`;
+    html+=`<div class="rt-conv">(Conv : ${minToHM(cMin)})</div>`;
     html+='</div>';
     if(aMin) html+=`<div style="color:#f97316;font-family:'Quicksand',sans-serif;font-size:0.88rem;padding:0 0 8px;text-align:right;">dont ${minToHM(aMin)} annexe</div>`;
     html+='<div class="divider"></div>';
@@ -2939,7 +2940,7 @@ function renderRecapMois(){
     days.forEach(ds=>{
       const vacs=vacsForDate(ds);
       rSem+=realMins(vacs);
-      cSem+=convMins(vacs,getDeduc(ds));
+      cSem+=convMins(vacs.filter(v=>!v.type&&!v.annexe),getDeduc(ds));
     });
     rMoisTotal+=rSem;
     cMoisTotal+=cSem;
@@ -3036,7 +3037,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
       <div class="recap-sem-label">${MOIS[m]} ${y}</div>
       ${moisHD?`<div style="font-size:0.65rem;font-weight:600;background:linear-gradient(90deg,#f97316,#eab308,#22c55e,#06b6d4,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">½ heure déduite (${minToHM(calcDeducTotal(moisDays))})</div>`:''}
     </div>
-    <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cTotal+aTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
+    <div class="recap-sem-hrs">${minToHM(rTotal+aTotal)}<br><span style="font-size:0.72rem;color:#8b5cf6;">conv. ${minToHM(cTotal)}</span>${aTotal?`<br><span style="font-size:0.72rem;color:#f97316;">dont ${minToHM(aTotal)}</span>`:''}</div>
     <span class="recap-sem-chev" style="transform:${isOpen?'rotate(90deg)':''};">▶</span>
   </div>`;
 
@@ -3055,7 +3056,7 @@ function buildMoisBlock(y,m,moisIdx,openMois,openSem,toggleMoisFn,toggleSemFn){
       const weekNum=isoWeekNum(new Date(mondayDs+'T12:00:00'));
       const duAu=semaineLabelDuAu(mondayDs);
       let rSem=0,cSem=0,aSem=0;
-      days.forEach(ds=>{const v=vacsForDate(ds);const n=v.filter(x=>!x.annexe);rSem+=realMins(n);cSem+=convMins(n,getDeduc(ds));aSem+=annexeMins(v);});
+      days.forEach(ds=>{const v=vacsForDate(ds);const n=v.filter(x=>!x.type&&!x.annexe);rSem+=realMins(n);cSem+=convMins(n,getDeduc(ds));aSem+=annexeMins(v);});
       const semKey=`${moisIdx}-${semIdx}`;
       const semOpen=openSem===semKey;
       html+=`<div class="recap-semaine-row" style="background:#fce7f3;margin-left:8px;" onclick="${toggleSemFn}('${semKey}')">
