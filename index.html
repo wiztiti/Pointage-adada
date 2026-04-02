@@ -326,8 +326,8 @@ html, body {
 .vac-time-slot:hover { background: #e0f2fe; }
 .vac-time-slot.empty { color: #bbb; border-style: dashed; }
 .vac-sep { color: var(--text-light); font-size: 0.9rem; }
-.vac-dur { color: var(--text-light); font-size: 0.78rem; margin-left: 4px; }
-.vac-del { background: none; border: none; color: #fca5a5; cursor: pointer; font-size: 1rem; margin-left: auto; padding: 2px 6px; border-radius: 6px; }
+.vac-dur { color: var(--text-light); font-size: 0.78rem; margin-left: 4px; flex: 1; }
+.vac-del { background: none; border: none; color: #fca5a5; cursor: pointer; font-size: 1rem; flex-shrink: 0; padding: 2px 6px; border-radius: 6px; }
 .vac-del:hover { background: #fff1f2; }
 
 .btn-ajout-manuel {
@@ -2098,7 +2098,7 @@ function renderVacations(){
     return;
   }
   const vacsComplete=vacsForDate(viewDate);
-  const normalVacs=vacsComplete.filter(v=>!v.annexe);
+  const normalVacs=vacsComplete.filter(v=>!v.type&&!v.annexe);
   const rMin=realMins(normalVacs);
   const cMin=convMins(normalVacs,getDeduc(viewDate));
   const annexeMin=annexeMins(vacsComplete);
@@ -2250,7 +2250,7 @@ function calcDeducTotal(dsList){
   let total=0;
   dsList.forEach(ds=>{
     if(!getDeduc(ds)) return;
-    const vacs=vacsForDate(ds).filter(v=>!v.annexe);
+    const vacs=vacsForDate(ds).filter(v=>!v.type&&!v.annexe);
     const sans=convMins(vacs,false);
     const avec=convMins(vacs,true);
     total+=sans-avec;
@@ -2603,7 +2603,7 @@ function openRapport(){
   const vacs=vacsForDate(ds);
   const allVacs=getVacsSorted();
   const dd=getDayData(ds);
-  const normalVacs2=vacs.filter(v=>!v.annexe);
+  const normalVacs2=vacs.filter(v=>!v.type&&!v.annexe);
   const rMin=realMins(normalVacs2);
   const cMin=convMins(normalVacs2,ded);
   const aMin=annexeMins(vacs);
@@ -2616,7 +2616,7 @@ function openRapport(){
   // Vacations
   if(allVacs.length){
     html+='<div class="rapport-section-title">Vacations</div>';
-    const normalVacs=allVacs.filter(v=>!v.annexe);
+    const normalVacs=allVacs.filter(v=>!v.type&&!v.annexe);
     const annexeVacs=allVacs.filter(v=>v.annexe);
     allVacs.forEach((v,i)=>{
       const dur=durMin(v.dep,v.ret);
@@ -2779,7 +2779,7 @@ function buildDayRow(ds){
   const vacs=vacsForDate(ds);
   const worked=vacs.length>0;
   const ded=getDeduc(ds);
-  const normalVacs=vacs.filter(v=>!v.annexe);
+  const normalVacs=vacs.filter(v=>!v.type&&!v.annexe);
   const rMin=realMins(normalVacs);
   const cMin=convMins(normalVacs,ded);
   const aMin=annexeMins(vacs);
@@ -2789,13 +2789,14 @@ function buildDayRow(ds){
   let cls=isWE?'weekend':worked?'worked':'absent';
   let vacsHtml='';
   if(worked){
-    const normalVacs=vacs.filter(v=>!v.annexe);
+    const normalVacs=vacs.filter(v=>!v.type&&!v.annexe);
     const annexeVacs=vacs.filter(v=>v.annexe);
     const vacsFormatted=vacs.map(v=>{
+      if(!v.dep||!v.ret) return '';
       const dep=new Date(v.dep);const ret=new Date(v.ret);
       const times=`(${String(dep.getHours()).padStart(2,'0')}:${String(dep.getMinutes()).padStart(2,'0')}–${String(ret.getHours()).padStart(2,'0')}:${String(ret.getMinutes()).padStart(2,'0')})`;
-      const isAnnexe=!!v.annexe;
-      return isAnnexe?`<span style="color:#f97316;">${times}</span>`:times;
+      const vtype=v.type||(v.annexe?'annexe':null);
+      return vtype?`<span style="color:${VAC_COLORS[vtype]};">${times}</span>`:times;
     });
     const lines=[];
     for(let i=0;i<vacsFormatted.length;i+=2) lines.push(vacsFormatted.slice(i,i+2).join(' '));
@@ -2804,7 +2805,8 @@ function buildDayRow(ds){
     vacsHtml=isWE?'—':'—';
   }
 
-  const hrsHtml=worked?`<span style="color:#3b82f6;">${minToHM(rMin+aMin)}</span> <span style="color:#8b5cf6;font-size:0.72rem;">(${minToHM(cMin+aMin)})</span>${aMin?`<br><span style="color:#f97316;font-size:0.72rem;text-align:right;display:block;">dont ${minToHM(aMin)}</span>`:''}`:'';
+  const dontHtml=aMin?VAC_TYPES.map(t=>{const m=typedMins(vacs,t);return m?`<span style="color:${VAC_COLORS[t]};font-size:0.72rem;">dont ${minToHM(m)} ${t}</span>`:''}).filter(Boolean).join('<br>'):'' ;
+  const hrsHtml=worked?`<span style="color:#3b82f6;">${minToHM(rMin+aMin)}</span> <span style="color:#8b5cf6;font-size:0.72rem;">(${minToHM(cMin)})</span>${dontHtml?`<br>${dontHtml}`:''}`:'';
 
   return `<div class="recap-day-row ${cls}" style="cursor:pointer;" onclick="openRapportForDate('${ds}')">
     <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
@@ -2836,17 +2838,19 @@ function renderRecapSemaine(){
   document.getElementById('btnRecapSemNext').disabled=recapSemDate>=todayMonday;
 
   let rTotal=0,cTotal=0,aTotal=0;
+  let semVacs=[];
   let html='';
   days.forEach(ds=>{
     const vacs=vacsForDate(ds);
-    const normal=vacs.filter(v=>!v.annexe);
+    semVacs=semVacs.concat(vacs);
+    const normal=vacs.filter(v=>!v.type&&!v.annexe);
     rTotal+=realMins(normal);
     cTotal+=convMins(normal,getDeduc(ds));
     aTotal+=annexeMins(vacs);
     html+=buildDayRow(ds);
   });
   const semHasDeduct=days.some(ds=>getDeduc(ds));
-  document.getElementById('recapSemTotal').innerHTML=totalHoursHtml(rTotal,cTotal,aTotal,semHasDeduct);
+  document.getElementById('recapSemTotal').innerHTML=totalHoursHtml(rTotal,cTotal,aTotal,semHasDeduct,semVacs);
   document.getElementById('recapSemaineBody').innerHTML=html;
 }
 
@@ -2892,13 +2896,15 @@ function renderRecapMois(){
   }
 
   let rMoisTotal=0,cMoisTotal=0,aMoisTotal=0;
+  let moisVacs=[];
 
   // Calcul des totaux d'abord
   semaines.forEach((mondayDs)=>{
     const days=weekDatesFrom(mondayDs);
     days.forEach(ds=>{
       const vacs=vacsForDate(ds);
-      const normal=vacs.filter(v=>!v.annexe);
+      moisVacs=moisVacs.concat(vacs);
+      const normal=vacs.filter(v=>!v.type&&!v.annexe);
       rMoisTotal+=realMins(normal);
       cMoisTotal+=convMins(normal,getDeduc(ds));
       aMoisTotal+=annexeMins(vacs);
@@ -2908,7 +2914,7 @@ function renderRecapMois(){
   // Mise à jour du bandeau fixe
   const allMoisDays=semaines.flatMap(mondayDs=>weekDatesFrom(mondayDs));
   const moisHasDeduct=allMoisDays.some(ds=>getDeduc(ds));
-  document.getElementById('recapMoisTotal').innerHTML=totalHoursHtml(rMoisTotal,cMoisTotal,aMoisTotal,moisHasDeduct);
+  document.getElementById('recapMoisTotal').innerHTML=totalHoursHtml(rMoisTotal,cMoisTotal,aMoisTotal,moisHasDeduct,moisVacs);
 
   let html='';
 
@@ -2961,11 +2967,20 @@ let recapAnneeOpenSem=null;   // clé "moisIdx-semIdx" ouverte
 let recapAnneeScoOpenMois=null;
 let recapAnneeScoOpenSem=null;
 
-function totalHoursHtml(rMin,cMin,aMin,hasDeduct=false){
+function totalHoursHtml(rMin,cMin,aMin,hasDeduct=false,vacs=[]){
   const rTotal=rMin+aMin;
-  const cTotal=cMin; // les heures typées ne comptent PAS dans le conventionnel
+  const cTotal=cMin;
   let h=`<span style="color:#3b82f6;font-weight:600;">${minToHM(rTotal)} réelles</span> <span style="color:#8b5cf6;font-weight:600;">(${minToHM(cTotal)} Conv.)</span>`;
-  if(aMin) h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} spéciales</span>`;
+  if(aMin){
+    if(vacs.length){
+      VAC_TYPES.forEach(t=>{
+        const m=typedMins(vacs,t);
+        if(m) h+=` <span style="color:${VAC_COLORS[t]};font-weight:600;">dont ${minToHM(m)} ${t}</span>`;
+      });
+    } else {
+      h+=` <span style="color:#f97316;font-weight:600;">dont ${minToHM(aMin)} spéciales</span>`;
+    }
+  }
   return h;
 }
 
@@ -2973,8 +2988,8 @@ function totalHoursHtml(rMin,cMin,aMin,hasDeduct=false){
 function annexeMins(vacs){return vacs.filter(v=>v.annexe||v.type).reduce((s,v)=>s+Math.round((v.ret-v.dep)/60000),0);}
 function typedMins(vacs,type){return vacs.filter(v=>(v.type||( v.annexe?'annexe':undefined))===type).reduce((s,v)=>s+(v.dep&&v.ret?Math.round((v.ret-v.dep)/60000):0),0);}
 const VAC_TYPES=['annexe','mission','formation','autre'];
-const VAC_COLORS={annexe:'#f97316',mission:'#f59e0b',formation:'#0284c7',autre:'#64748b'};
-const VAC_BG={annexe:'#fff7ed',mission:'#fffbeb',formation:'#eff6ff',autre:'#f8fafc'};
+const VAC_COLORS={annexe:'#f97316',mission:'#16a34a',formation:'#0284c7',autre:'#64748b'};
+const VAC_BG={annexe:'#fff7ed',mission:'#f0fdf4',formation:'#eff6ff',autre:'#f8fafc'};
 
 function calcMoisTotaux(y,m){
   const firstDay=new Date(y,m,1,12,0,0);
@@ -2987,7 +3002,7 @@ function calcMoisTotaux(y,m){
     const days=weekDatesFrom(dateStr(monday));
     days.forEach(ds=>{
       const vacs=vacsForDate(ds);
-      const normal=vacs.filter(v=>!v.annexe);
+      const normal=vacs.filter(v=>!v.type&&!v.annexe);
       rTotal+=realMins(normal);
       cTotal+=convMins(normal,getDeduc(ds));
       aTotal+=annexeMins(vacs);
@@ -3079,9 +3094,11 @@ function renderRecapAnnee(){
   const now=new Date();
   document.getElementById('btnRecapAnneeNext').disabled=y>=now.getFullYear();
   let rAnn=0,cAnn=0,aAnn=0;
-  for(let m=0;m<12;m++){const t=calcMoisTotaux(y,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;}
+  let annVacs=[];
+  for(let m=0;m<12;m++){const t=calcMoisTotaux(y,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;
+    for(let d=1;d<=31;d++){const ds=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');annVacs=annVacs.concat(vacsForDate(ds));}}
   const annHD=Array.from({length:12},(_,m2)=>Array.from({length:new Date(y,m2+1,0).getDate()},(_,d)=>`${y}-${String(m2+1).padStart(2,'0')}-${String(d+1).padStart(2,'0')}`)).flat().some(ds=>getDeduc(ds));
-  document.getElementById('recapAnneeTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn,annHD);
+  document.getElementById('recapAnneeTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn,annHD,annVacs);
   let html='';
   for(let m=0;m<12;m++){
     html+=buildMoisBlock(y,m,m,recapAnneeOpenMois,recapAnneeOpenSem,'toggleRecapAnneeMois','toggleRecapAnneeSem');
@@ -3125,9 +3142,11 @@ function renderRecapAnneeSco(){
     {y:y+1,m:4},{y:y+1,m:5},{y:y+1,m:6},{y:y+1,m:7}
   ];
   let rAnn=0,cAnn=0,aAnn=0;
-  moisSco.forEach(({y:my,m})=>{const t=calcMoisTotaux(my,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;});
+  let annVacs=[];
+  moisSco.forEach(({y:my,m})=>{const t=calcMoisTotaux(my,m);rAnn+=t.rTotal;cAnn+=t.cTotal;aAnn+=t.aTotal;
+    for(let d=1;d<=31;d++){const ds=my+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');annVacs=annVacs.concat(vacsForDate(ds));}});
   const annHD=moisSco.flatMap(({y:my,m})=>Array.from({length:new Date(my,m+1,0).getDate()},(_,d)=>`${my}-${String(m+1).padStart(2,'0')}-${String(d+1).padStart(2,'0')}`)).some(ds=>getDeduc(ds));
-  document.getElementById('recapAnneeScoTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn,annHD);
+  document.getElementById('recapAnneeScoTotal').innerHTML=totalHoursHtml(rAnn,cAnn,aAnn,annHD,annVacs);
   let html='';
   moisSco.forEach(({y:my,m},idx)=>{
     html+=buildMoisBlock(my,m,idx,recapAnneeScoOpenMois,recapAnneeScoOpenSem,'toggleRecapAnneeScoMois','toggleRecapAnneeScoSem');
@@ -4320,7 +4339,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
       const kmFin=peekDayData(ds).km;
       if(!vierge && kmFin&&(!isWeekend||vacs.length>0)){doc.setFontSize(9);doc.setFont('helvetica','bold');doc.text(kmFin,XS[9]+C_LIEU/2,y+DAY_H*0.72,{align:'center'});doc.setFont('helvetica','normal');}
       // Temps
-      const normal=vacs.filter(v=>!v.annexe);
+      const normal=vacs.filter(v=>!v.type&&!v.annexe);
       const rMin=realMins(normal);
       const cMin=convMins(normal,getDeduc(ds));
       const aMin=annexeMins(vacs);
@@ -4330,7 +4349,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
         // Afficher les types avec leurs couleurs dans la colonne annexes
         const dayTypes=VAC_TYPES.map(t=>({t,m:typedMins(vacs,t)})).filter(x=>x.m>0);
         if(dayTypes.length===1){
-          const rgb={'annexe':[249,115,22],'mission':[245,158,11],'formation':[2,132,199],'autre':[100,116,139]};
+          const rgb={'annexe':[249,115,22],'mission':[22,163,74],'formation':[2,132,199],'autre':[100,116,139]};
           doc.setTextColor(...(rgb[dayTypes[0].t]||[249,115,22]));
           doc.text(minToHM(dayTypes[0].m),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});
         } else {
