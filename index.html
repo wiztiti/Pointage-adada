@@ -2820,9 +2820,11 @@ function buildDayRow(ds){
   const hrsHtml=worked?`<span style="color:#3b82f6;">${minToHM(rMin+aMin)}</span> <span style="color:#8b5cf6;font-size:0.72rem;">(${minToHM(cMin)})</span>${dontHtml?`<br>${dontHtml}`:''}`:'';
 
   return `<div class="recap-day-row ${cls}" style="cursor:pointer;" onclick="openRapportForDate('${ds}')">
-    <span class="recap-day-name" style="min-width:48px;">${dateLabel}</span>
-    <span class="recap-day-vacs">${vacsHtml}</span>
-    <span class="recap-day-hrs">${hrsHtml}</span>
+    <span class="recap-day-name" style="min-width:48px;flex-shrink:0;">${dateLabel}</span>
+    <div style="flex:1;display:flex;justify-content:space-between;align-items:flex-start;gap:6px;">
+      <span class="recap-day-vacs">${vacsHtml}</span>
+      <span class="recap-day-hrs" style="flex-shrink:0;text-align:right;">${hrsHtml}</span>
+    </div>
   </div>`;
 }
 
