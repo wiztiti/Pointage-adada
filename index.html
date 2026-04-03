@@ -1287,6 +1287,19 @@ html, body {
         Le header affiche la date, le saint, le numéro de semaine et le bouton <span style="font-weight:600;">Rapport</span> pour générer un résumé de la journée.
       </div>
 
+      <div style="background:#fefce8;border-radius:12px;padding:12px 14px;border:1.5px solid #fde68a;">
+        <div style="font-weight:700;color:#854d0e;margin-bottom:6px;">🕐 Vacations</div>
+        Enregistrez vos heures via <span style="font-weight:600;">Départ</span> / <span style="font-weight:600;">Retour</span> ou ajoutez-les manuellement.<br><br>
+        L'app calcule automatiquement vos heures conventionnelles :<br>
+        &nbsp;• 1 vacation = 2h conv. &nbsp;• 2 vacations = 3h conv. &nbsp;• 3+ = 4h30 conv.<br><br>
+        <span style="font-weight:600;">Types de vacation</span> — chaque vacation affiche un petit rond <span style="background:#e2e8f0;border-radius:50%;padding:0 4px;font-size:0.8rem;font-weight:700;color:#94a3b8;">+</span> à droite. Tapez dessus pour cycler entre les types :<br>
+        &nbsp;• <span style="color:#f97316;font-weight:600;">● Annexe</span> — heures annexes<br>
+        &nbsp;• <span style="color:#f59e0b;font-weight:600;">● Mission</span> — missions ponctuelles<br>
+        &nbsp;• <span style="color:#0284c7;font-weight:600;">● Formation</span> — heures de formation<br>
+        &nbsp;• <span style="color:#64748b;font-weight:600;">● Autre</span> — tout autre type<br><br>
+        Les heures typées s'ajoutent au total réel et conventionnel mais ne suivent pas la règle des vacations (2h/3h/4h30) — elles sont comptées en heures réelles.
+      </div>
+
       <div style="background:#f0fdf4;border-radius:12px;padding:12px 14px;border:1.5px solid #bbf7d0;">
         <div style="font-weight:700;color:#166534;margin-bottom:6px;">🕐 Historique</div>
         Consultez et modifiez n'importe quel jour passé.<br><br>
@@ -1305,14 +1318,6 @@ html, body {
         Les boutons roses permettent de générer :<br>
         &nbsp;• <span style="font-weight:600;">📄 Feuille de route hebdo</span> — choisissez la semaine, générez en PDF ou JPG<br>
         &nbsp;• <span style="font-weight:600;">📊 État mensuel des présences</span> — choisissez le mois, générez en PDF ou JPG
-      </div>
-
-      <div style="background:#fefce8;border-radius:12px;padding:12px 14px;border:1.5px solid #fde68a;">
-        <div style="font-weight:700;color:#854d0e;margin-bottom:6px;">🕐 Vacations</div>
-        Enregistrez vos heures via <span style="font-weight:600;">Départ</span> / <span style="font-weight:600;">Retour</span> ou ajoutez-les manuellement.<br><br>
-        L'app calcule automatiquement vos heures conventionnelles :<br>
-        &nbsp;• 1 vacation = 2h conv. &nbsp;• 2 vacations = 3h conv. &nbsp;• 3+ = 4h30 conv.<br><br>
-        Une vacation peut être marquée <span style="color:#f97316;font-weight:600;">Annexe</span> — elle est comptabilisée séparément et s'ajoute au total.
       </div>
 
       <div style="background:#fefce8;border-radius:12px;padding:12px 14px;border:1.5px solid #fde68a;">
@@ -2133,7 +2138,7 @@ function renderVacations(){
     const vcol=vtype?VAC_COLORS[vtype]:'';
     const pastilleLabel=vtype?vtype.charAt(0).toUpperCase()+vtype.slice(1):'';
     const pastille=canE
-      ?`<span onclick="cycleType('${v.id}')" style="cursor:pointer;width:18px;height:18px;border-radius:50%;display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;background:${vtype?vcol:'#e2e8f0'};margin-left:2px;"></span>`
+      ?`<span onclick="cycleType('${v.id}')" style="cursor:pointer;width:18px;height:18px;border-radius:50%;display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;background:${vtype?vcol:'#e2e8f0'};margin-left:2px;font-size:0.65rem;font-weight:700;color:${vtype?'#fff':'#94a3b8'}">${vtype?'':'+' }</span>`
       :(vtype?`<span style="width:18px;height:18px;border-radius:50%;display:inline-flex;flex-shrink:0;background:${vcol};margin-left:2px;"></span>`:'');
     return`<div class="vacation-line" style="${vbg?'background:'+vbg+';':''}">
       <span class="vac-label" style="${vcol?'color:'+vcol+';font-weight:700;':''}">${label}</span>
