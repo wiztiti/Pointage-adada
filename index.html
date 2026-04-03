@@ -976,7 +976,7 @@ html, body {
       </div>
       <div class="card-body">
         <div class="notes-field-label" style="margin-top:10px;">Kilométrage fin de journée</div>
-        <input class="note-km-input" type="tel" inputmode="numeric" pattern="[0-9]*" id="kmInput" placeholder="" autocomplete="off" oninput="saveNotes()">
+        <input class="note-km-input" type="tel" inputmode="numeric" pattern="[0-9]*" id="kmInput" placeholder="" autocomplete="off" oninput="saveNotes()" onblur="if(new Date().getDay()===5&&this.value)setTimeout(showFDRReminder,300);">
         <div id="kmLastInfo" style="font-size:0.75rem;color:#94a3b8;font-style:italic;margin-top:4px;min-height:1em;"></div>
         <div class="notes-field-label" style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;">
           <span>Commentaires</span>
@@ -2346,8 +2346,7 @@ function saveNotes(){
   dd.note=document.getElementById(_noteId()).value;
   document.getElementById(_kmId()).value=dd.km;
   saveState();
-  if(dd.km) showFDRReminder();
-  else localStorage.removeItem('fdrReminderShown'); // km effacé → permettre réaffichage
+  if(!dd.km) localStorage.removeItem('fdrReminderShown'); // km effacé → permettre réaffichage
 }
 function autoResize(el){el.style.height='auto';el.style.height=(el.scrollHeight)+'px';}
 function limitLines(el, max){
@@ -3504,7 +3503,7 @@ function showFDRReminder(){
   const el=document.createElement('div');
   el.id='fdrReminder';
   el.style.cssText=`
-    position:fixed;bottom:75px;left:50%;transform:translateX(-50%) translateY(20px);
+    position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-20px);
     background:linear-gradient(135deg,#e0f7ff,#ccfbf1);
     border:1.5px solid #67e8f9;
     color:#0e7490;
@@ -3545,7 +3544,7 @@ function removeFDRReminder(){
   const el=document.getElementById('fdrReminder');
   if(!el) return;
   el.style.opacity='0';
-  el.style.transform='translateX(-50%) translateY(20px)';
+  el.style.transform='translateX(-50%) translateY(-20px)';
   setTimeout(()=>el.remove(),350);
 }
 
