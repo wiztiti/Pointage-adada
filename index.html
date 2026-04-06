@@ -902,12 +902,12 @@ html, body {
   overflow-x: hidden;
 }
 .tab-content {
-  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease;
+  transition: opacity 0.25s ease;
 }
-.tab-content.slide-out-left  { transform: scale(0.93); opacity: 0; }
-.tab-content.slide-out-right { transform: scale(0.93); opacity: 0; }
-.tab-content.slide-in-left   { transform: scale(0.93); opacity: 0; }
-.tab-content.slide-in-right  { transform: scale(0.93); opacity: 0; }
+.tab-content.slide-out-left  { opacity: 0; }
+.tab-content.slide-out-right { opacity: 0; }
+.tab-content.slide-in-left   { opacity: 0; }
+.tab-content.slide-in-right  { opacity: 0; }
 
 /* scrollbar */
 ::-webkit-scrollbar { width: 4px; }
