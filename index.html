@@ -26,7 +26,7 @@
   --shadow-lg: 0 8px 32px rgba(100,160,200,0.18);
   --radius: 18px;
   --radius-sm: 12px;
-  --header-h: 70px;
+  --header-h: 106px;
   --btn-green: #4ade80;
   --btn-green-dark: #22c55e;
   --btn-red: #f87171;
@@ -185,7 +185,7 @@ html, body {
 /* ===== MAIN SCROLL ===== */
 #main {
   position: fixed;
-  top: var(--header-h);
+  top: 106px;
   bottom: 0;
   left: 0; right: 0;
   overflow-y: auto;
@@ -919,9 +919,9 @@ html, body {
 <body>
 
 <!-- ===== HEADER ===== -->
-<div id="header" style="flex-wrap:wrap;height:auto;padding:8px 14px;gap:0;">
+<div id="header" style="flex-wrap:wrap;height:106px;padding:8px 14px;gap:0;">
   <!-- Header Aujourd'hui -->
-  <div id="headerToday" style="display:flex;flex-direction:column;align-items:center;width:100%;gap:0;">
+  <div id="headerToday" style="display:flex;flex-direction:column;align-items:center;width:100%;gap:0;height:90px;">
     <div class="h-date-center">
       <div class="h-date-main" id="hDateMain"></div>
       <div class="h-date-saint" id="hDateSaint"></div>
@@ -932,7 +932,7 @@ html, body {
     </div>
   </div>
   <!-- Header Historique -->
-  <div id="headerHistory" style="display:none;flex-wrap:wrap;width:100%;gap:0;">
+  <div id="headerHistory" style="display:none;flex-wrap:wrap;width:100%;gap:0;height:90px;">
     <div style="display:flex;align-items:center;width:100%;gap:0;">
       <button class="h-arrow" id="btnPrev" onclick="navDay(-1)">‹</button>
       <div class="h-date-center">
@@ -951,7 +951,7 @@ html, body {
     </div>
   </div>
   <!-- Header simple (Compteurs / Paramètres) -->
-  <div id="headerSimple" style="display:none;align-items:center;width:100%;justify-content:center;">
+  <div id="headerSimple" style="display:none;align-items:center;width:100%;justify-content:center;height:90px;">
     <div class="h-date-main" id="hDateSimple" style="font-size:0.9rem;color:var(--text-med);"></div>
   </div>
 </div>
@@ -1979,9 +1979,7 @@ function switchTab(tab){
   });
   if(tab==='params') renderParamsTab();
   renderAll();
-  setTimeout(()=>{
-    document.getElementById('main').style.top=document.getElementById('header').offsetHeight+'px';
-  },0);
+
 }
 
 function renderParamsTab(){
@@ -2030,9 +2028,7 @@ function renderHeader(){
       document.getElementById('btnEdit').classList.remove('active');
     }
   }
-  setTimeout(()=>{
-    document.getElementById('main').style.top=document.getElementById('header').offsetHeight+'px';
-  },0);
+
 }
 
 function toggleEdit(){
@@ -3915,22 +3911,11 @@ function renderSuivi(){
       nextEl.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
       nextEl.style.opacity='1';
       nextEl.classList.add('active');
-      // Créer un clone du header pour le nouvel onglet
-      const headerEl=document.getElementById('header');
-      const headerClone=headerEl.cloneNode(true);
-      headerClone.id='headerClone';
-      headerClone.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
-      document.body.appendChild(headerClone);
-      // Préparer le header clone avec le bon état
-      switchTab._pending=nextTab;
+
     }
     if(!dragging||!currentEl||!nextEl) return;
-    const header=document.getElementById('header');
-    const clone=document.getElementById('headerClone');
     currentEl.style.transform=`translateX(${moveX}px)`;
     nextEl.style.transform=`translateX(${(swipeDir>0?W:-W)+moveX}px)`;
-    header.style.transform=`translateX(${moveX}px)`;
-    if(clone) clone.style.transform=`translateX(${(swipeDir>0?W:-W)+moveX}px)`;
   },{passive:true});
 
   document.getElementById('main').addEventListener('touchend',function(e){
@@ -3941,15 +3926,12 @@ function renderSuivi(){
 
     currentEl.classList.add('swipe-animating');
     nextEl.classList.add('swipe-animating');
-    document.getElementById('header').classList.add('swipe-animating');
-    const cloneAnim=document.getElementById('headerClone');
-    if(cloneAnim) cloneAnim.classList.add('swipe-animating');
+
 
     if(commit){
       currentEl.style.transform=`translateX(${swipeDir>0?-W:W}px)`;
       nextEl.style.transform='translateX(0)';
-      document.getElementById('header').style.transform=`translateX(${swipeDir>0?-W:W}px)`;
-      if(cloneAnim) cloneAnim.style.transform='translateX(0)';
+
       setTimeout(()=>{
         currentEl.classList.remove('swipe-animating');
         nextEl.classList.remove('swipe-animating');
@@ -3958,7 +3940,6 @@ function renderSuivi(){
         nextEl.style.top=''; nextEl.style.left=''; nextEl.style.width='';
         document.getElementById('header').style.transform='';
         document.getElementById('header').classList.remove('swipe-animating');
-        const c=document.getElementById('headerClone');if(c)c.remove();
         currentEl.classList.remove('active');
         switchTab(nextTab);
         dragging=false;
@@ -3967,9 +3948,7 @@ function renderSuivi(){
       // Annuler le swipe
       currentEl.style.transform='translateX(0)';
       nextEl.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
-      document.getElementById('header').style.transform='translateX(0)';
-      const cl=document.getElementById('headerClone');
-      if(cl){ cl.classList.add('swipe-animating'); cl.style.transform=`translateX(${swipeDir>0?W:-W}px)`; }
+      document.getElementById('header').style.transform='';
       setTimeout(()=>{
         currentEl.classList.remove('swipe-animating');
         nextEl.classList.remove('swipe-animating');
@@ -3978,7 +3957,6 @@ function renderSuivi(){
         nextEl.style.top=''; nextEl.style.left=''; nextEl.style.width='';
         document.getElementById('header').style.transform='';
         document.getElementById('header').classList.remove('swipe-animating');
-        const c2=document.getElementById('headerClone');if(c2)c2.remove();
         nextEl.classList.remove('active');
         dragging=false;
       },280);
