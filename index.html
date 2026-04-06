@@ -831,7 +831,14 @@ html, body {
 .tab-btn .tab-icon { font-size: 1.3rem; line-height: 1; }
 .tab-btn .tab-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.01em; }
 .tab-btn.active { color: #0284c7; }
-.tab-btn.active .tab-icon { transform: translateY(-1px); }
+.tab-btn.active .tab-icon {
+  transform: translateY(-2px);
+  display: inline-block;
+  background: linear-gradient(135deg, #e0f7ff, #ccfbf1);
+  border-radius: 12px;
+  padding: 4px 8px;
+  box-shadow: 0 2px 8px rgba(14,116,144,0.18);
+}
 
 /* ===== TAB CONTENT ===== */
 .tab-content { display: none; }
@@ -888,6 +895,18 @@ html, body {
   padding-bottom: 4px;
   border-bottom: 1.5px solid var(--border-light);
 }
+/* ===== SWIPE TABS ===== */
+#main {
+  overflow-x: hidden;
+}
+.tab-content {
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease;
+}
+.tab-content.slide-out-left  { transform: translateX(-30px); opacity: 0; }
+.tab-content.slide-out-right { transform: translateX(30px);  opacity: 0; }
+.tab-content.slide-in-left   { transform: translateX(30px);  opacity: 0; }
+.tab-content.slide-in-right  { transform: translateX(-30px); opacity: 0; }
+
 /* scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-thumb { background: #bae6fd; border-radius: 4px; }
@@ -3855,6 +3874,51 @@ function renderSuivi(){
 }
 
 // ============================================================
+// ============================================================
+// SWIPE NAVIGATION
+// ============================================================
+(function(){
+  const TAB_ORDER=['today','history','compteurs','params'];
+  let touchStartX=0, touchStartY=0, touchStartTime=0;
+
+  document.getElementById('main').addEventListener('touchstart',function(e){
+    touchStartX=e.touches[0].clientX;
+    touchStartY=e.touches[0].clientY;
+    touchStartTime=Date.now();
+  },{passive:true});
+
+  document.getElementById('main').addEventListener('touchend',function(e){
+    const dx=e.changedTouches[0].clientX-touchStartX;
+    const dy=e.changedTouches[0].clientY-touchStartY;
+    const dt=Date.now()-touchStartTime;
+    // Swipe horizontal : plus large que vertical, assez rapide, assez long
+    if(Math.abs(dx)<40||Math.abs(dx)<Math.abs(dy)*1.5||dt>400) return;
+    const idx=TAB_ORDER.indexOf(currentTab);
+    if(dx<0&&idx<TAB_ORDER.length-1) swipeToTab(TAB_ORDER[idx+1],'left');
+    else if(dx>0&&idx>0) swipeToTab(TAB_ORDER[idx-1],'right');
+  },{passive:true});
+})();
+
+function swipeToTab(tab, direction){
+  const current=document.getElementById('tab-'+currentTab);
+  const next=document.getElementById('tab-'+tab);
+  if(!current||!next) return;
+  // Animer sortie
+  current.classList.add(direction==='left'?'slide-out-left':'slide-out-right');
+  // Préparer entrée
+  next.classList.add(direction==='left'?'slide-in-left':'slide-in-right');
+  next.classList.add('active');
+  // Déclencher entrée
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    next.classList.remove(direction==='left'?'slide-in-left':'slide-in-right');
+  }));
+  setTimeout(()=>{
+    current.classList.remove('active');
+    current.classList.remove(direction==='left'?'slide-out-left':'slide-out-right');
+    switchTab(tab);
+  },280);
+}
+
 setupClockEvents();
 document.addEventListener('DOMContentLoaded', function(){
   renderAll();
