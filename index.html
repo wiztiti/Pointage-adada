@@ -185,7 +185,7 @@ html, body {
 /* ===== MAIN SCROLL ===== */
 #main {
   position: fixed;
-  top: 106px;
+  top: 0;
   bottom: 0;
   left: 0; right: 0;
   overflow-y: auto;
@@ -918,49 +918,24 @@ html, body {
 </head>
 <body>
 
-<!-- ===== HEADER ===== -->
-<div id="header" style="flex-wrap:wrap;height:106px;padding:8px 14px;gap:0;">
-  <!-- Header Aujourd'hui -->
-  <div id="headerToday" style="display:flex;flex-direction:column;align-items:center;width:100%;gap:0;height:90px;">
-    <div class="h-date-center">
-      <div class="h-date-main" id="hDateMain"></div>
-      <div class="h-date-saint" id="hDateSaint"></div>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding-top:5px;">
-      <span id="backupWarn1" class="backup-warning" title="Pensez à sauvegarder !">⚠️</span>
-      <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
-    </div>
-  </div>
-  <!-- Header Historique -->
-  <div id="headerHistory" style="display:none;flex-wrap:wrap;width:100%;gap:0;height:90px;">
-    <div style="display:flex;align-items:center;width:100%;gap:0;">
-      <button class="h-arrow" id="btnPrev" onclick="navDay(-1)">‹</button>
-      <div class="h-date-center">
-        <div class="h-date-main" id="hDateMainHist"></div>
-        <div class="h-date-saint" id="hDateSaintHist"></div>
-      </div>
-      <button class="h-arrow" id="btnNext" onclick="navDay(1)">›</button>
-    </div>
-    <div style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
-      <button onclick="openCalendarPicker()" style="background:none;border:none;cursor:pointer;padding:4px;position:absolute;left:0;font-size:1.2rem;">📅</button>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
-        <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
-      </div>
-      <span id="backupWarn2" class="backup-warning" style="position:absolute;right:4px;" title="Pensez à sauvegarder !">⚠️</span>
-    </div>
-  </div>
-  <!-- Header simple (Compteurs / Paramètres) -->
-  <div id="headerSimple" style="display:none;align-items:center;width:100%;justify-content:center;height:90px;">
-    <div class="h-date-main" id="hDateSimple" style="font-size:0.9rem;color:var(--text-med);"></div>
-  </div>
-</div>
+<!-- header supprimé - intégré dans chaque onglet -->
 
 <!-- ===== MAIN ===== -->
 <div id="main">
 
   <!-- ===== ONGLET AUJOURD'HUI ===== -->
   <div id="tab-today" class="tab-content active">
+    <div id="headerToday" class="tab-header">
+      <div class="h-date-center" style="width:100%;text-align:center;">
+        <div class="h-date-main" id="hDateMain"></div>
+        <div class="h-date-saint" id="hDateSaint"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:6px;padding-top:5px;width:100%;">
+        <span id="backupWarn1" class="backup-warning" title="Pensez à sauvegarder !">⚠️</span>
+        <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
+      </div>
+      <div style="height:10px;width:100%;"></div>
+    </div>
 
     <!-- Action buttons -->
     <div class="action-row" id="actionRow">
@@ -1034,6 +1009,25 @@ html, body {
 
   <!-- ===== ONGLET HISTORIQUE ===== -->
   <div id="tab-history" class="tab-content">
+    <div id="headerHistory" class="tab-header">
+      <div style="display:flex;align-items:center;width:100%;gap:0;">
+        <button class="h-arrow" id="btnPrev" onclick="navDay(-1)">‹</button>
+        <div class="h-date-center" style="flex:1;text-align:center;">
+          <div class="h-date-main" id="hDateMainHist"></div>
+          <div class="h-date-saint" id="hDateSaintHist"></div>
+        </div>
+        <button class="h-arrow" id="btnNext" onclick="navDay(1)">›</button>
+      </div>
+      <div style="width:100%;display:flex;justify-content:center;align-items:center;padding-top:6px;position:relative;">
+        <button onclick="openCalendarPicker()" style="background:none;border:none;cursor:pointer;padding:4px;position:absolute;left:0;font-size:1.2rem;">📅</button>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="h-btn h-btn-edit" id="btnEdit" onclick="toggleEdit()">Édition</button>
+          <button class="h-btn h-btn-rapport" onclick="openRapport()">Rapport</button>
+        </div>
+        <span id="backupWarn2" class="backup-warning" style="position:absolute;right:4px;" title="Pensez à sauvegarder !">⚠️</span>
+      </div>
+      <div style="height:10px;width:100%;"></div>
+    </div>
 
     <!-- Action buttons historique (readonly) -->
     <div class="action-row" id="actionRowHist" style="display:none;">
@@ -1090,6 +1084,7 @@ html, body {
 
   <!-- ===== ONGLET COMPTEURS ===== -->
   <div id="tab-compteurs" class="tab-content">
+
     <div>
       <div class="params-section-title" style="text-align:center;">Compteurs d'heures</div>
       <div style="text-align:center;font-style:italic;font-size:0.75rem;color:#94a3b8;margin-bottom:8px;">Les totaux d'heures sont donnés à titre indicatif</div>
@@ -1114,6 +1109,7 @@ html, body {
 
   <!-- ===== ONGLET PARAMETRES ===== -->
   <div id="tab-params" class="tab-content">
+
     <div>
       <div class="params-section-title" style="text-align:center;">Feuille de route et<br>état des présences</div>
       <button class="btn-open-modal" onclick="openModalInfosFixes()">⚙️ Renseignements fixes</button>
@@ -1955,14 +1951,11 @@ function switchTab(tab){
   const activeBtn=document.getElementById('tabBtn'+tab.charAt(0).toUpperCase()+tab.slice(1));
   if(activeBtn) activeBtn.classList.add('active');
   // Adapter le header
-  document.getElementById('headerToday').style.display=tab==='today'?'flex':'none';
-  document.getElementById('headerHistory').style.display=tab==='history'?'flex':'none';
-  document.getElementById('headerSimple').style.display=(tab==='compteurs'||tab==='params')?'flex':'none';
-  if(tab==='compteurs') document.getElementById('hDateSimple').textContent='Compteurs';
-  if(tab==='params') document.getElementById('hDateSimple').textContent='Paramètres';
+  // headers intégrés dans les onglets, pas besoin de les gérer
+
   // Stopper le mode édition et le clignotement
   editMode=false;
-  document.getElementById('header').classList.remove('edit-mode');
+  const hh=document.getElementById('headerHistory');if(hh)hh.classList.remove('edit-mode');
   // Retour à aujourd'hui
   if(tab==='today') viewDate=todayStr();
   // Lors du passage à Historique, aller au dernier jour pas aujourd'hui
@@ -2019,13 +2012,13 @@ function renderHeader(){
     document.getElementById('hDateMainHist').textContent=dateText;
     document.getElementById('hDateSaintHist').innerHTML=saintHtml;
     document.getElementById('btnNext').disabled=isToday();
-    const hdr=document.getElementById('header');
+    const hdr=document.getElementById('headerHistory')||document.getElementById('header');
     if(editMode){
-      hdr.classList.add('edit-mode');
-      document.getElementById('btnEdit').classList.add('active');
+      if(hdr) hdr.classList.add('edit-mode');
+      const be=document.getElementById('btnEdit');if(be)be.classList.add('active');
     } else {
-      hdr.classList.remove('edit-mode');
-      document.getElementById('btnEdit').classList.remove('active');
+      if(hdr) hdr.classList.remove('edit-mode');
+      const be=document.getElementById('btnEdit');if(be)be.classList.remove('active');
     }
   }
 
@@ -3906,8 +3899,12 @@ function renderSuivi(){
       nextTab=TAB_ORDER[nextIdx];
       currentEl=getEl(currentTab);
       nextEl=getEl(nextTab);
+      const main=document.getElementById('main');
+      const savedScroll=main.scrollTop;
+      main.style.overflow='hidden';
       nextEl.style.position='absolute';
-      nextEl.style.top='0'; nextEl.style.left='0'; nextEl.style.width='100%';
+      nextEl.style.top=savedScroll+'px';
+      nextEl.style.left='0'; nextEl.style.width='100%';
       nextEl.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
       nextEl.style.opacity='1';
       nextEl.classList.add('active');
@@ -3938,9 +3935,11 @@ function renderSuivi(){
         currentEl.style.transform=''; currentEl.style.position='';
         nextEl.style.transform=''; nextEl.style.position='';
         nextEl.style.top=''; nextEl.style.left=''; nextEl.style.width='';
-        document.getElementById('header').style.transform='';
-        document.getElementById('header').classList.remove('swipe-animating');
+
         currentEl.classList.remove('active');
+        document.getElementById('main').style.overflow='';
+        document.getElementById('main').scrollTop=0;
+        nextEl.style.top='';
         switchTab(nextTab);
         dragging=false;
       },280);
@@ -3948,16 +3947,16 @@ function renderSuivi(){
       // Annuler le swipe
       currentEl.style.transform='translateX(0)';
       nextEl.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
-      document.getElementById('header').style.transform='';
+
       setTimeout(()=>{
         currentEl.classList.remove('swipe-animating');
         nextEl.classList.remove('swipe-animating');
         currentEl.style.transform=''; currentEl.style.position='';
         nextEl.style.transform=''; nextEl.style.position='';
         nextEl.style.top=''; nextEl.style.left=''; nextEl.style.width='';
-        document.getElementById('header').style.transform='';
-        document.getElementById('header').classList.remove('swipe-animating');
+
         nextEl.classList.remove('active');
+        document.getElementById('main').style.overflow='';
         dragging=false;
       },280);
     }
