@@ -900,14 +900,16 @@ html, body {
 /* ===== SWIPE TABS ===== */
 #main {
   overflow-x: hidden;
+  perspective: 1000px;
 }
 .tab-content {
-  transition: opacity 0.25s ease;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+  backface-visibility: hidden;
 }
-.tab-content.slide-out-left  { opacity: 0; }
-.tab-content.slide-out-right { opacity: 0; }
-.tab-content.slide-in-left   { opacity: 0; }
-.tab-content.slide-in-right  { opacity: 0; }
+.tab-content.slide-out-left  { transform: rotateY(-15deg) scale(0.95); opacity: 0; }
+.tab-content.slide-out-right { transform: rotateY(15deg)  scale(0.95); opacity: 0; }
+.tab-content.slide-in-left   { transform: rotateY(15deg)  scale(0.95); opacity: 0; }
+.tab-content.slide-in-right  { transform: rotateY(-15deg) scale(0.95); opacity: 0; }
 
 /* scrollbar */
 ::-webkit-scrollbar { width: 4px; }
