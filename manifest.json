@@ -1,0 +1,16 @@
+{
+  "name": "Pointage ADIATE",
+  "short_name": "Pointage",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eefbf7",
+  "theme_color": "#eefbf7",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "https://pointage-adada.vercel.app/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
