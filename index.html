@@ -3910,16 +3910,18 @@ function renderSuivi(){
       nextTab=TAB_ORDER[nextIdx];
       currentEl=getEl(currentTab);
       nextEl=getEl(nextTab);
-      const scrollTop=document.getElementById('main').scrollTop;
       nextEl.style.position='absolute';
-      nextEl.style.top=scrollTop+'px'; nextEl.style.left='0'; nextEl.style.width='100%';
+      nextEl.style.top='0'; nextEl.style.left='0'; nextEl.style.width='100%';
       nextEl.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
       nextEl.style.opacity='1';
       nextEl.classList.add('active');
     }
     if(!dragging||!currentEl||!nextEl) return;
+    // Faire glisser header + contenu ensemble
+    const header=document.getElementById('header');
     currentEl.style.transform=`translateX(${moveX}px)`;
     nextEl.style.transform=`translateX(${(swipeDir>0?W:-W)+moveX}px)`;
+    header.style.transform=`translateX(${moveX}px)`;
   },{passive:true});
 
   document.getElementById('main').addEventListener('touchend',function(e){
@@ -3930,17 +3932,20 @@ function renderSuivi(){
 
     currentEl.classList.add('swipe-animating');
     nextEl.classList.add('swipe-animating');
+    document.getElementById('header').classList.add('swipe-animating');
 
     if(commit){
-      // Valider le swipe
       currentEl.style.transform=`translateX(${swipeDir>0?-W:W}px)`;
       nextEl.style.transform='translateX(0)';
+      document.getElementById('header').style.transform='translateX(0)';
       setTimeout(()=>{
         currentEl.classList.remove('swipe-animating');
         nextEl.classList.remove('swipe-animating');
         currentEl.style.transform=''; currentEl.style.position='';
         nextEl.style.transform=''; nextEl.style.position='';
         nextEl.style.top=''; nextEl.style.left=''; nextEl.style.width='';
+        document.getElementById('header').style.transform='';
+        document.getElementById('header').classList.remove('swipe-animating');
         currentEl.classList.remove('active');
         switchTab(nextTab);
         dragging=false;
@@ -3949,12 +3954,15 @@ function renderSuivi(){
       // Annuler le swipe
       currentEl.style.transform='translateX(0)';
       nextEl.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
+      document.getElementById('header').style.transform='translateX(0)';
       setTimeout(()=>{
         currentEl.classList.remove('swipe-animating');
         nextEl.classList.remove('swipe-animating');
         currentEl.style.transform=''; currentEl.style.position='';
         nextEl.style.transform=''; nextEl.style.position='';
         nextEl.style.top=''; nextEl.style.left=''; nextEl.style.width='';
+        document.getElementById('header').style.transform='';
+        document.getElementById('header').classList.remove('swipe-animating');
         nextEl.classList.remove('active');
         dragging=false;
       },280);
