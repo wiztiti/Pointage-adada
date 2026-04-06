@@ -2646,21 +2646,27 @@ function openRapport(){
   if(allVacs.length){
     html+='<div class="rapport-section-title">Vacations</div>';
     const normalVacs=allVacs.filter(v=>!v.type&&!v.annexe);
-    const annexeVacs=allVacs.filter(v=>v.annexe);
-    allVacs.forEach((v,i)=>{
+    allVacs.forEach(v=>{
+      // Migration ancien format
+      if(v.annexe&&!v.type) v.type='annexe';
+      const vtype=v.type||null;
+      const vcol=vtype?VAC_COLORS[vtype]:'';
+      const vbg=vtype?VAC_BG[vtype]:'';
       const dur=durMin(v.dep,v.ret);
       const durTxt=dur!==null?'durée ('+minToHM(dur)+')':'';
-      const isAnnexe=!!v.annexe;
+      // Label selon type
       let label;
-      if(isAnnexe){
-        const idx=annexeVacs.indexOf(v);
-        label=annexeVacs.length>1?`Annexe ${idx+1}`:'Annexe';
+      if(vtype){
+        const sameType=allVacs.filter(x=>(x.type||(x.annexe?'annexe':null))===vtype);
+        const idx=sameType.indexOf(v);
+        const tname=vtype.charAt(0).toUpperCase()+vtype.slice(1);
+        label=sameType.length>1?`${tname} ${idx+1}`:tname;
       } else {
         const idx=normalVacs.indexOf(v);
         label=`Vacation ${idx+1}`;
       }
-      html+=`<div class="rapport-vac-line" style="${isAnnexe?'background:#fff7ed;':''}">
-        <span class="rv-label" style="${isAnnexe?'color:#f97316;':''}">${label} :</span>
+      html+=`<div class="rapport-vac-line" style="${vbg?'background:'+vbg+';':''}">
+        <span class="rv-label" style="${vcol?'color:'+vcol+';':''}">${label} :</span>
         <span class="rv-times">${fmt(v.dep)} – ${fmt(v.ret)}</span>
         <span class="rv-dur">${durTxt}</span>
       </div>`;
@@ -2671,7 +2677,12 @@ function openRapport(){
     html+=`<div class="rt-real" style="font-weight:400;">Heures réelles : ${minToHM(rMin+aMin)}</div>`;
     html+=`<div class="rt-conv">(Conv : ${minToHM(cMin+aMin)})</div>`;
     html+='</div>';
-    if(aMin) html+=`<div style="color:#f97316;font-family:'Quicksand',sans-serif;font-size:0.88rem;padding:0 0 8px;text-align:right;">dont ${minToHM(aMin)} annexe</div>`;
+    if(aMin){
+      VAC_TYPES.forEach(t=>{
+        const m=typedMins(allVacs,t);
+        if(m) html+=`<div style="color:${VAC_COLORS[t]};font-family:'Quicksand',sans-serif;font-size:0.88rem;padding:0 0 4px;text-align:right;">dont ${minToHM(m)} ${t}</div>`;
+      });
+    }
     html+='<div class="divider"></div>';
   }
 
