@@ -3910,8 +3910,9 @@ function renderSuivi(){
       nextTab=TAB_ORDER[nextIdx];
       currentEl=getEl(currentTab);
       nextEl=getEl(nextTab);
+      const scrollTop=document.getElementById('main').scrollTop;
       nextEl.style.position='absolute';
-      nextEl.style.top='0'; nextEl.style.left='0'; nextEl.style.width='100%';
+      nextEl.style.top=scrollTop+'px'; nextEl.style.left='0'; nextEl.style.width='100%';
       nextEl.style.transform=`translateX(${swipeDir>0?W:-W}px)`;
       nextEl.style.opacity='1';
       nextEl.classList.add('active');
