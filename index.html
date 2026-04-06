@@ -1070,13 +1070,26 @@ html, body {
 
   <!-- ===== ONGLET COMPTEURS ===== -->
   <div id="tab-compteurs" class="tab-content">
-    <button class="btn-open-modal" onclick="openRecapAnneeSco()">🎒 Année scolaire</button>
-    <button class="btn-open-modal" onclick="openRecapAnnee()">📅 Année civile</button>
-    <button class="btn-open-modal" onclick="openSuiviEntreprise()">📊 Comparatif heures bulletin</button>
-    <button class="btn-open-modal" onclick="openModalDeduc()">⏳ Déduction ½ heure</button>
-    <button class="btn-fdr-etat" onclick="openModalFDR()">📄 Feuille de route hebdo</button>
-    <button class="btn-fdr-etat" onclick="openModalEtatMensuel()">📊 État mensuel des présences</button>
-    <div style="text-align:center;font-style:italic;font-size:0.78rem;color:#94a3b8;">Les totaux d'heures sont donnés à titre indicatif</div>
+    <div>
+      <div class="params-section-title" style="text-align:center;">Compteurs d'heures</div>
+      <div style="text-align:center;font-style:italic;font-size:0.75rem;color:#94a3b8;margin-bottom:8px;">Les totaux d'heures sont donnés à titre indicatif</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn-open-modal" onclick="openRecapAnneeSco()">🎒 Année scolaire</button>
+        <button class="btn-open-modal" onclick="openRecapAnnee()">📅 Année civile</button>
+        <button class="btn-open-modal" onclick="openSuiviEntreprise()">📊 Comparatif heures bulletin</button>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <div class="params-section-title" style="text-align:center;">Paramétrage de la ½ heure</div>
+      <button class="btn-open-modal" onclick="openModalDeduc()">⏳ Déduction ½ heure</button>
+    </div>
+    <div style="margin-top:20px;">
+      <div class="params-section-title" style="text-align:center;">États hebdomadaires et mensuels</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn-fdr-etat" onclick="openModalFDR()">📄 Feuille de route hebdo</button>
+        <button class="btn-fdr-etat" onclick="openModalEtatMensuel()">📊 État mensuel des présences</button>
+      </div>
+    </div>
   </div><!-- /tab-compteurs -->
 
   <!-- ===== ONGLET PARAMETRES ===== -->
