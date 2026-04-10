@@ -4470,7 +4470,15 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
         const depStr=String(hDep.getHours()).padStart(2,'0')+':'+String(hDep.getMinutes()).padStart(2,'0');
         const retStr=String(hRet.getHours()).padStart(2,'0')+':'+String(hRet.getMinutes()).padStart(2,'0');
         const cx=XS[1+vi*2];
-        doc.setFontSize(9.5);doc.setTextColor(...DARK);doc.setFont('helvetica','bold');
+        // Vacation typée : italique + couleur du type
+        const vtype=v.type||(v.annexe?'annexe':null);
+        const rgb={'annexe':[249,115,22],'mission':[22,163,74],'formation':[2,132,199],'autre':[100,116,139]};
+        if(vtype){
+          doc.setFontSize(9);doc.setFont('helvetica','bolditalic');
+          doc.setTextColor(...(rgb[vtype]||DARK));
+        } else {
+          doc.setFontSize(9.5);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
+        }
         doc.text(depStr,cx+CT/2,y+DAY_H/2+1,{align:'center'});
         doc.text(retStr,cx+CT+CT/2,y+DAY_H/2+1,{align:'center'});
       });
