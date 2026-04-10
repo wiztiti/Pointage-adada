@@ -4495,11 +4495,11 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
       totalReel+=rMin;totalConv+=cMin;totalAnx+=aMin;
       doc.setFontSize(9.5);doc.setFont('helvetica','bold');
       if(aMin>0){
-        // Afficher les types avec leurs couleurs dans la colonne annexes
         const dayTypes=VAC_TYPES.map(t=>({t,m:typedMins(vacs,t)})).filter(x=>x.m>0);
+        const rgb2={'annexe':[249,115,22],'mission':[22,163,74],'formation':[2,132,199],'autre':[100,116,139]};
+        doc.setFont('helvetica','bolditalic');
         if(dayTypes.length===1){
-          const rgb={'annexe':[249,115,22],'mission':[22,163,74],'formation':[2,132,199],'autre':[100,116,139]};
-          doc.setTextColor(...(rgb[dayTypes[0].t]||[249,115,22]));
+          doc.setTextColor(...(rgb2[dayTypes[0].t]||[249,115,22]));
           doc.text(minToHM(dayTypes[0].m),XS[10]+C_ANX/2,y+DAY_H/2+1,{align:'center'});
         } else {
           doc.setTextColor(249,115,22);
