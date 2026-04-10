@@ -4550,7 +4550,7 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
       let ty=TotalY+DAY_H*0.22;
       doc.setFontSize(6.5);doc.setFont('helvetica','italic');doc.setTextColor(120,120,120);
       typeTotals.forEach(({t,m})=>{
-        doc.text('dont '+minToHM(m)+' '+t,typeX,ty,{align:'center'});
+        doc.text('dont '+minToHM(m)+' '+t,XS[13]+2,ty);
         ty+=3.5;
       });
     }
@@ -4562,13 +4562,10 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
       return acc+(convMins(vacs,false)-convMins(vacs,true));
     },0);
     if(totalDeducMin>0){
-      doc.setFontSize(7);doc.setFont('helvetica','italic');doc.setTextColor(120,120,120);
-      const deducX=XS[13]+C_COM/2;
-      const deducY=TotalY+DAY_H*0.3;
-      doc.text('Temps déduit',deducX,deducY,{align:'center'});
-      doc.text('au titre de la ½ heure :',deducX,deducY+3.5,{align:'center'});
-      doc.setFont('helvetica','bolditalic');
-      doc.text(minToHM(totalDeducMin),deducX,deducY+7,{align:'center'});
+      doc.setFontSize(6.5);doc.setFont('helvetica','italic');doc.setTextColor(120,120,120);
+      const deducX=XS[13]+2;
+      const deducY=TotalY+DAY_H*0.55;
+      doc.text('dont '+minToHM(totalDeducMin)+' déduits (½h)',deducX,deducY);
     }
   }
 
