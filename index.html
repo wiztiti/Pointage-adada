@@ -4978,6 +4978,7 @@ function _buildEtatPage(doc,mois,annee,s,elevesInput,nbJours,MOIS_FR,logoB64,vie
   doc.setFontSize(8);doc.setFont('helvetica','bold');
   doc.text('Numéro Circuit',CBX+CBW/2,CBY+5,{align:'center'});
   doc.setFontSize(14);doc.setFont('helvetica','bold');
+  alert('p'+pageIndex+' allPages='+s.circuitAllPages);
   if(!vierge && s.circuit && (pageIndex===0 || s.circuitAllPages)) doc.text(s.circuit,CBX+CBW/2,CBY+12,{align:'center'});
 
   // ---- TABLEAU ----
