@@ -4150,7 +4150,7 @@ function toggleFdrParams(){
 
 function saveFdrSettings(){
   if(!state.pdfSettings) state.pdfSettings={};
-  state.pdfSettings={
+  Object.assign(state.pdfSettings,{
     agence:document.getElementById('fdrAgence').value,
     immat:document.getElementById('fdrImmat').value,
     licence:document.getElementById('fdrLicence').value,
@@ -4162,7 +4162,7 @@ function saveFdrSettings(){
     lieuArrivee:document.getElementById('feuilleArrivee').value,
     circuit:document.getElementById('fdrCircuit')?document.getElementById('fdrCircuit').value:'',
     carte:document.getElementById('fdrCarte')?document.getElementById('fdrCarte').value:'',
-  };
+  });
   saveState();
 }
 
