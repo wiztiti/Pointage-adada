@@ -4217,12 +4217,21 @@ function genererFeuille(mode){
   };
 
   if(champsVides.length>0){
-    const el=document.getElementById('fdrWarningList');
-    if(el) el.textContent='Champs manquants : '+champsVides.join(', ');
-    const wm=document.getElementById('modalFDRWarning');
-    if(wm) wm.classList.add('open');
-    const btn=document.getElementById('fdrWarningConfirm');
-    if(btn) btn.onclick=()=>{closeModal('modalFDRWarning');doGenerate();};
+    // Afficher un toast avec bouton "Générer quand même"
+    const existing=document.getElementById('fdrWarnToast');
+    if(existing) existing.remove();
+    const toast=document.createElement('div');
+    toast.id='fdrWarnToast';
+    toast.style.cssText='position:fixed;bottom:75px;left:50%;transform:translateX(-50%) translateY(20px);background:linear-gradient(135deg,#fff7ed,#fff);border:1.5px solid #f97316;color:#9a3412;padding:14px 18px;border-radius:18px;font-family:Quicksand,sans-serif;font-weight:600;font-size:0.82rem;z-index:9998;box-shadow:0 8px 24px rgba(249,115,22,0.2);opacity:0;transition:all 0.3s ease;max-width:300px;text-align:center;';
+    const cancelBtn='<button style="background:#f1f5f9;color:#64748b;border:none;border-radius:10px;padding:6px 14px;font-family:Quicksand,sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;" id="fdrWarnCancelBtn">Annuler</button>';
+    const confirmBtn='<button id="fdrWarnConfirmBtn" style="background:linear-gradient(135deg,#38bdf8,#0284c7);color:#fff;border:none;border-radius:10px;padding:6px 14px;font-family:Quicksand,sans-serif;font-weight:700;font-size:0.78rem;cursor:pointer;">📄 Générer quand même</button>';
+    toast.innerHTML='<div style="font-size:1.1rem;margin-bottom:6px;">⚠️ Champs manquants</div>'
+      +'<div style="font-size:0.75rem;color:#c2410c;margin-bottom:10px;">'+champsVides.join(', ')+'</div>'
+      +'<div style="display:flex;gap:8px;justify-content:center;">'+cancelBtn+confirmBtn+'</div>';
+    document.body.appendChild(toast);
+    setTimeout(()=>{toast.style.opacity='1';toast.style.transform='translateX(-50%) translateY(0)';},50);
+    document.getElementById('fdrWarnConfirmBtn').onclick=()=>{toast.remove();doGenerate();};
+    document.getElementById('fdrWarnCancelBtn').onclick=()=>{toast.remove();};
   } else { doGenerate(); }
 }
 
@@ -4254,11 +4263,13 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     doc.setFillColor(255,255,255);doc.rect(5,y-3,INFO_LABEL_W,5,'F');
     doc.rect(5,y-3,INFO_LABEL_W,5,'S');
     doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(80,80,80);
-    doc.text(label,12,y);
+    // Col 1 : aligné à gauche, centré verticalement
+    doc.text(label,6,y-3+5/2+1);
     doc.setFont('helvetica','normal');
     doc.setFillColor(255,255,255);doc.rect(5+INFO_LABEL_W,y-3,INFO_VAL_W,5,'F');
     doc.rect(5+INFO_LABEL_W,y-3,INFO_VAL_W,5,'S');
-    if(!vierge){doc.setFontSize(6.5);doc.setTextColor(30,30,30);doc.text(val,10+INFO_LABEL_W+2,y);}
+    // Col 2 : centré horizontalement et verticalement
+    if(!vierge){doc.setFontSize(6.5);doc.setTextColor(30,30,30);doc.text(val,5+INFO_LABEL_W+INFO_VAL_W/2,y-3+5/2+1,{align:'center'});}
   });
 
   // Logo ADIATE
@@ -4292,8 +4303,8 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     doc.setFont('helvetica','normal');doc.setFontSize(9);
   }
   const TH=H-TY-20;
-  const HDR_H=7;
-  const SUB_H=9;
+  const HDR_H=5;
+  const SUB_H=8;
 
   // Largeurs colonnes
   const C0=38;
@@ -4530,10 +4541,10 @@ function _buildPDF(mondayDs,lieuDep,lieuArr,s,vierge=false){
     const note=peekDayData(ds).note;
     if(!vierge && note&&note.trim()){
       doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
-      doc.setFontSize(7.5);
+      doc.setFontSize(6.5);
       let noteLines=doc.splitTextToSize(note.trim(),C_COM-4);
       let fontSize=6.5;
-      if(noteLines.length>3){
+      if(noteLines.length>4){
         fontSize=6;
         doc.setFontSize(6);
         noteLines=doc.splitTextToSize(note.trim(),C_COM-4);
