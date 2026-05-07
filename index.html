@@ -4896,10 +4896,22 @@ function _buildEtatMensuelPDF(jsPDF,mois,annee,s,mode,vierge=false){
   const nbJours=new Date(annee,mois+1,0).getDate();
   // En mode vierge : 8 lignes vides, pas de page 2
   const maxP1=s.maxPage1||8;
-  const elevesReal=vierge?[]:state.eleves.slice(0,maxP1);
+  // Filtrer les élèves ayant au moins une présence sur le mois
+  const MOMENTS_FILTER=['MA','MR','SA','SR'];
+  const elevesAvecPresence=vierge?[]:state.eleves.filter(prenom=>{
+    for(let j=1;j<=nbJours;j++){
+      const ds=String(annee)+'-'+String(mois+1).padStart(2,'0')+'-'+String(j).padStart(2,'0');
+      for(const m of MOMENTS_FILTER){
+        const p=getPresenceState(ds,prenom,m);
+        if(p===true||p==='np') return true;
+      }
+    }
+    return false;
+  });
+  const elevesReal=elevesAvecPresence.slice(0,maxP1);
   // Forcer 8 lignes minimum
   const eleves=elevesReal.length<8?[...elevesReal,...Array(8-elevesReal.length).fill(null)]:elevesReal;
-  const elevesPage2Raw=vierge?[]:(state.eleves.length>maxP1?state.eleves.slice(maxP1,maxP1+8):[]);
+  const elevesPage2Raw=elevesAvecPresence.length>maxP1?elevesAvecPresence.slice(maxP1,maxP1+8):[];
   const elevesPage2=elevesPage2Raw.length>0?(elevesPage2Raw.length<8?[...elevesPage2Raw,...Array(8-elevesPage2Raw.length).fill(null)]:elevesPage2Raw):[];
 
   const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
