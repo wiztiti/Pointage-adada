@@ -2851,8 +2851,16 @@ function openRapport(){
     </div>`;
   });
   if(hasElv){
+    // Compter uniquement les élèves ayant au moins une présence réelle (pas np)
+    let transportCount=0;
+    orderedEleves.forEach(p=>{
+      const pr=pres[p];if(!pr)return;
+      if(MOMENTS.some(m=>pr[m]===true)) transportCount++;
+    });
     const elvCount=elvHtml.split('rapport-eleve-entry').length-1;
-    html+=`<div class="rapport-section-title">${elvCount} élève${elvCount>1?'s':''} transporté${elvCount>1?'s':''} aujourd'hui</div>`;
+    const npCount=elvCount-transportCount;
+    const titre=transportCount>0?`${transportCount} élève${transportCount>1?'s':''} transporté${transportCount>1?'s':''}${npCount>0?`, ${npCount} absent${npCount>1?'s':''} non prévenu${npCount>1?'s':''}`:''}`:`${npCount} élève${npCount>1?'s':''} absent${npCount>1?'s':''} non prévenu${npCount>1?'s':''}`;
+    html+=`<div class="rapport-section-title">${titre}</div>`;
     html+=elvHtml;
     html+='<div class="rapport-legend">A = aller &nbsp;&nbsp; R = retour</div>';
   }
